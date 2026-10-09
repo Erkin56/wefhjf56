@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Плов как бесконечный ряд</title>
+<meta name="description" content="Интерактивный научный стендап: математическая модель узбекского гостеприимства. Антинаучная конференция РГПУ им. А. И. Герцена.">
+<style>
+/*@FONTS@*/
+</style>
+<style>
+/*@CSS@*/
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage" aria-live="polite">
+    <div id="stage-bg" aria-hidden="true"></div>
+<!--@SLIDES@-->
+    <div id="chrome" aria-hidden="true">
+      <div class="chrome-top">
+        <span class="chrome-conf">Антинаучная конференция · РГПУ им. А. И. Герцена</span>
+        <span class="chrome-title">Плов как бесконечный ряд</span>
+      </div>
+      <div class="chrome-bottom">
+        <span class="chrome-author">Эркинбой</span>
+        <span class="chrome-section" id="chrome-section"></span>
+        <span class="chrome-steps" id="chrome-steps"></span>
+        <span class="chrome-num" id="chrome-num"></span>
+      </div>
+    </div>
+    <canvas id="fx" width="1920" height="1080" aria-hidden="true"></canvas>
+    <div id="stage-timer" hidden></div>
+  </div>
+</div>
+
+<nav id="navbar" aria-label="Управление презентацией">
+  <button type="button" class="nb" data-act="prev" title="Назад (←)" aria-label="Предыдущий слайд">‹</button>
+  <span class="nb-num" id="nb-num">1 / 10</span>
+  <button type="button" class="nb" data-act="next" title="Далее (→)" aria-label="Следующий шаг или слайд">›</button>
+  <span class="nb-sep"></span>
+  <button type="button" class="nb nb-txt" data-act="fullscreen" title="Полный экран (F)">⛶</button>
+  <button type="button" class="nb nb-txt" data-act="sound" id="nb-sound" title="Звук (M)">♪</button>
+  <button type="button" class="nb nb-txt" data-act="notes" title="Заметки (N)">N</button>
+  <button type="button" class="nb nb-txt" data-act="presenter" title="Окно докладчика (P)">P</button>
+  <button type="button" class="nb nb-txt" data-act="help" title="Подсказка (H)">?</button>
+</nav>
+<div id="edge-prev" class="edge" aria-hidden="true"></div>
+<div id="edge-next" class="edge" aria-hidden="true"></div>
+
+<aside id="notes-panel" hidden>
+  <div class="np-head">
+    <span id="np-title"></span>
+    <span id="np-time"></span>
+    <span id="np-clock"></span>
+  </div>
+  <div id="np-body"></div>
+</aside>
+
+<div id="help" hidden>
+  <div class="help-card">
+    <h2>Управление</h2>
+    <dl>
+      <dt>→ · PageDown · Пробел</dt><dd>следующий шаг слайда, затем следующий слайд</dd>
+      <dt>←  · PageUp</dt><dd>предыдущий слайд</dd>
+      <dt>↓ · ↑</dt><dd>следующий / предыдущий слайд без шагов</dd>
+      <dt>1 · 2 · 3</dt><dd>кнопки выбора на слайдах 2, 9 и 10</dd>
+      <dt>F</dt><dd>полный экран</dd>
+      <dt>N</dt><dd>заметки на экране (для репетиции)</dd>
+      <dt>P</dt><dd>окно докладчика: заметки и таймер</dd>
+      <dt>T</dt><dd>таймер на слайде</dd>
+      <dt>R</dt><dd>перезапустить текущий слайд</dd>
+      <dt>M</dt><dd>звук вкл/выкл</dd>
+      <dt>B · .</dt><dd>чёрный экран</dd>
+      <dt>Home · End</dt><dd>первый / последний слайд</dd>
+    </dl>
+    <p class="help-foot">Мышью: кнопки на слайдах, стрелки внизу справа или края экрана.</p>
+  </div>
+</div>
+<div id="blackout" hidden></div>
+<div id="hint-start">Нажмите <b>F</b> для полного экрана · <b>H</b> — подсказка</div>
+
+<svg id="art-defs" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"></svg>
+
+<script>
+/*@JS@*/
+</script>
+</body>
+</html>
