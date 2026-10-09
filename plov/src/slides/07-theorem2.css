@@ -1,0 +1,203 @@
+/* Слайд 7. Теорема 2: тарелка сходится, съеденное растёт. График слева, весы с ляганом и гость справа, финал — на весь экран */
+#s07 .s07-head { position: absolute; left: var(--pad-x); top: var(--pad-top); display: flex; flex-direction: column; gap: 14px; }
+#s07 .s07-title { font-size: 76px; white-space: nowrap; }
+
+/* ---------- график ---------- */
+#s07 .s07-chartbox { position: absolute; left: var(--pad-x); top: 262px; width: 1030px; height: 598px; }
+#s07 .s07-chart .plot { display: block; }
+#s07 .plot .pg-plate .pg-path { stroke-width: 8; }
+#s07 .plot .pg-eaten .pg-path { stroke-width: 8; }
+#s07 .plot .pg-lim .pg-hlabel { font-size: 32px; }
+#s07 .plot .pg-label { font-size: 32px; }
+
+#s07 .s07-legend { position: absolute; left: 160px; top: 46px; display: flex; flex-direction: column; gap: 6px; }
+#s07 .s07-leg { display: flex; align-items: baseline; gap: 14px; font-family: var(--f-body); font-weight: 700; font-size: 30px; color: var(--cream); line-height: 1.25; }
+#s07 .s07-leg i { width: 46px; height: 8px; border-radius: 4px; align-self: center; flex: none; }
+#s07 .s07-leg--plate i { background: var(--blue); box-shadow: 0 0 14px rgba(82, 182, 255, .6); }
+#s07 .s07-leg--eaten i { background: var(--orange); box-shadow: 0 0 14px rgba(255, 138, 53, .6); }
+#s07 .s07-leg .math { font-size: 34px; }
+#s07 .s07-leg--plate .math { color: var(--blue); }
+#s07 .s07-leg--eaten .math { color: var(--orange); }
+#s07 .s07-arr { font-family: var(--f-body); font-weight: 600; font-style: normal; padding: 0 .06em; }
+
+#s07 .s07-ctrl { position: relative; height: 70px; margin-top: 14px; }
+#s07 .s07-ctrl > * { position: absolute; left: 0; top: 0; }
+#s07 .s07-ff { box-shadow: 0 0 0 3px var(--cream-3) inset; }
+#s07 .s07-ff:hover { box-shadow: 0 0 0 3px var(--gold) inset; }
+#s07 .s07-ff, #s07 .s07-sum { font-size: 22px; padding: 16px 26px 14px; gap: 12px; transition: opacity .3s, transform .35s var(--ease-back), filter .2s, box-shadow .12s; }
+#s07 .s07-ffi { width: 30px; height: 18px; flex: none; }
+#s07 .s07-sum, #s07 .s07-ffsticker { opacity: 0; transform: scale(.6); pointer-events: none; }
+#s07.is-ffing .s07-ff, #s07.is-ffdone .s07-ff { opacity: 0; transform: scale(.6); pointer-events: none; }
+#s07.is-ffing .s07-ffsticker { opacity: 1; transform: rotate(var(--rot)); animation: s07-blink .5s steps(2) infinite; }
+#s07.is-ffdone .s07-sum { opacity: 1; transform: none; pointer-events: auto; animation: btn-pulse 1.8s ease-in-out infinite; }
+#s07 .s07-sum { --c2: var(--red-3); }
+#s07 .s07-ffsticker { font-size: 24px; display: inline-flex; align-items: center; gap: 12px; transition: opacity .25s, transform .3s var(--ease-back); top: 4px; }
+@keyframes s07-blink { 50% { filter: brightness(1.35); } }
+
+#s07 .s07-slope {
+  position: absolute; left: 0; top: 0; font-size: 46px; color: var(--gold); white-space: nowrap;
+  opacity: 0; transform: translate(-50%, 0) rotate(-22deg) scale(.7); transition: opacity .4s, transform .5s var(--ease-back);
+  text-shadow: 0 0 10px var(--bg), 0 0 18px var(--bg); pointer-events: none;
+}
+#s07 .s07-slope.is-shown { opacity: 1; transform: translate(-50%, 0) rotate(-22deg); }
+
+/* ---------- формулы под графиком ---------- */
+#s07 .s07-formulas { position: absolute; left: var(--pad-x); top: 872px; display: flex; flex-direction: column; gap: 10px; }
+#s07 .s07-f { display: flex; align-items: center; gap: 18px; }
+#s07 .s07-f .badge { min-width: 250px; justify-content: center; }
+#s07 .s07-f .math { font-size: 36px; color: var(--cream); }
+
+/* ---------- табло ---------- */
+#s07 .s07-scorewrap { position: absolute; left: 1200px; top: 96px; width: 610px; }
+#s07 .s07-score { padding: 22px 32px 24px; border-radius: 24px; }
+#s07 .s07-score-top { display: flex; align-items: baseline; justify-content: space-between; }
+#s07 .s07-n { font-size: 24px; color: var(--muted); font-weight: 700; }
+#s07 .s07-n b { color: var(--cream); font-size: 30px; }
+#s07 .s07-eaten { display: flex; align-items: baseline; gap: 18px; margin-top: 8px; transform-origin: 0 70%; }
+#s07 .s07-eaten.is-bump { animation: s07-bump .45s var(--ease-out); }
+#s07 .s07-eaten-num { color: var(--orange); font-size: 96px; text-shadow: 0 0 30px rgba(255, 138, 53, .35); }
+#s07 .s07-eaten-unit { font-family: var(--f-body); font-weight: 800; font-size: 40px; color: var(--cream); }
+@keyframes s07-bump { 0% { transform: scale(1); } 35% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+/* ---------- сцена ---------- */
+#s07 .s07-scene { position: absolute; left: 1140px; top: 318px; width: 700px; height: 560px; }
+#s07 .s07-benchwrap { position: absolute; left: 10px; top: 248px; width: 330px; }
+#s07 .s07-bench { display: block; width: 330px; height: 300px; overflow: visible; }
+#s07 .s07-scale-v { font-family: var(--f-mono); font-weight: 800; font-size: 34px; fill: var(--blue); }
+#s07 .s07-platewrap { position: absolute; left: 50px; top: -66px; width: 250px; }
+#s07 .s07-plate .art { filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .35)); }
+#s07 .s07-plate.is-jiggle { animation: s07-jiggle .18s linear infinite; }
+#s07 .s07-plate.is-plop { animation: jelly .55s var(--ease-out); transform-origin: 50% 85%; }
+@keyframes s07-jiggle { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(-3px, 1px); } 75% { transform: translate(3px, -1px); } }
+
+#s07 .s07-guestwrap { position: absolute; left: 380px; top: -30px; width: 330px; }
+#s07 .s07-guest { transform-origin: 50% 100%; }
+#s07 .s07-guest.is-gulp { animation: s07-gulp .5s var(--ease-out); }
+@keyframes s07-gulp { 0% { transform: scale(1, 1); } 30% { transform: scale(1.05, .95); } 60% { transform: scale(.98, 1.03); } 100% { transform: scale(1, 1); } }
+#s07 .s07-guest .art { filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .45)); }
+#s07.is-dizzy .s07-guest { animation: s07-sway 1.6s ease-in-out infinite; }
+@keyframes s07-sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+
+/* пуговица на животе: едет вместе с животом, при перегрузке отлетает */
+#s07 .s07-btnpos { transform: translateY(calc(var(--full, 0) * 19px)); transition: transform .7s var(--ease-back); }
+#s07 .s07-btnin { transform-box: fill-box; transform-origin: 50% 50%; }
+#s07 .s07-btnin.is-strain { animation: s07-strain .32s ease-in-out infinite; }
+#s07 .s07-btnin.is-popped { animation: s07-popoff 1s var(--ease-out) forwards; }
+@keyframes s07-strain { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg) scale(1.06); } }
+@keyframes s07-popoff {
+  0% { transform: translate(0, 0) rotate(0); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translate(260px, -420px) rotate(900deg); opacity: 0; }
+}
+
+/* звёздочки над головой у «закружившегося» гостя */
+#s07 .s07-stars { opacity: 0; transition: opacity .4s; }
+#s07.is-dizzy .s07-stars { opacity: 1; }
+
+#s07 .s07-chpok { position: absolute; left: 370px; top: -14px; font-size: 38px; z-index: 6; opacity: 0; pointer-events: none; }
+#s07 .s07-chpok.is-shown { animation: s07-chpok 1.6s var(--ease-out) forwards; }
+@keyframes s07-chpok {
+  0% { opacity: 0; transform: scale(.3) rotate(-20deg); }
+  18% { opacity: 1; transform: scale(1.15) rotate(var(--rot)); }
+  30% { transform: scale(1) rotate(var(--rot)); }
+  80% { opacity: 1; transform: scale(1) rotate(var(--rot)); }
+  100% { opacity: 0; transform: scale(.9) translateY(-20px) rotate(var(--rot)); }
+}
+
+/* капгир бабушки: влетает, высыпает порцию, улетает */
+#s07 .s07-kapgir { position: absolute; left: 143px; top: 53px; width: 84px; pointer-events: none; z-index: 4; }
+#s07 .s07-kapgir-in { opacity: 0; transform-origin: 50% 14.3%; }
+#s07 .s07-kapgir-in .art { filter: drop-shadow(0 10px 12px rgba(0, 0, 0, .5)); }
+#s07 .s07-kapgir.is-swoop .s07-kapgir-in { animation: s07-swoop .95s var(--ease-out) both; }
+#s07 .s07-kapgir.is-turbo .s07-kapgir-in { opacity: 1; transform: translate(0, 0) rotate(140deg); animation: s07-turbo .16s linear infinite; }
+@keyframes s07-swoop {
+  0% { opacity: 0; transform: translate(-230px, -150px) rotate(115deg); }
+  30% { opacity: 1; transform: translate(0, 0) rotate(145deg); }
+  45% { opacity: 1; transform: translate(8px, 12px) rotate(112deg); }
+  62% { opacity: 1; transform: translate(0, 0) rotate(140deg); }
+  100% { opacity: 0; transform: translate(-250px, -170px) rotate(115deg); }
+}
+@keyframes s07-turbo { 0%, 100% { transform: translate(0, 0) rotate(146deg); } 50% { transform: translate(6px, 14px) rotate(120deg); } }
+
+/* всплывающие подписи «+0,91», «+1» */
+#s07 .s07-floats { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+#s07 .s07-float {
+  position: absolute; font-family: var(--f-mono); font-weight: 800; font-size: 40px; white-space: nowrap;
+  transform: translate(-50%, 0); animation: s07-float 1.1s var(--ease-out) forwards;
+  text-shadow: 0 0 8px var(--bg), 0 0 16px var(--bg);
+}
+#s07 .s07-float--eat { color: var(--orange); }
+#s07 .s07-float--add { color: var(--gold); font-family: var(--f-hand); font-size: 54px; }
+@keyframes s07-float {
+  0% { opacity: 0; transform: translate(-50%, 20px) scale(.6); }
+  20% { opacity: 1; transform: translate(-50%, 0) scale(1.08); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -36px) scale(1); }
+}
+
+/* главная кнопка */
+#s07 .s07-mainwrap { position: absolute; left: 1200px; top: 894px; width: 610px; display: flex; justify-content: center; }
+#s07 .s07-more { font-size: 36px; padding: 24px 46px 22px; }
+#s07 .s07-more.is-busy { pointer-events: none; opacity: .55; }
+#s07 .s07-more.is-pressed { transform: translateY(8px); box-shadow: 0 1px 0 var(--c2), 0 6px 14px rgba(0, 0, 0, .4); }
+
+/* ---------- финал на весь экран ---------- */
+#s07 .s07-final {
+  position: absolute; inset: 0; z-index: 30;
+  background:
+    radial-gradient(1100px 600px at 50% 40%, rgba(232, 67, 45, .16), transparent 70%),
+    radial-gradient(900px 500px at 50% 100%, rgba(246, 187, 42, .10), transparent 70%),
+    var(--bg);
+  opacity: 0; visibility: hidden; transition: opacity .45s var(--ease-out), visibility 0s linear .45s;
+  cursor: pointer;
+}
+#s07 .s07-final.is-on { opacity: 1; visibility: visible; transition: opacity .45s var(--ease-out), visibility 0s; }
+#s07 .s07-final.is-arrow { cursor: default; }
+#s07 .s07-final-top { position: absolute; left: 0; right: 0; top: 70px; display: flex; justify-content: center; opacity: 0; transition: opacity .5s .2s; }
+#s07 .s07-final.is-on .s07-final-top { opacity: 1; }
+#s07 .s07-final-lines {
+  position: absolute; left: 0; right: 0; top: 300px;
+  display: flex; flex-direction: column; align-items: center; gap: 34px;
+  font-family: var(--f-display); font-weight: 900; font-size: 120px; line-height: 1; letter-spacing: -.02em;
+  text-transform: uppercase; white-space: nowrap;
+  transition: transform .8s var(--ease-out);
+}
+#s07 .s07-final.is-arrow .s07-final-lines { transform: translateY(-170px) scale(.8); }
+#s07 .s07-l1 { color: var(--cream); opacity: 0; }
+#s07 .s07-l2 { color: var(--red); opacity: 0; text-shadow: 0 0 60px rgba(232, 67, 45, .45); }
+#s07 .s07-l1.is-shown { animation: s07-l1in .6s var(--ease-out) forwards; }
+#s07 .s07-l2.is-shown { animation: s07-l2in .55s var(--ease-out) forwards; }
+@keyframes s07-l1in { from { opacity: 0; transform: translateY(40px); letter-spacing: .08em; } to { opacity: 1; transform: none; letter-spacing: -.02em; } }
+@keyframes s07-l2in {
+  0% { opacity: 0; transform: scale(2.2) rotate(-4deg); }
+  55% { opacity: 1; transform: scale(.95) rotate(0); }
+  75% { transform: scale(1.04, .96); }
+  100% { opacity: 1; transform: none; }
+}
+#s07 .s07-final-sub {
+  position: absolute; left: 0; right: 0; top: 520px; margin: 0; text-align: center;
+  font-family: var(--f-display); font-weight: 800; font-size: 76px; line-height: 1.1; color: var(--cream);
+  opacity: 0; transform: translateY(30px); transition: opacity .5s var(--ease-out) .25s, transform .6s var(--ease-back) .25s;
+}
+#s07 .s07-final-sub b { color: var(--gold); font-weight: 900; }
+#s07 .s07-final.is-arrow .s07-final-sub { opacity: 1; transform: none; }
+#s07 .s07-bigarrow {
+  position: absolute; left: 50%; top: 646px; width: 250px; margin-left: -125px; height: 300px;
+  perspective: 640px; perspective-origin: 50% -20%;
+  opacity: 0; transition: opacity .3s .55s;
+}
+#s07 .s07-final.is-arrow .s07-bigarrow { opacity: 1; }
+#s07 .s07-bigarrow svg { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 0 34px rgba(246, 187, 42, .45)); transform-origin: 50% 0%; transform: rotateX(44deg); }
+#s07 .s07-final.is-arrow .s07-bigarrow svg { animation: s07-arrin .7s var(--ease-back) .5s both, s07-bounce .9s ease-in-out 1.2s infinite; }
+@keyframes s07-arrin { from { transform: rotateX(85deg) scale(.3); } to { transform: rotateX(44deg) scale(1); } }
+@keyframes s07-bounce {
+  0%, 100% { transform: rotateX(44deg) translateZ(0); }
+  50% { transform: rotateX(36deg) translateZ(60px); }
+}
+#s07 .s07-ba-sh { fill: rgba(0, 0, 0, .45); }
+#s07 .s07-ba-body { fill: var(--gold); stroke: var(--ink); stroke-width: 8; stroke-linejoin: round; }
+#s07 .s07-ba-hi { stroke: var(--cream); stroke-width: 12; stroke-linecap: round; opacity: .7; fill: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  #s07 .s07-bigarrow svg, #s07 .s07-plate.is-jiggle, #s07 .s07-btnin.is-strain, #s07.is-dizzy .s07-guest { animation: none !important; }
+}

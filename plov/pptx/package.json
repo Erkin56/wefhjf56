@@ -1,0 +1,7 @@
+{
+  "name": "plov-pptx",
+  "private": true,
+  "description": "Сборка PowerPoint-версии презентации «Плов как бесконечный ряд»",
+  "scripts": { "build": "node build-pptx.mjs" },
+  "dependencies": { "pptxgenjs": "3.12.0", "jszip": "3.10.1" }
+}

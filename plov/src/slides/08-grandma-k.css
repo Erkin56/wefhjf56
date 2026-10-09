@@ -1,0 +1,233 @@
+/* Слайд 8. Коэффициент бабушки: гигантская формула, ползунок k, гора плова на фоне */
+#s08 { padding: 0; --heat: 0; }
+
+/* ---------- фон: гора плова ---------- */
+#s08 .s08-world { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+/* гора — в отдельном слое: дрожь и мигание поверх не заставляют перерисовывать SVG */
+#s08 .s08-quake { position: absolute; inset: 0; will-change: transform; }
+#s08 .s08-mtn { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
+#s08.is-critical .s08-quake { animation: s08-tremble .14s linear infinite; }
+@keyframes s08-tremble {
+  0%, 100% { transform: scale(1.008) translate(0, 0); }
+  25% { transform: scale(1.008) translate(-3px, 2px); }
+  50% { transform: scale(1.008) translate(3px, -1px); }
+  75% { transform: scale(1.008) translate(-2px, -2px); }
+}
+#s08 .s08-heat {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none; will-change: opacity;
+  opacity: var(--heat);
+  background: radial-gradient(ellipse 75% 70% at 60% 55%, transparent 35%, rgba(232, 67, 45, .5) 100%);
+  transition: opacity .3s;
+}
+#s08 .s08-heat::after {
+  content: ''; position: absolute; inset: 0; opacity: 0; will-change: opacity;
+  background: radial-gradient(ellipse 70% 65% at 60% 55%, transparent 30%, rgba(232, 67, 45, .75) 100%);
+}
+#s08.is-critical .s08-heat::after { animation: s08-blink .5s steps(1, end) infinite; }
+@keyframes s08-blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ---------- заголовок: на стандартном месте (надзаголовок y=104, заголовок y=147); подложка — когда гора плова дорастает до него ---------- */
+#s08 .s08-head {
+  position: absolute; left: calc(var(--pad-x) - 22px); top: calc(var(--pad-top) - 10px); z-index: 4;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+  padding: 10px 22px 12px; border-radius: 18px;
+  background: rgba(23, 24, 27, 0); transition: background .5s, box-shadow .5s;
+}
+#s08.is-flood .s08-head { background: rgba(23, 24, 27, .94); box-shadow: 0 12px 34px rgba(0, 0, 0, .45); }
+
+/* k = 2: гора плова закрывает и полосы «беамера» — подкладываем под шапку и подвал тёмные полосы, чтобы их было видно */
+#s08::before, #s08::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 64px; z-index: 15; pointer-events: none;
+  background: rgba(12, 13, 15, .78); opacity: 0; transition: opacity .35s;
+}
+#s08::before { top: 0; box-shadow: 0 6px 18px rgba(12, 13, 15, .45); }
+#s08::after { bottom: 0; height: 60px; box-shadow: 0 -6px 18px rgba(12, 13, 15, .45); }
+#s08.is-critical::before, #s08.is-critical::after { opacity: 1; }
+
+/* ---------- левая панель ---------- */
+#s08 .s08-panelwrap { position: absolute; left: var(--pad-x); top: 262px; width: 900px; height: 728px; z-index: 3; }
+#s08 .s08-panel {
+  position: relative; width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  padding: 14px 44px 24px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, var(--panel), var(--bg-2));
+  box-shadow: 0 0 0 2px var(--line) inset, 0 2px 0 rgba(246, 187, 42, .25) inset, 0 34px 80px rgba(0, 0, 0, .6);
+}
+#s08 .s08-badge-k { position: absolute; right: 30px; top: -17px; }
+
+/* гигантская формула */
+#s08 .s08-formula {
+  display: flex; align-items: baseline; gap: 0;
+  font-size: 188px; line-height: 1.02; color: var(--gold);
+  height: 204px; letter-spacing: 0;
+}
+#s08 .s08-kbox { display: inline-block; white-space: nowrap; }
+#s08 .s08-k { font-size: 1em; text-shadow: 0 0 46px rgba(246, 187, 42, .35); }
+#s08 .s08-formula .s08-ksub {
+  font-size: 52px; font-style: italic; color: var(--cream-2);
+  vertical-align: -34px; margin-left: 6px; letter-spacing: .01em;
+}
+#s08 .s08-eq { color: var(--cream-3); font-size: .78em; margin: 0 .16em 0 .14em; }
+#s08 .s08-kval {
+  display: inline-block; color: var(--gold); transform-origin: 20% 80%;
+  text-shadow: 0 0 50px rgba(246, 187, 42, .4), 0 6px 0 rgba(0, 0, 0, .25);
+  transition: color .3s;
+}
+#s08 .s08-kval.is-bump { animation: jelly .6s var(--ease-out); }
+#s08.is-critical .s08-kval { color: var(--red); text-shadow: 0 0 50px rgba(232, 67, 45, .55), 0 6px 0 rgba(0, 0, 0, .25); }
+
+/* ползунок */
+#s08 .s08-slider { position: relative; margin-top: 2px; }
+#s08 .s08-range { --fill: calc(26px + (100% - 52px) * .5); height: 60px; display: block; }
+#s08 .s08-range::-webkit-slider-runnable-track {
+  height: 16px; border-radius: 99px;
+  background:
+    linear-gradient(90deg, transparent var(--fill), var(--line) var(--fill)),
+    linear-gradient(90deg, var(--gold) 0%, var(--gold) 45%, var(--orange) 78%, var(--red) 100%);
+}
+#s08 .s08-range::-webkit-slider-thumb { width: 56px; height: 56px; margin-top: -20px; transition: border-color .3s, transform .15s; }
+#s08.is-critical .s08-range::-webkit-slider-thumb { border-color: var(--red); }
+#s08 .s08-ticks { position: relative; height: 32px; font-family: var(--f-mono); font-weight: 700; font-size: 26px; color: var(--muted); }
+#s08 .s08-ticks span { position: absolute; top: 0; left: calc(28px + (100% - 56px) * var(--p)); transform: translateX(-50%); }
+
+/* модель (математика) */
+#s08 .s08-model { margin-top: 14px; padding: 20px 32px 18px; }
+#s08 .s08-badge-m { position: absolute; right: 28px; top: -16px; }
+#s08 .s08-eqno { position: absolute; right: 32px; top: 32px; font-size: 38px; color: var(--ink-2); }
+#s08 .s08-rec { font-size: 52px; line-height: 1.1; color: var(--ink); }
+#s08 .s08-kn { font-weight: 400; color: var(--red-2); }
+#s08 .s08-adds { display: flex; align-items: center; gap: 14px; margin-top: 14px; flex-wrap: nowrap; }
+#s08 .s08-adds-l { font-family: var(--f-body); font-weight: 700; font-size: 30px; color: var(--ink-2); white-space: nowrap; }
+#s08 .s08-adds-l .math { font-size: 32px; color: var(--red-2); }
+#s08 .s08-chips { display: flex; gap: 8px; align-items: center; }
+#s08 .s08-chip {
+  font-style: normal; font-family: var(--f-mono); font-weight: 800; font-size: 30px; line-height: 1;
+  background: var(--ink); color: var(--cream); border-radius: 10px; padding: 8px 12px 7px;
+  min-width: 52px; text-align: center; font-variant-numeric: tabular-nums;
+}
+#s08 .s08-chip--more { background: transparent; color: var(--ink-2); min-width: 0; padding: 8px 4px; }
+#s08 .s08-verdict { display: flex; align-items: center; gap: 20px; margin-top: 16px; }
+#s08 .s08-vchip {
+  display: inline-block; border-radius: 14px; padding: 10px 20px 9px;
+  background: var(--red); color: var(--cream);
+  font-family: var(--f-display); font-weight: 800; font-size: 30px; text-transform: uppercase; letter-spacing: .02em; white-space: nowrap;
+  transition: background .3s;
+}
+#s08 .s08-vchip b { font-weight: inherit; display: inline-block; }
+#s08 .s08-vchip.is-pop b { animation: s08-pop .55s var(--ease-back); }
+@keyframes s08-pop { 0% { transform: scale(.5); opacity: 0; } 100% { transform: none; opacity: 1; } }
+#s08.is-conv .s08-vchip { background: var(--turq); }
+#s08 .s08-vmath { font-size: 36px; color: var(--ink); }
+#s08 .s08-arr { font-family: var(--f-body); font-weight: 600; font-style: normal; padding: 0 .04em; }
+
+/* показания */
+#s08 .s08-readout { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+#s08 .s08-ro-label { font-family: var(--f-body); font-weight: 700; font-size: 30px; color: var(--cream-2); }
+#s08 .s08-ro-val { display: flex; align-items: baseline; gap: 16px; margin-top: 4px; white-space: nowrap; }
+#s08 .s08-ro-num { font-family: var(--f-mono); font-weight: 800; font-size: 100px; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; letter-spacing: -.02em; transition: color .3s; }
+#s08.is-critical .s08-ro-num { color: var(--red); }
+#s08 .s08-ro-unit { font-family: var(--f-body); font-weight: 800; font-size: 42px; color: var(--cream); }
+#s08 .s08-spark { width: 290px; flex: none; }
+#s08 .s08-bars { height: 108px; display: flex; align-items: flex-end; gap: 6px; border-bottom: 3px solid var(--cream-3); padding: 0 2px; }
+#s08 .s08-bars i { flex: 1; min-height: 4px; border-radius: 5px 5px 0 0; background: var(--gold); transition: background .3s; }
+#s08 .s08-bars i.is-hot { background: var(--red); }
+#s08 .s08-spark-cap { margin-top: 8px; font-family: var(--f-body); font-size: 20px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+#s08 .s08-spark-cap .math { font-size: 22px; color: var(--cream-3); }
+
+/* ---------- k = 1: «в природе не встречается» ---------- */
+#s08 .s08-ideal {
+  position: absolute; left: 1050px; width: 760px; top: 548px; z-index: 4;
+  display: flex; justify-content: center; pointer-events: none;
+  opacity: 0; transform: translateY(24px) scale(.6);
+  transition: opacity .25s, transform .3s var(--ease-in);
+}
+#s08 .s08-ideal .sticker { font-size: 32px; }
+#s08.is-conv .s08-ideal { opacity: 1; transform: none; transition: opacity .3s .25s, transform .55s var(--ease-back) .25s; }
+/* после «константы» на месте стикера стоят бабушки с подписями — стикер не показываем */
+#s08.is-const .s08-ideal { display: none; }
+
+/* ---------- критический уровень ---------- */
+#s08 .s08-alert {
+  position: absolute; left: 1050px; width: 760px; top: 292px; z-index: 6;
+  display: flex; justify-content: center; pointer-events: none;
+  opacity: 0; transform: scale(.5) rotate(-6deg);
+  transition: opacity .25s, transform .45s var(--ease-back);
+}
+#s08.is-critical .s08-alert { opacity: 1; transform: rotate(-2deg); }
+#s08 .s08-alert-box {
+  position: relative; display: flex; align-items: center; gap: 22px;
+  padding: 20px 32px 20px 20px; border-radius: 20px;
+  background: var(--red); color: var(--cream);
+  font-family: var(--f-display); font-weight: 900; font-size: 43px; line-height: 1.06; text-transform: uppercase; letter-spacing: 0;
+  box-shadow: 0 0 0 10px var(--ink), 0 0 0 16px var(--gold), 0 30px 60px rgba(0, 0, 0, .55), 0 0 90px rgba(232, 67, 45, .7);
+}
+#s08.is-critical .s08-alert-box { animation: s08-alarm .5s steps(1, end) infinite; }
+@keyframes s08-alarm {
+  0% { background: var(--red); color: var(--cream); }
+  50% { background: var(--red-3); color: var(--gold); }
+}
+#s08 .s08-alert-t { white-space: nowrap; }
+#s08 .s08-siren { width: 104px; height: 104px; flex: none; overflow: visible; }
+#s08 .s08-siren-rays { transform-origin: 60px 58px; }
+#s08.is-critical .s08-siren-rays { animation: spin 1s linear infinite; }
+#s08:not(.is-critical) .s08-reset { animation: none; }
+
+#s08 .s08-sos {
+  position: absolute; left: 1050px; width: 760px; top: 528px; z-index: 7;
+  display: flex; justify-content: center;
+  opacity: 0; transform: translateY(30px) scale(.9); pointer-events: none;
+  transition: opacity .3s .25s, transform .5s var(--ease-back) .25s;
+}
+#s08.is-critical .s08-sos { opacity: 1; transform: none; pointer-events: auto; }
+
+/* ---------- контрольная группа ---------- */
+#s08 .s08-gma { position: absolute; top: 548px; width: 290px; z-index: 5; pointer-events: none; }
+#s08 .s08-gma--uz { left: 1030px; }
+#s08 .s08-gma--ru { left: 1530px; }
+#s08 .s08-gma-art {
+  opacity: 0; transform: translateY(160px) scale(.8);
+  transition: opacity .35s, transform .7s var(--ease-back);
+}
+#s08 .s08-gma-art .art { filter: drop-shadow(0 22px 26px rgba(0, 0, 0, .5)); }
+#s08:not(.is-const) .s08-gma .eyes { animation: none; }
+#s08 .s08-gma--ru .s08-gma-art { transition-delay: .25s; }
+#s08.is-const .s08-gma-art { opacity: 1; transform: none; }
+#s08 .s08-tag {
+  position: absolute; left: 50%; top: -6px; z-index: 2;
+  background: var(--cream); color: var(--ink); border-radius: 12px; padding: 8px 16px 7px;
+  font-family: var(--f-body); font-weight: 800; font-size: 26px; white-space: nowrap;
+  box-shadow: 0 0 0 4px var(--bg), 0 12px 24px rgba(0, 0, 0, .4);
+  opacity: 0; transform: translate(-50%, 20px) rotate(-3deg);
+  transition: opacity .3s .9s, transform .5s var(--ease-back) .9s;
+}
+#s08 .s08-gma--ru .s08-tag { transform: translate(-50%, 20px) rotate(3deg); transition-delay: 1.05s; }
+#s08 .s08-tag .math { font-size: 30px; color: var(--red-2); }
+#s08.is-const .s08-tag { opacity: 1; transform: translate(-50%, 0) rotate(-3deg); }
+#s08.is-const .s08-gma--ru .s08-tag { transform: translate(-50%, 0) rotate(3deg); }
+
+#s08 .s08-const { position: absolute; left: 1050px; width: 760px; top: 292px; z-index: 7; display: flex; justify-content: center; pointer-events: none; transition: opacity .3s; }
+#s08.is-critical .s08-const, #s08.is-critical .s08-tag { opacity: 0; }
+#s08 .s08-stamp { font-size: 44px; line-height: 1.08; padding: 18px 34px 14px; background: rgba(23, 24, 27, .9); opacity: 0; }
+#s08 .s08-badge-c { position: absolute; right: 70px; top: -26px; opacity: 0; transform: scale(.4); transition: opacity .3s, transform .45s var(--ease-back); }
+#s08 .s08-const.is-on .s08-badge-c { opacity: 1; transform: rotate(4deg); }
+
+/* ---------- табличка у подножия: «вершина — где-то там» ---------- */
+#s08 .s08-peak {
+  position: absolute; right: 100px; top: 846px; z-index: 4;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--ink); border-radius: 14px; padding: 6px 18px 10px 22px;
+  box-shadow: 0 0 0 4px var(--gold-2), 0 16px 30px rgba(0, 0, 0, .5);
+  color: var(--gold);
+  opacity: 0; transform: translateY(24px) rotate(-4deg);
+  transition: opacity .4s, transform .5s var(--ease-back);
+  pointer-events: none;
+}
+#s08 .s08-peak .hand { font-size: 46px; white-space: nowrap; }
+#s08 .s08-peak svg { width: 30px; height: 48px; }
+#s08.is-offtop .s08-peak { opacity: 1; transform: rotate(-4deg); }
+#s08.is-const .s08-peak { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  #s08.is-critical .s08-quake, #s08.is-critical .s08-alert-box, #s08.is-critical .s08-heat::after, #s08.is-critical .s08-siren-rays { animation: none; }
+}

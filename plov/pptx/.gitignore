@@ -1,0 +1,4 @@
+node_modules/
+assets/
+sfx/wav/
+*.raw.pptx

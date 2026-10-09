@@ -1,0 +1,98 @@
+<section class="slide" id="s09" data-id="09" data-title="Попробуй сбежать" data-section="Мини-игра" data-time="3:55–4:30">
+  <header class="s09-head">
+    <div class="eyebrow" data-in style="--d:0">Мини-игра · попробуй сбежать</div>
+    <h1 class="h1 s09-title" data-in style="--d:80">Как выйти из&nbsp;узбекского застолья?</h1>
+  </header>
+
+  <!-- «игровой» индикатор: вероятность побега -->
+  <div class="s09-hudwrap" data-in="right" style="--d:250">
+    <div class="s09-hud" role="status">
+      <div class="s09-hud-row">
+        <span class="s09-hud-label">Вероятность побега</span>
+        <span class="s09-hud-val"><span class="s09-hud-num">100</span>%</span>
+      </div>
+      <div class="s09-hud-bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <span class="badge badge--joke s09-hud-badge">Шуточная модель</span>
+    </div>
+  </div>
+  <div class="s09-sumwrap"><button type="button" class="btn btn--sm btn--red s09-sum" tabindex="-1">Подвести итог<svg class="s09-arr" viewBox="0 0 40 24" aria-hidden="true"><path d="M3,12 H33 M23,3 L35,12 L23,21" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+
+  <!-- сцена: бабушка, хонтахта, гость, дверь -->
+  <div class="s09-scene" aria-hidden="true">
+    <div class="s09-rugwrap" data-in="fade" style="--d:100"><div class="s09-rug"></div></div>
+    <div class="s09-doorwrap" data-in="fade" style="--d:200"><div class="s09-door"></div></div>
+    <div class="s09-guestwrap" data-in="right" style="--d:380"><div class="s09-guest"><div class="s09-guest-bob"></div></div></div>
+    <div class="s09-tablewrap" data-in style="--d:160">
+      <div class="s09-table"></div>
+      <div class="s09-item s09-non"></div>
+      <div class="s09-item s09-plate0"></div>
+      <!-- А: чай -->
+      <div class="s09-item s09-teapot"><div class="s09-gag"></div></div>
+      <div class="s09-item s09-piala"><div class="s09-gag"></div></div>
+      <!-- Б: будильник и ещё тарелка -->
+      <div class="s09-item s09-clock"><div class="s09-gag"><div class="s09-clock-in"></div></div></div>
+      <div class="s09-item s09-plate2"><div class="s09-gag"></div></div>
+      <!-- В: диссертация под пловом -->
+      <div class="s09-item s09-thesis"><div class="s09-gag"></div></div>
+      <div class="s09-item s09-plate3"><div class="s09-gag"></div></div>
+    </div>
+    <div class="s09-gmawrap" data-in="left" style="--d:300"><div class="s09-gma"></div></div>
+
+    <div class="s09-bubwrap">
+      <div class="s09-bub">
+        <span class="s09-bub-t"></span>
+        <svg class="s09-bub-tail" viewBox="0 0 120 90" aria-hidden="true"><path d="M44,0 L112,0 Q64,40 0,90 Q40,40 44,0 Z"/></svg>
+      </div>
+    </div>
+
+    <div class="s09-prize">
+      <div class="s09-box"></div>
+      <div class="sticker sticker--gold s09-prize-st" style="--rot:5deg"><span>Утешительный приз:</span><b>плов с&nbsp;собой</b></div>
+    </div>
+  </div>
+
+  <!-- три варианта ответа -->
+  <div class="s09-opts">
+    <div class="s09-optwrap" data-in style="--d:450">
+      <button type="button" class="s09-opt" data-i="0" aria-label="Вариант А: «Спасибо, я уже наелся» (клавиша 1)">
+        <span class="s09-letter"><span class="s09-lt">А</span><span class="key">1</span></span>
+        <span class="s09-opt-t">Спасибо, я&nbsp;уже наелся</span>
+        <svg class="s09-x" viewBox="0 0 60 60" aria-hidden="true"><path d="M14,14 L46,46 M46,14 L14,46" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="s09-optwrap" data-in style="--d:540">
+      <button type="button" class="s09-opt" data-i="1" aria-label="Вариант Б: «Мне завтра рано вставать» (клавиша 2)">
+        <span class="s09-letter"><span class="s09-lt">Б</span><span class="key">2</span></span>
+        <span class="s09-opt-t">Мне завтра рано вставать</span>
+        <svg class="s09-x" viewBox="0 0 60 60" aria-hidden="true"><path d="M14,14 L46,46 M46,14 L14,46" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="s09-optwrap" data-in style="--d:630">
+      <button type="button" class="s09-opt" data-i="2" aria-label="Вариант В: «Мне нужно писать магистерскую диссертацию» (клавиша 3)">
+        <span class="s09-letter"><span class="s09-lt">В</span><span class="key">3</span></span>
+        <span class="s09-opt-t">Мне нужно писать магистерскую диссертацию</span>
+        <svg class="s09-x" viewBox="0 0 60 60" aria-hidden="true"><path d="M14,14 L46,46 M46,14 L14,46" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- печать «Попытка не удалась» ложится на выбранную отговорку (позицию ставит JS) -->
+  <div class="s09-stampwrap" aria-hidden="true"><span class="stamp s09-stamp" style="--rot:-9deg">Попытка<br>не&nbsp;удалась</span></div>
+
+  <!-- итог -->
+  <div class="s09-final" role="status">
+    <div class="card s09-final-card">
+      <span class="badge badge--joke s09-final-badge">Шутка</span>
+      <p class="s09-final-t">Вероятность побега в&nbsp;рамках нашей шуточной модели: <b class="s09-zero">0%</b></p>
+    </div>
+  </div>
+
+  <aside class="notes">
+    <p><span class="cue">3:55</span> <span class="say">Мини-игра. Вы — гость. Задача — вежливо выйти из-за стола. Зал, выбирайте: А, Б или В?</span></p>
+    <p><span class="cue">НАЖАТЬ 1</span> (или →) — гость идёт к двери. Голосом бабушки: <span class="say">Значит, тебе ещё и чай нужен!</span></p>
+    <p><span class="cue">НАЖАТЬ 2</span> (или →) — будильник и ещё тарелка. <span class="say">Вот и поешь, чтобы завтра силы были!</span></p>
+    <p><span class="cue">НАЖАТЬ 3</span> (или →) — плов прямо на диссертации. <span class="say">Сначала поешь нормально. Потом занимайся своей наукой!</span> <span class="tip">Пауза на смех: «Это, кстати, мой случай».</span></p>
+    <p><span class="cue">4:22</span> <span class="cue">НАЖАТЬ →</span> (или «Подвести итог») <span class="say">Вероятность побега в рамках нашей шуточной модели — ноль процентов. Но есть утешительный приз: плов с собой.</span></p>
+    <p class="tip">Порядок — любой, как подскажет зал. Попытка идёт 1,5 с: печать на отговорке и грустный тромбон. Нажатие → во время попытки сразу ставит печать. Бабушка ничего не запрещает — она только заботится.</p>
+  </aside>
+</section>

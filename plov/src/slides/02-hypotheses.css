@@ -1,0 +1,253 @@
+/* Слайд 2. Три научные гипотезы: три карточки переворачиваются и показывают «результаты» */
+
+/* ---------- шапка ---------- */
+#s02 .s02-head { position: absolute; left: var(--pad-x); top: 100px; width: 1330px; z-index: 3; display: flex; flex-direction: column; gap: 14px; }
+#s02 .s02-title { font-size: 74px; line-height: 1.02; }
+
+/* ---------- исследователь из-за карточек ---------- */
+#s02 .s02-rwrap { position: absolute; left: 1530px; top: 60px; width: 290px; z-index: 1; }
+#s02 .s02-researcher { transform-origin: 50% 100%; }
+#s02 .s02-researcher.is-bounce { animation: jelly .6s var(--ease-out); }
+#s02 .s02-researcher .art { width: 100%; height: auto; filter: drop-shadow(0 16px 24px rgba(0, 0, 0, .45)); }
+
+/* ---------- карточки ---------- */
+#s02 .s02-cards {
+  position: absolute; left: var(--pad-x); right: var(--pad-x); top: 322px; height: 534px; z-index: 2;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+}
+#s02 .s02-cardwrap { position: relative; height: 100%; }
+#s02 .s02-card {
+  appearance: none; border: 0; padding: 0; margin: 0; background: none; color: inherit; font: inherit; text-align: left;
+  display: block; width: 100%; height: 100%; cursor: pointer; position: relative;
+  perspective: 1700px;
+  transition: transform .25s var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+#s02 .s02-card:not(.is-open):hover { transform: translateY(-8px); }
+#s02 .s02-card:focus-visible { outline: 5px solid var(--gold); outline-offset: 8px; border-radius: 28px; }
+#s02 .s02-flip { display: block; position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .7s var(--ease-out); }
+#s02 .s02-card.is-open .s02-flip { transform: rotateY(180deg); animation: s02-flip .78s var(--ease-out) both; }
+@keyframes s02-flip {
+  0% { transform: rotateY(0); }
+  45% { transform: translateZ(140px) rotateY(110deg); }
+  100% { transform: rotateY(180deg); }
+}
+#s02 .s02-face {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
+  border-radius: 26px;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+}
+
+/* лицевая сторона: кремовая карточка-гипотеза */
+#s02 .s02-front {
+  background: var(--cream); color: var(--ink);
+  padding: 26px 30px 34px;
+  box-shadow: 0 2px 0 rgba(255, 255, 255, .55) inset, 0 -8px 0 var(--cream-3) inset, 0 26px 50px rgba(0, 0, 0, .4);
+}
+#s02 .s02-front::before {
+  content: ''; position: absolute; left: 30px; right: 30px; top: 0; height: 8px; border-radius: 0 0 8px 8px; background: var(--red);
+}
+#s02 .s02-fhead { align-self: stretch; display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+#s02 .s02-num {
+  font-family: var(--f-body); font-weight: 800; font-size: 22px; letter-spacing: .2em; text-transform: uppercase; color: var(--red-2);
+}
+#s02 .s02-icon { display: block; width: 100%; height: 196px; margin-top: 10px; flex: none; }
+#s02 .s02-icon svg { display: block; width: 100%; height: 100%; overflow: visible; }
+#s02 .s02-icon--plov svg { height: 250px; margin-top: -36px; }
+#s02 .s02-claim {
+  /* все три гипотезы — ровно в две строки, поэтому верхние строки стоят на одной линии */
+  flex: 1; display: flex; align-items: center; justify-content: center; text-align: center;
+  align-self: stretch; margin: 0 -8px;
+  font-family: var(--f-display); font-weight: 800; font-size: 38px; line-height: 1.1; letter-spacing: -.01em;
+  color: var(--ink); text-wrap: balance; padding: 6px 0;
+}
+#s02 .s02-check { flex: none; pointer-events: none; }
+#s02 .s02-card:hover .s02-check { filter: brightness(1.08); transform: translateY(-3px); box-shadow: 0 9px 0 var(--c2), 0 18px 30px rgba(0, 0, 0, .35); }
+
+/* оборотная сторона: тёмный «протокол» с печатью */
+#s02 .s02-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(180deg, var(--panel), var(--bg-2));
+  color: var(--cream);
+  padding: 20px 26px 22px;
+  box-shadow: 0 0 0 3px var(--line) inset, 0 26px 50px rgba(0, 0, 0, .45);
+  justify-content: space-between;
+}
+#s02 .s02-bhead { align-self: stretch; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex: none; }
+#s02 .s02-bnum { font-family: var(--f-body); font-weight: 800; font-size: 20px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); white-space: nowrap; }
+#s02 .s02-bclaim { font-family: var(--f-body); font-weight: 600; font-size: 20px; color: var(--muted); white-space: nowrap; }
+#s02 .s02-stampzone { display: grid; place-items: center; height: 112px; flex: none; position: relative; z-index: 3; }
+#s02 .s02-stamp { font-size: 38px; padding: 12px 22px 8px; border-width: 7px; opacity: 0; }
+#s02 .s02-stamp.is-slam { opacity: 1; }
+#s02 .s02-stamp--two { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 22px 10px; white-space: normal; }
+#s02 .s02-st-big { font-size: 35px; line-height: 1; }
+#s02 .s02-st-small { font-size: 20px; line-height: 1.1; letter-spacing: .06em; max-width: 340px; }
+#s02 .s02-stamp--three { font-size: 23px; line-height: 1.18; padding: 11px 18px 8px; }
+#s02 .s02-fact { align-self: stretch; font-family: var(--f-body); font-weight: 600; font-size: 21px; line-height: 1.3; color: var(--cream-2); opacity: 0; transform: translateY(14px); transition: opacity .45s var(--ease-out), transform .55s var(--ease-out); flex: none; }
+#s02 .s02-fact.is-shown { opacity: 1; transform: none; }
+#s02 .s02-fact .badge { font-size: 20px; padding: 7px 12px 6px; vertical-align: 2px; margin-right: 4px; }
+#s02 .s02-fact b { font-weight: 800; color: var(--cream); }
+#s02 .s02-fact--tree { font-size: 27px; line-height: 1.2; }
+#s02 .s02-fact--tree .badge { vertical-align: 5px; }
+#s02 .s02-fact--unesco { font-size: 20px; line-height: 1.28; }
+
+/* карта (карточка 1) */
+#s02 .s02-mapbox { display: block; width: 100%; height: 272px; flex: none; margin-top: -10px; } /* ≥ 270: подписи городов не мельче 20px */
+#s02 .s02-map { display: block; width: 100%; height: 100%; overflow: visible; }
+#s02 .s02-uz { fill: var(--cream); fill-opacity: 0; stroke: var(--cream); stroke-width: 3.5; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset .85s var(--ease-out), fill-opacity .6s ease .5s; }
+#s02 .s02-map.is-drawn .s02-uz { stroke-dashoffset: 0; fill-opacity: .1; }
+#s02 .s02-city { opacity: 0; transform: scale(.2); transform-box: fill-box; transform-origin: 50% 50%; transition: opacity .25s, transform .45s var(--ease-back); }
+#s02 .s02-city.is-shown { opacity: 1; transform: none; }
+#s02 .s02-city circle { fill: var(--cream); stroke: var(--ink); stroke-width: 3; }
+#s02 .s02-city text, #s02 .s02-cap text {
+  font-family: var(--f-body); font-weight: 700; font-size: 20px; fill: var(--cream);
+  paint-order: stroke; stroke: var(--bg-2); stroke-width: 6px; stroke-linejoin: round;
+}
+#s02 .s02-cap .s02-star { fill: var(--red); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+#s02 .s02-cap text { font-size: 22px; font-weight: 800; fill: var(--gold); }
+#s02 .s02-cap text tspan.s02-cap-sub { font-weight: 600; fill: var(--cream-2); font-size: 20px; }
+
+/* древо (карточка 2): миниатюра, которая всё равно не помещается */
+#s02 .s02-treebox {
+  display: block; position: relative; width: 100%; height: 218px; flex: none; overflow: hidden; border-radius: 14px;
+  background: radial-gradient(120% 90% at 50% 0%, rgba(246, 187, 42, .08), transparent 70%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+}
+#s02 .s02-treethumb { position: absolute; left: 50%; top: -24px; width: 492px; height: 276.75px; margin-left: -246px; opacity: 0; transition: opacity .3s; }
+#s02 .s02-treethumb svg { display: block; width: 100%; height: 100%; }
+#s02 .s02-card.is-tree .s02-treethumb { opacity: 1; }
+#s02 .s02-n {
+  position: absolute; right: 44px; bottom: 10px; font-size: 22px; font-weight: 800; color: var(--gold);
+  background: var(--bg); padding: 4px 12px; border-radius: 10px; opacity: 0; transition: opacity .3s .2s;
+}
+#s02 .s02-card.is-tree .s02-n { opacity: 1; }
+
+/* награда (карточка 3) */
+#s02 .s02-award { display: flex; align-items: flex-end; justify-content: center; gap: 4px; width: 100%; height: 206px; flex: none; }
+#s02 .s02-medalwrap { width: 160px; flex: none; }
+#s02 .s02-medal { display: block; opacity: 0; }
+#s02 .s02-medal svg { display: block; width: 100%; height: auto; overflow: visible; }
+#s02 .s02-medal.is-in { opacity: 1; animation: s02-medal 1s var(--ease-out) both; }
+@keyframes s02-medal {
+  0% { opacity: 0; transform: translateY(-150px) rotateY(0) scale(.7); }
+  55% { opacity: 1; transform: translateY(8px) rotateY(540deg) scale(1.05); }
+  100% { opacity: 1; transform: translateY(0) rotateY(720deg) scale(1); }
+}
+#s02 .s02-platewrap { width: 262px; flex: none; margin-bottom: -6px; }
+#s02 .s02-plate { display: block; opacity: 0; transform: scale(.3); transform-origin: 50% 80%; transition: opacity .25s, transform .55s var(--ease-back); }
+#s02 .s02-plate.is-in { opacity: 1; transform: none; }
+#s02 .s02-plate svg { display: block; }
+#s02 .s02-spark { fill: var(--cream); opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; }
+#s02 .s02-medal.is-in .s02-spark { animation-name: s02-twinkle; animation-duration: 1.8s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+@keyframes s02-twinkle { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0); } 40% { opacity: 1; transform: scale(1) rotate(45deg); } 70% { opacity: 0; transform: scale(.4) rotate(90deg); } }
+
+/* иконки лицевой стороны */
+#s02 .s02-pin { fill: var(--red); stroke: var(--ink); stroke-width: 3.5; stroke-linejoin: round; }
+#s02 .s02-pin-dot { fill: var(--cream); }
+#s02 .s02-icon--map .s02-uzi { fill: var(--cream-3); stroke: var(--ink); stroke-width: 4; stroke-linejoin: round; }
+#s02 .s02-card:hover .s02-pins { animation: s02-hop .6s var(--ease-out); }
+#s02 .s02-pins { transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes s02-hop { 0%, 100% { transform: none; } 40% { transform: translateY(-14px) scale(1.06, .95); } }
+
+/* ---------- узлы древа (общие для миниатюры и «вылета») ---------- */
+#s02 .s02-tree { font-family: var(--f-body); }
+#s02 .s02-tree .te { fill: none; stroke: var(--gold); stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+#s02 .s02-tree .tn-in { opacity: 0; transform: scale(.15); transform-box: fill-box; transform-origin: 50% 50%; }
+#s02 .s02-tree .tn-box { fill: var(--cream); stroke: var(--ink); stroke-width: 3.5; }
+#s02 .s02-tree .tn--me .tn-box { fill: var(--gold); }
+#s02 .s02-tree .tn--root .tn-box { fill: var(--cream); stroke-width: 4.5; }
+#s02 .s02-tree .tn-t { fill: var(--ink); font-weight: 700; }
+#s02 .s02-tree .tn-t2 { fill: var(--ink-2); font-weight: 600; }
+#s02 .s02-tree .av-face { fill: var(--skin); stroke: var(--ink); stroke-width: 2.5; }
+#s02 .s02-tree .av-ink, #s02 .s02-icon .av-ink { fill: var(--ink); }
+#s02 .s02-tree .av-line, #s02 .s02-icon .av-line { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+#s02 .s02-tree .av-scarf, #s02 .s02-icon .av-scarf { stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+#s02 .s02-tree .av-cap, #s02 .s02-icon .av-cap { fill: var(--ink); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+#s02 .s02-tree .av-capdot, #s02 .s02-icon .av-capdot { fill: var(--cream); }
+#s02 .s02-tree .av-beard, #s02 .s02-icon .av-beard { fill: var(--cream); stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+#s02 .s02-icon .av-face { fill: var(--skin); stroke: var(--ink); stroke-width: 3; }
+#s02 .s02-icon .av-body { stroke: var(--ink); stroke-width: 3.5; stroke-linejoin: round; }
+#s02 .s02-tree .tn-heart { fill: var(--red); stroke: var(--ink); stroke-width: 3; }
+#s02 .s02-tree .tn-link { stroke: var(--gold); stroke-width: 5; }
+
+/* в миниатюре всё уже нарисовано */
+#s02 .s02-tree.is-static .te { stroke-dashoffset: 0; }
+#s02 .s02-tree.is-static .tn-in { opacity: 1; transform: none; }
+
+/* «вылет» древа за пределы карточки и экрана */
+#s02 .s02-dim { position: absolute; inset: 0; background: var(--bg); opacity: 0; visibility: hidden; transition: opacity .35s var(--ease-out), visibility 0s linear .35s; z-index: 30; pointer-events: none; }
+#s02 .s02-dim.is-on { opacity: 1; visibility: visible; transition: opacity .35s var(--ease-out), visibility 0s; }
+#s02 .s02-treefly { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; z-index: 31; pointer-events: none; opacity: 0; visibility: hidden; }
+#s02 .s02-treefly.is-on { opacity: 1; visibility: visible; }
+#s02 .s02-treefly.is-out { opacity: 0; transition: opacity .3s ease !important; }
+/* пока древо на весь экран — клик по нему (или по затемнению) возвращает его в карточку */
+#s02 .s02-dim.is-on, #s02 .s02-treefly.is-on:not(.is-settling) { pointer-events: auto; cursor: pointer; }
+#s02 .s02-treefly-svg, #s02 .s02-treefly-svg svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+/* ветки уходят «за экран», но гаснут до подвала и не перечёркивают его */
+#s02 .s02-treefly-svg {
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 930px, transparent 1012px);
+  mask-image: linear-gradient(180deg, #000 0, #000 930px, transparent 1012px);
+}
+#s02 .s02-treefly .s02-tree.is-grown .te { stroke-dashoffset: 0; transition: stroke-dashoffset .4s var(--ease-out) var(--dl, 0ms); }
+#s02 .s02-treefly .s02-tree.is-grown .tn-in { opacity: 1; transform: none; transition: opacity .2s ease var(--dl, 0ms), transform .45s var(--ease-back) var(--dl, 0ms); }
+#s02 .s02-treefly .s02-tree.is-instant .te, #s02 .s02-treefly .s02-tree.is-instant .tn-in { transition: none; }
+#s02 .s02-treecount {
+  position: absolute; right: 110px; top: 92px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+  background: var(--panel); border-radius: 18px; padding: 16px 24px 14px; box-shadow: 0 0 0 3px var(--gold) inset, 0 20px 40px rgba(0, 0, 0, .5);
+  transition: opacity .3s;
+}
+#s02 .s02-treecount .counter { font-size: 64px; }
+#s02 .s02-tc-top { display: flex; align-items: center; gap: 14px; }
+#s02 .s02-tc-top .badge { font-size: 20px; padding: 7px 12px 6px; }
+#s02 .s02-treefly.is-settling .s02-treecount { opacity: 0; }
+
+/* панчлайн поверх «вылетевшего» древа: мем-подпись в свободной полосе между третьим рядом и рядом лиц */
+#s02 .s02-quip {
+  position: absolute; left: 0; right: 0; top: 818px; z-index: 32; pointer-events: none;
+  display: flex; justify-content: center;
+  opacity: 0; visibility: hidden; transform: scale(.4) rotate(-6deg);
+  transition: opacity .2s ease, transform .5s var(--ease-back), visibility 0s linear .5s;
+}
+#s02 .s02-quip.is-on { opacity: 1; visibility: visible; transform: none; transition: opacity .2s ease, transform .5s var(--ease-back), visibility 0s; }
+#s02 .s02-quip .sticker { --rot: -1deg; font-size: 46px; line-height: 1.1; text-transform: none; letter-spacing: -.005em; padding: 16px 32px 14px; }
+
+/* ---------- низ: сноска и вывод по ГОСТу ---------- */
+#s02 .s02-bottom { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 874px; height: 110px; z-index: 2; display: flex; align-items: center; gap: 34px; }
+#s02 .s02-foot { width: 330px; flex: none; margin: 0; line-height: 1.3; }
+#s02 .s02-concl { position: relative; flex: 1; height: 100%; }
+#s02 .s02-gostbtn { position: absolute; right: 0; top: 20px; }
+#s02 .s02-gostbtn.is-shown { animation: btn-pulse 1.8s ease-in-out infinite; }
+#s02 .s02-gost { position: absolute; inset: 0; opacity: 0; visibility: hidden; transform: translateY(60px) rotate(1.5deg); transition: opacity .35s var(--ease-out), transform .6s var(--ease-back), visibility 0s linear .6s; }
+#s02 .s02-gost.is-on { opacity: 1; visibility: visible; transform: rotate(-.6deg); transition: opacity .35s var(--ease-out), transform .6s var(--ease-back), visibility 0s; }
+#s02 .s02-sheet {
+  position: relative; height: 100%; display: flex; background: var(--cream); color: var(--ink);
+  padding: 8px 8px 8px 34px; border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .6) inset, 0 18px 40px rgba(0, 0, 0, .45);
+}
+#s02 .s02-sheet-field { position: relative; flex: 1; border: 3px solid var(--ink); border-right: 0; display: flex; align-items: center; padding: 10px 26px 0; min-width: 0; }
+#s02 .s02-sheet-label { position: absolute; left: 10px; top: 4px; font-family: var(--f-body); font-style: italic; font-weight: 700; font-size: 20px; color: var(--ink-2); letter-spacing: .04em; }
+#s02 .s02-gost-text { margin: 0; white-space: nowrap; font-family: var(--f-body); font-style: italic; font-weight: 700; font-size: 39px; line-height: 1; letter-spacing: .01em; color: var(--ink); }
+#s02 .s02-type.is-caret::after { content: ''; display: inline-block; width: 3px; height: .9em; margin-left: 4px; vertical-align: -.08em; background: var(--red); animation: s02-caret .5s steps(1) infinite; }
+@keyframes s02-caret { 50% { opacity: 0; } }
+#s02 .s02-tb {
+  flex: none; display: grid; grid-template-columns: auto auto; grid-auto-rows: 1fr;
+  border: 3px solid var(--ink);
+  font-family: var(--f-body); font-style: italic; font-size: 20px; line-height: 1;
+  opacity: .2; transition: opacity .3s;
+}
+#s02 .s02-gost.is-done .s02-tb { opacity: 1; }
+#s02 .s02-tb > span { display: flex; align-items: center; padding: 0 12px; border-bottom: 1.5px solid var(--ink); white-space: nowrap; }
+#s02 .s02-tb > span:nth-last-child(-n+2) { border-bottom: 0; }
+#s02 .s02-tb-k { border-right: 1.5px solid var(--ink); font-weight: 600; color: var(--ink-2); }
+#s02 .s02-tb-v { font-weight: 800; }
+#s02 .s02-tb .math { font-style: normal; font-size: 26px; margin-left: 6px; }
+#s02 .s02-gost-badge { font-size: 20px; position: absolute; right: 272px; top: -16px; opacity: 0; transform: scale(.4); transition: opacity .25s, transform .45s var(--ease-back); }
+#s02 .s02-gost.is-done .s02-gost-badge { opacity: 1; transform: none; }
+#s02 .s02-gost.is-done .s02-sheet { animation: s02-thud .45s var(--ease-out); }
+@keyframes s02-thud { 0% { transform: none; } 35% { transform: translateY(5px) scale(1.01); } 100% { transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  #s02 .s02-card.is-open .s02-flip { animation: none; }
+  #s02 .s02-medal.is-in { animation: none; }
+}
