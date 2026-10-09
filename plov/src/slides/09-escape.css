@@ -5,11 +5,11 @@
 #s09 .s09-title { font-size: 64px; line-height: 1.04; white-space: nowrap; }
 
 /* ---------- индикатор «Вероятность побега» (игровой HUD) ---------- */
-#s09 .s09-hudwrap { position: absolute; right: var(--pad-x); top: 236px; width: 456px; z-index: 6; }
+#s09 .s09-hudwrap { position: absolute; right: var(--pad-x); top: 236px; width: 470px; z-index: 6; }
 #s09 .s09-hud {
   position: relative;
-  display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; column-gap: 22px; row-gap: 12px; align-items: center;
-  background: var(--panel); border-radius: 22px; padding: 16px 22px 18px;
+  display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; column-gap: 18px; row-gap: 12px; align-items: center;
+  background: var(--panel); border-radius: 22px; padding: 30px 28px 18px 22px;
   box-shadow: 0 0 0 2px var(--line) inset, 0 20px 40px rgba(0, 0, 0, .4);
   --lvl: var(--gold);
   transition: box-shadow .4s;
@@ -20,11 +20,11 @@
 #s09 .s09-hud.is-zero { box-shadow: 0 0 0 3px var(--red) inset, 0 0 40px rgba(232, 67, 45, .35), 0 20px 40px rgba(0, 0, 0, .4); }
 @keyframes s09-hit { 0%, 100% { transform: none; } 20% { transform: translate(-8px, 3px) rotate(-1deg); } 45% { transform: translate(7px, -2px) rotate(1deg); } 70% { transform: translate(-4px, 1px); } }
 #s09 .s09-hud-row { display: contents; }
-#s09 .s09-hud-label { grid-column: 1; grid-row: 1; font-family: var(--f-body); font-weight: 800; font-size: 19px; letter-spacing: .12em; text-transform: uppercase; color: var(--cream-2); white-space: nowrap; }
+#s09 .s09-hud-label { grid-column: 1; grid-row: 1; font-family: var(--f-body); font-weight: 800; font-size: 20px; letter-spacing: .08em; text-transform: uppercase; color: var(--cream-2); white-space: nowrap; }
 #s09 .s09-hud-val {
   grid-column: 2; grid-row: 1 / span 2;
   font-family: var(--f-mono); font-weight: 800; font-size: 56px; line-height: 1; color: var(--lvl);
-  font-variant-numeric: tabular-nums; min-width: 4.1ch; text-align: right;
+  font-variant-numeric: tabular-nums; min-width: 4ch; text-align: right;
   text-shadow: 0 0 24px color-mix(in srgb, var(--lvl) 35%, transparent);
   transition: color .4s;
 }
@@ -33,12 +33,13 @@
 #s09 .s09-hud-bar i.is-off { background: var(--line); opacity: .45; transform: scaleY(.7); }
 #s09 .s09-hud.lvl-low .s09-hud-bar i:not(.is-off) { animation: s09-blink .8s steps(2, jump-none) infinite; }
 @keyframes s09-blink { 50% { opacity: .35; } }
+#s09 .badge { font-size: 20px; }   /* core: 19px; на проекторе — не меньше 20 */
 #s09 .s09-hud-badge { position: absolute; right: 22px; top: -17px; }
 
 /* кнопка «Подвести итог» — появляется после трёх попыток */
-#s09 .s09-sumwrap { position: absolute; right: 588px; top: 262px; z-index: 7; visibility: hidden; opacity: 0; transform: translateY(-14px) scale(.85); transition: opacity .35s, transform .45s var(--ease-back), visibility 0s linear .45s; }
+#s09 .s09-sumwrap { position: absolute; right: 604px; top: 262px; z-index: 7; visibility: hidden; opacity: 0; transform: translateY(-14px) scale(.85); transition: opacity .35s, transform .45s var(--ease-back), visibility 0s linear .45s; }
 #s09 .s09-sumwrap.is-shown { visibility: visible; opacity: 1; transform: none; transition: opacity .35s, transform .45s var(--ease-back), visibility 0s; }
-#s09 .s09-sum { font-size: 23px; padding: 15px 24px 13px; gap: 12px; }
+#s09 .s09-sum { font-size: 22px; padding: 15px 22px 13px; gap: 10px; }
 #s09 .s09-arr { width: 30px; height: 20px; }
 
 /* ---------- сцена ---------- */
@@ -61,7 +62,7 @@
 
 /* гость: обёртка с data-in → .s09-guest (ходьба) → .s09-guest-bob (шаги) */
 #s09 .s09-guestwrap { position: absolute; left: 1196px; top: 360px; width: 252px; z-index: 2; }
-#s09 .s09-guest { --gx: 0px; transform: translateX(var(--gx)); transition: transform .8s cubic-bezier(.45, .05, .35, 1); }
+#s09 .s09-guest { --gx: 0px; transform: translateX(var(--gx)); transition: transform .55s cubic-bezier(.45, .05, .35, 1); }
 #s09 .s09-guest-bob { transform-origin: 50% 100%; }
 #s09 .s09-guest-bob.is-walking { animation: s09-walk .32s ease-in-out infinite alternate; }
 #s09 .s09-guest-bob.is-happy { animation: jelly .6s var(--ease-out); }
@@ -92,7 +93,7 @@
 #s09 .s09-clock .s09-gag { transform: scale(.2) rotate(-30deg); }
 #s09 .s09-clock.is-in .s09-gag { opacity: 1; transform: none; transition: opacity .2s, transform .5s var(--ease-back); }
 #s09 .s09-clock-in { transform-origin: 50% 70%; }
-#s09 .s09-clock.is-ringing .s09-clock-in { animation: s09-ring .07s linear 20 alternate; }
+#s09 .s09-clock.is-ringing .s09-clock-in { animation: s09-ring .07s linear 10 alternate; }
 #s09 .s09-ringlines { opacity: 0; transition: opacity .15s; }
 #s09 .s09-clock.is-ringing .s09-ringlines { opacity: 1; }
 @keyframes s09-ring { from { transform: rotate(-9deg) translateY(-3px); } to { transform: rotate(9deg) translateY(0); } }
@@ -132,8 +133,9 @@
 #s09 .s09-bub-tail path { fill: var(--cream); stroke: var(--ink); stroke-width: 5px; stroke-linejoin: round; paint-order: stroke; }
 
 /* печать «Попытка не удалась» */
-#s09 .s09-stampwrap { position: absolute; left: 560px; top: 398px; width: 720px; z-index: 7; display: flex; justify-content: center; }
-#s09 .s09-stamp { font-size: 70px; line-height: 1.02; padding: 18px 40px 14px; border-width: 10px; opacity: 0; background: rgba(23, 24, 27, .7); box-shadow: 0 20px 50px rgba(0, 0, 0, .45); }
+/* ложится на выбранную кнопку-отговорку: центр задаёт JS (--sx/--sy), над кнопками (z 8), под итогом (z 9) */
+#s09 .s09-stampwrap { position: absolute; left: var(--sx, 960px); top: var(--sy, 900px); z-index: 9; transform: translate(-50%, -50%); pointer-events: none; }
+#s09 .s09-stamp { font-size: 44px; line-height: 1.02; padding: 12px 26px 8px; border-width: 8px; opacity: 0; background: rgba(23, 24, 27, .86); box-shadow: 0 16px 40px rgba(0, 0, 0, .5); }
 #s09 .s09-stamp.is-slam { animation: stamp-slam .5s var(--ease-out) both; }
 #s09 .s09-stamp.is-slam.is-off { animation: s09-stampout .45s var(--ease-in) both; }
 @keyframes s09-stampout { from { opacity: 1; transform: rotate(var(--rot)); } to { opacity: 0; transform: scale(.85) rotate(var(--rot)); } }
@@ -182,7 +184,7 @@
   position: absolute; right: -9px; bottom: -7px; width: 32px; height: 32px; border-radius: 50%;
   display: grid; place-items: center;
   background: var(--gold); color: var(--ink); box-shadow: 0 0 0 3px var(--cream);
-  font-family: var(--f-mono); font-weight: 800; font-size: 18px;
+  font-family: var(--f-mono); font-weight: 800; font-size: 20px;
   transition: background .3s, box-shadow .3s;
 }
 #s09 .s09-opt.is-chosen .s09-letter .key { box-shadow: 0 0 0 3px var(--gold); background: var(--cream); }

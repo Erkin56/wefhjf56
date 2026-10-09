@@ -3,7 +3,9 @@
    1) «ОПРОВЕРГНУТО» + карта Узбекистана с городами;
    2) генеалогическое древо вырывается за пределы экрана и возвращается в карточку + печать;
    3) медаль, ляган плова и факт про ЮНЕСКО (2016).
-   Затем — вывод «по ГОСТу». «Далее»: карточки 1 → 2 → 3 (пропуская открытые) → вывод → следующий слайд. */
+   Затем — вывод «по ГОСТу».
+   «Далее»: карточка 1 → карточка 2 (древо на весь экран) → древо в карточку → карточка 3 → вывод → следующий слайд.
+   Нажатие во время анимации не пропускает шаг, а сразу доводит текущую анимацию до конца. */
 
 const S02_CX = 960;
 
@@ -43,15 +45,15 @@ function s02Avatar(x, y, r, kind, tone = 'var(--cream)', happy = false) {
 const S02_TREE = [
   { y: 150, h: 66, fs: 28, nodes: [] }, // бабушка и дедушка — особый случай
   { y: 352, h: 58, fs: 25, pad: 40, nodes: [['Тётя № 1', null, 'f'], ['Дядя № 1', null, 'm'], ['Тётя № 2', null, 'f'], ['Мама', null, 'f'], ['Дядя № 2', null, 'm'], ['Тётя № 3', null, 'f'], ['Дядя № 3', null, 'm']] },
-  { y: 556, h: 62, fs: 19, pad: 18, nodes: [
-    ['двоюродный', 'брат № 23', 'm'], ['двоюродная', 'сестра № 19', 'f'], ['двоюродный', 'брат № 15', 'm'], ['двоюродная', 'сестра № 11', 'f'],
-    ['двоюродный', 'брат № 7', 'm'], ['сестра', null, 'f'], ['Я', 'Эркинбой', 'm', 'me'], ['брат', null, 'm'],
-    ['двоюродная', 'сестра № 4', 'f'], ['двоюродный', 'брат № 8', 'm'], ['двоюродная', 'сестра № 12', 'f'], ['двоюродный', 'брат № 16', 'm'], ['двоюродная', 'сестра № 20', 'f']] },
-  { y: 762, h: 62, fs: 19, pad: 16, nodes: [
-    ['троюродный', 'брат № 31', 'm'], ['невестка', null, 'f'], ['сват', null, 'm'], ['троюродная', 'тётя № 4', 'f'], ['друг папы', '«как брат»', 'm'],
-    ['сват свата', null, 'm'], ['сватья', null, 'f'], ['шурин', null, 'm'], ['золовка', null, 'f'], ['соседи —', '«почти родственники»', 'f'],
-    ['деверь', null, 'm'], ['свояченица', null, 'f'], ['свояк', null, 'm'], ['сноха', null, 'f'], ['зять', null, 'm'],
-    ['соседка —', '«почти бабушка»', 'f'], ['троюродный', 'дядя № 6', 'm'], ['сват', null, 'm'], ['троюродная', 'сестра № 9', 'f']] },
+  { y: 556, h: 62, fs: 20, pad: 16, nodes: [
+    ['Двоюродный', 'брат № 23', 'm'], ['Двоюродная', 'сестра № 19', 'f'], ['Двоюродный', 'брат № 15', 'm'], ['Двоюродная', 'сестра № 11', 'f'],
+    ['Двоюродный', 'брат № 7', 'm'], ['Сестра', null, 'f'], ['Я', 'Эркинбой', 'm', 'me'], ['Брат', null, 'm'],
+    ['Двоюродная', 'сестра № 4', 'f'], ['Двоюродный', 'брат № 8', 'm'], ['Двоюродная', 'сестра № 12', 'f'], ['Двоюродный', 'брат № 16', 'm'], ['Двоюродная', 'сестра № 20', 'f']] },
+  { y: 762, h: 62, fs: 20, pad: 14, nodes: [
+    ['Троюродный', 'брат № 31', 'm'], ['Невестка', null, 'f'], ['Сват', null, 'm'], ['Троюродная', 'тётя № 4', 'f'], ['Друг папы', '«как брат»', 'm'],
+    ['Сват свата', null, 'm'], ['Сватья', null, 'f'], ['Шурин', null, 'm'], ['Золовка', null, 'f'], ['Соседи —', '«почти родственники»', 'f'],
+    ['Деверь', null, 'm'], ['Свояченица', null, 'f'], ['Свояк', null, 'm'], ['Сноха', null, 'f'], ['Зять', null, 'm'],
+    ['Соседка —', '«почти бабушка»', 'f'], ['Троюродный', 'дядя № 6', 'm'], ['Сват', null, 'm'], ['Троюродная', 'сестра № 9', 'f']] },
   { y: 952, h: 56, fs: 0, gap: 92, count: 33 },  // только лица — и дальше за край экрана
 ];
 const S02_LEAVES = 2; // от каждого лица последнего ряда — ещё ветки вниз, за экран
@@ -145,12 +147,12 @@ function s02BuildTree() {
 const S02_CITIES = [
   // [название, подпись: dx, dy, якорь]
   ['Ташкент', 0, 0, 'cap'],
-  ['Самарканд', 0, 24, 'middle'],
-  ['Бухара', 0, -13, 'middle'],
+  ['Самарканд', 0, -13, 'middle'],
+  ['Бухара', -12, 7, 'end'],
   ['Хива', 0, 24, 'middle'],
   ['Нукус', 0, -13, 'middle'],
   ['Фергана', 0, 25, 'middle'],
-  ['Термез', 12, 7, 'start'],
+  ['Карши', 0, 25, 'middle'],
 ];
 function s02Map() {
   const W = 480, H = 270;
@@ -167,7 +169,7 @@ function s02Map() {
       cities += `<g class="s02-city"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6.5"/><text x="${(x + dx).toFixed(1)}" y="${(y + dy).toFixed(1)}" text-anchor="${anchor}">${name}</text></g>`;
     }
   }
-  return `<svg class="s02-map" viewBox="0 0 ${W} ${H}" aria-label="Карта Узбекистана: Ташкент, Самарканд, Бухара, Хива, Нукус, Фергана, Термез"><path class="s02-uz" pathLength="100" d="${Art.uzOutlinePath(proj)}"/>${cities}</svg>`;
+  return `<svg class="s02-map" viewBox="0 0 ${W} ${H}" aria-label="Карта Узбекистана: Ташкент, Самарканд, Бухара, Хива, Нукус, Фергана, Карши"><path class="s02-uz" pathLength="100" d="${Art.uzOutlinePath(proj)}"/>${cities}</svg>`;
 }
 
 /* ---------- иконки лицевых сторон ---------- */
@@ -237,7 +239,8 @@ function s02Medal() {
 Deck.register('02', {
   init(api) {
     const st = api.state;
-    Object.assign(st, { open: [false, false, false], gost: false, jobs: [], typer: null });
+    // tree: idle → growing → up (держится до нажатия) → settling → done
+    Object.assign(st, { open: [false, false, false], gost: false, jobs: [], typer: null, tree: 'idle', countTok: null });
     st.cards = api.$$('.s02-card');
     st.stamps = st.cards.map((c) => c.querySelector('.s02-stamp'));
 
@@ -257,6 +260,8 @@ Deck.register('02', {
     st.fly = api.$('.s02-treefly');
     st.flyTree = st.fly.querySelector('.s02-tree');
     st.dim = api.$('.s02-dim');
+    st.quip = api.$('.s02-quip');
+    st.countEl = st.fly.querySelector('.s02-treecount-v');
 
     // вывод по ГОСТу
     st.gostEl = api.$('.s02-gost');
@@ -266,6 +271,9 @@ Deck.register('02', {
 
     st.cards.forEach((c, i) => c.addEventListener('click', () => { c.blur(); this.open(api, i); }));
     st.gostBtn.addEventListener('click', () => { st.gostBtn.blur(); this.conclude(api); });
+    // древо на весь экран: клик мышью — то же, что «Далее»
+    st.fly.addEventListener('click', () => this.tap(api));
+    st.dim.addEventListener('click', () => this.tap(api));
   },
 
   enter(api) {
@@ -273,7 +281,7 @@ Deck.register('02', {
     api.timeout(() => st.r.setAttribute('data-point', 'down'), 1100);
   },
 
-  leave(api) { this.flush(api); },
+  leave(api) { this.complete(api); },
 
   /* ---------- таймлайн шагов: при быстром «Далее» или уходе со слайда — мгновенно доводим ---------- */
   seq(api, steps) {
@@ -285,6 +293,7 @@ Deck.register('02', {
     }
   },
   busy(api) { return api.state.jobs.some((j) => !j.done); },
+  // довести текущую анимацию до конечного кадра (без звуков)
   flush(api) {
     const st = api.state;
     if (st.typer) { clearInterval(st.typer); st.typer = null; }
@@ -293,6 +302,17 @@ Deck.register('02', {
       const jobs = st.jobs.splice(0);
       for (const j of jobs) if (!j.done) { clearTimeout(j.t); j.done = true; j.fn(true); }
     }
+  },
+  // всё до конца, включая возврат древа в карточку (уход со слайда, R, другая карточка, вывод)
+  complete(api) {
+    this.flush(api);
+    if (api.state.tree === 'up') this.settleTree(api, true);
+  },
+  // клик по древу / клавиша карточки, пока древо на весь экран
+  tap(api) {
+    if (this.busy(api)) this.flush(api);
+    else if (api.state.tree === 'up') this.settleTree(api);
+    api.updateSteps();
   },
   mood(api, m) {
     const st = api.state;
@@ -306,14 +326,15 @@ Deck.register('02', {
     const st = api.state;
     const card = st.cards[i];
     if (!card) return;
+    if (st.tree === 'growing' || st.tree === 'up') { this.tap(api); return; }
     if (st.open[i]) {
       // повторное нажатие — печать «пристукивает» ещё раз
-      if (this.busy(api)) return;
+      if (this.busy(api)) { this.flush(api); return; }
       FX.replay(st.stamps[i], 'is-slam');
       api.sfx('stamp');
       return;
     }
-    this.flush(api);
+    this.complete(api);
     st.open[i] = true;
     card.classList.add('is-open');
     card.setAttribute('aria-pressed', 'true');
@@ -330,71 +351,110 @@ Deck.register('02', {
     const map = card.querySelector('.s02-map');
     const cities = Array.from(card.querySelectorAll('.s02-city'));
     this.seq(api, [
-      [380, (s) => { map.classList.add('is-drawn'); if (!s) api.sfx('swoosh'); }],
-      ...cities.map((c, k) => [720 + k * 105, (s) => { c.classList.add('is-shown'); if (!s) api.sfx(k ? 'pop' : 'sparkle'); }]),
-      [1520, (s) => {
+      [300, (s) => { map.classList.add('is-drawn'); if (!s) api.sfx('swoosh'); }],
+      ...cities.map((c, k) => [560 + k * 80, (s) => { c.classList.add('is-shown'); if (!s) api.sfx(k ? 'pop' : 'sparkle'); }]),
+      [1120, (s) => {
         st.stamps[0].classList.add('is-slam');
         this.mood(api, 'smug');
         if (!s) { api.sfx('stamp'); FX.shakeStage(); }
       }],
-      [1760, (s) => { card.querySelector('.s02-fact').classList.add('is-shown'); this.afterReveal(api, s); }],
+      [1300, (s) => { card.querySelector('.s02-fact').classList.add('is-shown'); this.afterReveal(api); }],
     ]);
   },
 
-  // 2. «Много родственников» → древо вырывается за экран, возвращается, печать
+  // 2. «Много родственников» → древо вырывается на весь экран и держится до следующего нажатия
   revealTree(api, card) {
     const st = api.state;
+    st.tree = 'growing';
     this.seq(api, [
-      [240, (s) => this.treeGrow(api, card, s)],
-      [2600, (s) => this.treeSettle(api, card, s)],
-      [3260, (s) => this.treeDone(api, card, s)],
-      [3340, (s) => {
+      [120, (s) => this.treeGrow(api, card, s)],
+      [1150, (s) => this.treeQuip(api, s)],
+    ]);
+  },
+  treeGrow(api, card, silent) {
+    const st = api.state, fly = st.fly;
+    fly.classList.remove('is-out', 'is-settling');
+    st.dim.classList.add('is-on');
+    this.mood(api, 'shock');
+    if (silent) {
+      // сразу конечный кадр: древо на весь экран
+      fly.style.transition = 'none';
+      fly.style.transform = 'translate(0px, 0px) scale(1)';
+      st.flyTree.classList.add('is-instant', 'is-grown');
+      fly.classList.add('is-on');
+      st.countTok = null;
+      st.countEl.textContent = `n = ${Fmt.int(st.treeN)}`;
+      return;
+    }
+    const r = s02Rect(card);
+    const k0 = (r.w * .86) / 1920;
+    const x0 = r.x + r.w / 2 - 960 * k0, y0 = r.y + r.h * .62 - 540 * k0;
+    fly.style.transition = 'none';
+    fly.style.transform = `translate(${x0.toFixed(1)}px, ${y0.toFixed(1)}px) scale(${k0.toFixed(4)})`;
+    st.flyTree.classList.remove('is-grown', 'is-instant');
+    fly.classList.add('is-on');
+    void fly.offsetWidth;
+    fly.style.transition = 'transform 1s cubic-bezier(.2, .8, .25, 1)';
+    fly.style.transform = 'translate(0px, 0px) scale(1)';
+    st.flyTree.classList.add('is-grown');
+    api.sfx('whoosh');
+    // «чпок-чпок» по рядам и счётчик выборки
+    this.seq(api, S02_TREE.map((_, li) => [60 + li * 165, (s) => { if (!s) api.sfx('pop'); }]));
+    const tok = st.countTok = {};
+    Tween.num(1, st.treeN, 1000, (v) => { if (st.countTok === tok) st.countEl.textContent = `n = ${Fmt.int(v)}`; }, ease.inOutCubic);
+  },
+  treeQuip(api, silent) {
+    const st = api.state;
+    st.tree = 'up';
+    if (silent) {
+      // догнать незаконченные переходы роста
+      st.fly.style.transition = 'none';
+      st.fly.style.transform = 'translate(0px, 0px) scale(1)';
+      st.flyTree.classList.add('is-instant');
+      st.countTok = null;
+      st.countEl.textContent = `n = ${Fmt.int(st.treeN)}`;
+    } else {
+      api.sfx('boing');
+    }
+    st.quip.classList.add('is-on');
+  },
+  // древо возвращается в карточку: печать «ПОДТВЕРЖДЕНО…» и подпись
+  settleTree(api, silent = false) {
+    const st = api.state;
+    const card = st.cards[1];
+    st.tree = 'settling';
+    api.updateSteps();
+    const rest = [
+      [560, (s) => this.treeDone(api, card, s)],
+      [620, (s) => {
         st.stamps[1].classList.add('is-slam');
         this.mood(api, 'happy');
         if (!s) api.sfx('stamp');
       }],
-      [3600, (s) => { card.querySelector('.s02-fact').classList.add('is-shown'); this.afterReveal(api, s); }],
-    ]);
+      [800, () => { card.querySelector('.s02-fact').classList.add('is-shown'); st.tree = 'done'; this.afterReveal(api); }],
+    ];
+    if (silent) { rest.forEach(([, fn]) => fn(true)); return; }
+    this.treeSettle(api, card);
+    this.seq(api, rest);
   },
-  treeGrow(api, card, silent) {
-    if (silent) return;
-    const st = api.state, fly = st.fly;
-    const r = s02Rect(card);
-    const k0 = (r.w * .86) / 1920;
-    const x0 = r.x + r.w / 2 - 960 * k0, y0 = r.y + r.h * .62 - 540 * k0;
-    fly.classList.remove('is-out', 'is-settling');
-    fly.style.transition = 'none';
-    fly.style.transform = `translate(${x0.toFixed(1)}px, ${y0.toFixed(1)}px) scale(${k0.toFixed(4)})`;
-    st.flyTree.classList.remove('is-grown');
-    fly.classList.add('is-on');
-    void fly.offsetWidth;
-    fly.style.transition = 'transform 1.05s cubic-bezier(.2, .8, .25, 1)';
-    fly.style.transform = 'translate(0px, 0px) scale(1)';
-    st.flyTree.classList.add('is-grown');
-    st.dim.classList.add('is-on');
-    this.mood(api, 'shock');
-    api.sfx('whoosh');
-    // «чпок-чпок» по рядам и счётчик выборки
-    this.seq(api, S02_TREE.map((_, li) => [60 + li * 165, (s) => { if (!s) api.sfx('pop'); }]));
-    const nv = fly.querySelector('.s02-treecount-v');
-    Tween.num(1, st.treeN, 1450, (v) => { nv.textContent = `n = ${Fmt.int(v)}`; }, ease.inOutCubic);
-  },
-  treeSettle(api, card, silent) {
-    if (silent) return;
+  treeSettle(api, card) {
     const st = api.state, fly = st.fly;
     const r = s02Rect(card.querySelector('.s02-treethumb'));
     const k = r.w / 1920;
+    st.quip.classList.remove('is-on');
     fly.classList.add('is-settling');
-    fly.style.transition = 'transform .62s cubic-bezier(.6, 0, .25, 1)';
+    fly.style.transition = 'transform .6s cubic-bezier(.6, 0, .25, 1)';
     fly.style.transform = `translate(${r.x.toFixed(1)}px, ${r.y.toFixed(1)}px) scale(${k.toFixed(4)})`;
     st.dim.classList.remove('is-on');
     api.sfx('swoosh');
   },
   treeDone(api, card, silent) {
     const st = api.state, fly = st.fly;
+    st.countTok = null;
     card.querySelector('.s02-nv').textContent = Fmt.int(st.treeN);
     card.classList.add('is-tree');
     st.dim.classList.remove('is-on');
+    st.quip.classList.remove('is-on');
     if (silent) {
       fly.style.transition = 'none';
       fly.classList.remove('is-on', 'is-out', 'is-settling');
@@ -410,28 +470,29 @@ Deck.register('02', {
     const medal = card.querySelector('.s02-medal');
     const plate = card.querySelector('.s02-plate');
     this.seq(api, [
-      [420, (s) => { medal.classList.add('is-in'); if (!s) api.sfx('sparkle'); }],
-      [720, (s) => { plate.classList.add('is-in'); if (!s) { api.sfx('plop'); FX.at(plate, 'plov', { count: 46, power: 15 }); } }],
-      [1240, (s) => {
+      [300, (s) => { medal.classList.add('is-in'); if (!s) api.sfx('sparkle'); }],
+      [560, (s) => { plate.classList.add('is-in'); if (!s) { api.sfx('plop'); FX.at(plate, 'plov', { count: 46, power: 15 }); } }],
+      [1000, (s) => {
         st.stamps[2].classList.add('is-slam');
         this.mood(api, 'proud');
-        if (!s) { api.sfx('stamp'); FX.confetti({ count: 120 }); }
+        // конфетти — из-под третьей карточки, чтобы не закрывать подпись второй
+        if (!s) { api.sfx('stamp'); FX.confetti({ count: 110, x: 1540, spread: 1, life: 100 }); }
       }],
-      [1380, (s) => { if (!s) api.sfx('tada'); }],
-      [1500, (s) => { card.querySelector('.s02-fact').classList.add('is-shown'); this.afterReveal(api, s); }],
+      [1120, (s) => { if (!s) api.sfx('tada'); }],
+      [1250, (s) => { card.querySelector('.s02-fact').classList.add('is-shown'); this.afterReveal(api); }],
     ]);
   },
 
   afterReveal(api) {
     const st = api.state;
-    if (st.open.every(Boolean) && !st.gost) st.gostBtn.classList.add('is-shown');
+    if (st.open.every(Boolean) && st.tree === 'done' && !st.gost) st.gostBtn.classList.add('is-shown');
   },
 
   /* ---------- вывод: «Стереотипы необходимо оформлять по ГОСТу» ---------- */
   conclude(api) {
     const st = api.state;
     if (st.gost || !st.open.every(Boolean)) return;
-    this.flush(api);
+    this.complete(api);
     st.gost = true;
     api.updateSteps();
     st.gostBtn.classList.remove('is-shown');
@@ -441,9 +502,9 @@ Deck.register('02', {
     api.sfx('whoosh');
     this.mood(api, 'serious');
     const text = st.typeText;
-    const per = 24;
+    const per = 20;
     this.seq(api, [
-      [330, (s) => {
+      [250, (s) => {
         if (s) return;
         let n = 0;
         st.typer = api.interval(() => {
@@ -453,7 +514,7 @@ Deck.register('02', {
           if (n >= text.length) { clearInterval(st.typer); st.typer = null; }
         }, per);
       }],
-      [330 + text.length * per + 140, (s) => {
+      [250 + text.length * per + 120, (s) => {
         if (st.typer) { clearInterval(st.typer); st.typer = null; }
         st.type.textContent = text;
         st.type.classList.remove('is-caret');
@@ -465,16 +526,19 @@ Deck.register('02', {
 
   next(api) {
     const st = api.state;
+    if (this.busy(api)) { this.flush(api); return true; } // идёт анимация — доводим её, шаг не пропускаем
+    if (st.tree === 'up') { this.settleTree(api); return true; }
     const i = st.open.indexOf(false);
     if (i >= 0) { this.open(api, i); return true; }
     if (!st.gost) { this.conclude(api); return true; }
-    this.flush(api);
+    this.complete(api);
     return false;
   },
   progress(api) {
     const st = api.state;
-    if (!st.open) return { done: 0, total: 4 };
-    return { done: st.open.filter(Boolean).length + (st.gost ? 1 : 0), total: 4 };
+    if (!st.open) return { done: 0, total: 5 };
+    const treeBack = st.tree === 'settling' || st.tree === 'done' ? 1 : 0;
+    return { done: st.open.filter(Boolean).length + treeBack + (st.gost ? 1 : 0), total: 5 };
   },
   keys: {
     Digit1(api) { this.open(api, 0); },

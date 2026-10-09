@@ -40,7 +40,7 @@ Deck.register('07', {
 
     // график: обе серии на одной плоскости, ось Y плавно растёт вместе со съеденным
     const plot = new Plot(api.$('.s07-chart'), {
-      width: 1080, height: 630, margin: { l: 110, r: 40, t: 44, b: 84 },
+      width: 1030, height: 598, margin: { l: 120, r: 40, t: 44, b: 84 },
       x: [0, 5], y: [0, 3], xTickCount: 6, yTickCount: 5,
       fmtX: (v) => (Number.isInteger(v) ? Fmt.int(v) : ''),
       fmtY: (v) => (Number.isInteger(v) ? Fmt.int(v) : Fmt.num(v, 1)),
@@ -77,9 +77,12 @@ Deck.register('07', {
     this.render(api, 0);
     this.syncUi(api);
 
-    st.$more.addEventListener('click', () => this.addCycle(api, true));
-    api.$('.s07-ff').addEventListener('click', () => this.fastForward(api));
-    api.$('.s07-sum').addEventListener('click', () => this.climax(api));
+    // после клика мышью снимаем фокус с кнопки: иначе пробел/Enter кликера «нажимают» уже скрытую кнопку
+    // (core.js отдаёт Space/Enter сфокусированной кнопке), и «Далее» молчит
+    const onClick = (sel, fn) => api.$(sel).addEventListener('click', (e) => { e.currentTarget.blur(); fn(); });
+    onClick('.s07-more', () => this.addCycle(api, true));
+    onClick('.s07-ff', () => this.fastForward(api));
+    onClick('.s07-sum', () => this.climax(api));
     st.$final.addEventListener('click', () => { if (api.state.climax && !api.state.arrow) this.showArrow(api); });
   },
 

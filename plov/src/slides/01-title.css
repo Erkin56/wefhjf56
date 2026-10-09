@@ -12,24 +12,25 @@
 #s01 .s01-author { display: flex; flex-direction: column; gap: 6px; font-size: 26px; color: var(--muted); font-weight: 600; }
 #s01 .s01-author b { font-family: var(--f-display); font-weight: 800; color: var(--cream); font-size: 34px; letter-spacing: .01em; }
 #s01 .s01-action { position: relative; height: 260px; margin-top: 8px; }
-#s01 .s01-startwrap { position: absolute; left: 0; top: 18px; }
+#s01 .s01-startwrap { position: absolute; left: 0; top: 18px; z-index: 2; }
 #s01 .s01-start { transition: opacity .35s, transform .35s var(--ease-in); }
 #s01.is-started .s01-start { opacity: 0; transform: scale(.6) translateY(40px); pointer-events: none; }
 #s01 .s01-ethics {
   position: absolute; left: 0; top: 0; width: 900px;
   padding: 26px 40px 30px;
-  opacity: 0; transform: translateY(30px) rotate(-1.5deg) scale(.96);
-  transition: opacity .45s var(--ease-out), transform .6s var(--ease-back);
+  opacity: 0; visibility: hidden; transform: translateY(30px) rotate(-1.5deg) scale(.96);
+  pointer-events: none; z-index: 1; /* пока скрыта — не перекрывает кнопку «Начать эксперимент» */
+  transition: opacity .45s var(--ease-out), transform .6s var(--ease-back), visibility 0s linear .6s;
 }
-#s01.is-started .s01-ethics { opacity: 1; transform: rotate(-1.5deg); }
-#s01 .s01-badge { position: absolute; right: 28px; top: -16px; }
+#s01.is-started .s01-ethics { opacity: 1; visibility: visible; transform: rotate(-1.5deg); transition: opacity .45s var(--ease-out), transform .6s var(--ease-back), visibility 0s; }
+#s01 .s01-badge { position: absolute; right: 28px; top: -16px; font-size: 20px; }
 #s01 .s01-line { margin: 0; font-family: var(--f-body); font-weight: 700; font-size: 40px; line-height: 1.22; opacity: 0; transform: translateX(-20px); transition: opacity .4s, transform .5s var(--ease-out); }
 #s01 .s01-line.is-shown { opacity: 1; transform: none; }
 #s01 .s01-line3 { font-family: var(--f-display); font-weight: 900; font-size: 64px; color: var(--red); text-transform: uppercase; margin-top: 6px; }
 #s01 .s01-line3.is-shown { animation: jelly .7s var(--ease-out); }
 
 #s01 .s01-right { position: absolute; right: 0; top: 0; width: 900px; height: 1080px; }
-#s01 .s01-kazan { position: absolute; right: 250px; bottom: 40px; width: 640px; }
+#s01 .s01-kazan { position: absolute; right: 218px; bottom: 40px; width: 640px; } /* левая ручка казана — не впритык к строке автора */
 #s01 .s01-kazan .art { width: 100%; height: auto; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, .5)); }
 #s01 .s01-kazan.is-bounce .art { animation: jelly .7s var(--ease-out); }
 #s01 .s01-researcher { position: absolute; right: 30px; bottom: 30px; width: 340px; }

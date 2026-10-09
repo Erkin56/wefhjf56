@@ -245,6 +245,9 @@ const Deck = (() => {
   function scale() {
     const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
     $('#stage').style.setProperty('--scale', s);
+    // если снизу есть поле (экран 16:10 или 4:3) — панель управления уезжает туда и не закрывает подвал слайда
+    const band = (window.innerHeight - 1080 * s) / 2;
+    $('#navbar').style.bottom = band >= 44 ? `${Math.max(0, Math.round((band - 44) / 2))}px` : '';
   }
 
   function renderChrome() {
@@ -349,10 +352,14 @@ button.alt{background:#2a2c31;color:#f5ebd5}.next{margin-left:auto;color:#a39d90
 </body></html>`);
       d.close();
       const send = (act) => window.postMessage({ plov: act }, '*');
-      d.getElementById('p-next').onclick = () => send('next');
-      d.getElementById('p-prev').onclick = () => send('prev');
-      d.getElementById('p-reset').onclick = () => send('reset');
-      presenter.addEventListener('keydown', (e) => { onKey(e); });
+      // после клика кнопка теряет фокус, иначе пробел/Enter повторили бы «Перезапуск» или «Назад»
+      [['p-next', 'next'], ['p-prev', 'prev'], ['p-reset', 'reset']].forEach(([id, act]) => {
+        d.getElementById(id).onclick = (e) => { send(act); e.currentTarget.blur(); };
+      });
+      presenter.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' || e.code === 'Enter' || e.code === 'NumpadEnter') { e.preventDefault(); startClock(); advance(); return; }
+        onKey(e);
+      });
       updatePresenter();
     } catch (e) {
       console.warn('Окно докладчика недоступно, показываю заметки на экране', e);
@@ -506,6 +513,12 @@ button.alt{background:#2a2c31;color:#f5ebd5}.next{margin-left:auto;color:#a39d90
     let uiT;
     document.addEventListener('mousemove', () => { document.body.classList.add('show-ui'); clearTimeout(uiT); uiT = setTimeout(() => document.body.classList.remove('show-ui'), 2200); });
     document.addEventListener('pointerdown', () => { Sfx.unlock(); hideHint(); }, { capture: true });
+    // кнопка на слайде после клика мышью теряет фокус: пробел/Enter снова листают, а не жмут её повторно
+    // (e.detail === 0 — нажатие с клавиатуры через Tab, фокус оставляем)
+    $('#stage').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && e.detail > 0) b.blur(); });
+    // ползунок после перетаскивания мышью отпускает фокус: стрелки снова управляют слайдами
+    $('#stage').addEventListener('pointerup', (e) => { if (e.target.matches && e.target.matches('input[type="range"]')) setTimeout(() => e.target.blur(), 0); });
+    document.addEventListener('fullscreenchange', hideHint);
     // любой клик по кнопке на слайде запускает общий таймер
     $('#stage').addEventListener('click', (e) => { if (e.target.closest('button, input')) startClock(); });
     setTimeout(hideHint, 7000);

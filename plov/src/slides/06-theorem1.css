@@ -18,9 +18,9 @@
 #s06 .s06-frac { display: inline-flex; flex-direction: column; align-items: center; line-height: 1; font-size: .78em; vertical-align: middle; }
 #s06 .s06-frac span:first-child { border-bottom: 3px solid currentColor; padding: 0 .12em .06em; }
 #s06 .s06-frac span:last-child { padding-top: .06em; }
-#s06 .s06-frac--sm { font-size: .8em; }
+#s06 .s06-frac--sm { font-size: .9em; }
 #s06 .s06-frac--sm span:first-child { border-bottom-width: 2px; }
-#s06 .s06-proof { font-family: var(--f-serif); font-size: 25px; line-height: 1.5; color: var(--ink-2); }
+#s06 .s06-proof { font-family: var(--f-serif); font-size: 28px; line-height: 1.45; color: var(--ink-2); }
 
 #s06 .s06-readout { display: flex; align-items: center; gap: 18px; background: var(--panel); border-radius: 22px; padding: 14px 24px 14px 10px; box-shadow: 0 0 0 1px var(--line) inset; }
 #s06 .s06-plate { flex: 0 0 190px; height: 150px; display: grid; place-items: center; overflow: hidden; }
@@ -39,7 +39,18 @@
 #s06 .s06-verdict { position: absolute; left: 236px; top: 520px; width: 1020px; height: 330px; pointer-events: none; }
 #s06 .s06-verdict .stamp { position: absolute; opacity: 0; }
 #s06 .s06-st1 { left: 40px; top: 0; font-size: 54px; background: rgba(23, 24, 27, .8); }
-#s06 .s06-st2 { left: 120px; top: 150px; font-size: 40px; background: rgba(23, 24, 27, .85); }
+#s06 .s06-st2 { left: 134px; top: 150px; font-size: 40px; background: rgba(23, 24, 27, .85); }
 #s06 .s06-verdict .stamp.is-slam { opacity: 1; }
-#s06 .s06-guest { position: absolute; left: 560px; top: 905px; width: 250px; transform: translateY(240px) rotate(8deg); transition: transform .7s var(--ease-back); pointer-events: none; z-index: 3; }
-#s06 .s06-guest.is-on { transform: translateY(0) rotate(-4deg); }
+/* гость: круглый стикер-реакция слева от красной печати (внутри графика, над осью x) */
+#s06 .s06-guest {
+  position: absolute; left: 221px; top: 681px; width: 150px; height: 150px; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, var(--cream) 0 58%, var(--cream-2) 100%);
+  box-shadow: 0 0 0 6px var(--bg), 0 0 0 11px var(--red), 0 18px 34px rgba(0, 0, 0, .5);
+  opacity: 0; transform: scale(.2) rotate(-40deg);
+  transition: opacity .25s, transform .6s var(--ease-back);
+  pointer-events: none; z-index: 3;
+}
+#s06 .s06-guest.is-on { opacity: 1; transform: rotate(-8deg); }
+#s06 .s06-guest .art { display: block; width: 100%; height: 100%; }
+#s06 .s06-guest.is-on .art { animation: s06-panic .16s ease-in-out .6s 6 alternate; }
+@keyframes s06-panic { from { transform: translateX(-3px) rotate(-2deg); } to { transform: translateX(3px) rotate(2deg); } }

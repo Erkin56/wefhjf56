@@ -14,16 +14,16 @@ const S10 = {
     ['семья', 'Мама спрашивает, есть&nbsp;ли у&nbsp;меня шапка.'],
     ['родня', 'Двоюродный брат тоже стал лингвистом. Это у&nbsp;нас семейное.'],
     ['соседи', 'Соседи достроили второй этаж.'],
-    ['бабушка', 'У&nbsp;бабушки всё хорошо. Её&nbsp;кот тоже в&nbsp;порядке.'],
+    ['бабушка', 'У&nbsp;бабушки всё хорошо. Её&nbsp;кот тоже поправился&nbsp;— на&nbsp;два килограмма.'],
     ['знакомые', 'В&nbsp;субботу свадьба. Вы&nbsp;тоже приглашены.'],
     ['родня', 'Племянник пошёл в&nbsp;первый класс и&nbsp;уже знает, что такое предел.'],
     ['семья', 'Папа спрашивает, хорошо&nbsp;ли я&nbsp;питаюсь.'],
     ['соседи', 'Сосед купил машину. Цвет выбирала вся махалля — весь квартал.'],
     ['бабушка', 'Бабушка спрашивает, почему вы&nbsp;до&nbsp;сих пор не&nbsp;поели.'],
     ['знакомые', 'Одноклассник открыл чайхану. Передаёт привет.'],
-    ['родня', 'Тётя из&nbsp;Ферганы передала сухофрукты. Через три города.'],
-    ['семья', 'Младшая сестра поступила в&nbsp;университет.'],
-    ['соседи', 'Соседский мальчик вырос. Теперь он&nbsp;выше дяди.'],
+    ['родня', 'Тётя из&nbsp;Ферганы передала сухофрукты: через проводника, двух соседей и&nbsp;знакомого знакомого.'],
+    ['семья', 'Младшая сестра поступила на&nbsp;математику. Будет считать родственников.'],
+    ['соседи', 'Соседский мальчик вырос. Теперь он&nbsp;тоже спрашивает, когда я&nbsp;женюсь.'],
     ['родня', 'Дедушка смотрит футбол и&nbsp;даёт советы тренеру. Через телевизор.'],
     ['знакомые', 'Знакомый знакомого тоже живёт в&nbsp;Петербурге. Передаёт привет.'],
     ['родня', 'Двоюродная сестра выходит замуж. Вы, конечно, тоже приглашены.'],
@@ -318,14 +318,17 @@ Deck.register('10', {
     const num = api.$(`.s10-row--${s.c} .s10-num`);
     res.setAttribute('data-point', 'up');
     api.sfx('swoosh');
+    // эффекты — только пока мы ещё в сцене выводов (кликер мог уже перелистнуть на культурный центр)
+    const inA = (fn) => () => { if (s.scene === 'a') fn(); };
     if (s.c < 3) {
-      api.timeout(() => { api.sfx(s.c === 1 ? 'ding' : 'coin'); FX.at(num, 'rice', { count: 26, power: 12 }); }, 380);
-      Art.mood(res, s.c === 1 ? 'serious' : 'smug');
+      const k = s.c;
+      api.timeout(inA(() => { api.sfx(k === 1 ? 'ding' : 'coin'); FX.at(num, 'rice', { count: 26, power: 12 }); }), 380);
+      Art.mood(res, k === 1 ? 'serious' : 'smug');
     } else {
       const g = api.$('.s10-a-gma-in');
-      api.timeout(() => { api.sfx('boing'); FX.shakeStage(); Art.mood(res, 'shock'); FX.at(num, 'confetti', { count: 40, power: 14, spread: 6.28 }); }, 380);
-      api.timeout(() => { api.sfx('plop'); const c = FX.centerOf(g); FX.plov({ x: c.x, y: c.y - 30, count: 70, power: 17 }); Art.mood(g, 'happy'); }, 1000);
-      api.timeout(() => { api.sfx('stamp'); FX.at(api.$('.s10-qed'), 'rice', { count: 30, power: 12 }); Art.mood(res, 'proud'); Art.mood(g, 'proud'); }, 1520);
+      api.timeout(inA(() => { api.sfx('boing'); FX.shakeStage(); Art.mood(res, 'shock'); FX.at(num, 'confetti', { count: 40, power: 14, spread: 6.28 }); }), 380);
+      api.timeout(inA(() => { api.sfx('plop'); const c = FX.centerOf(g); FX.plov({ x: c.x, y: c.y - 30, count: 70, power: 17 }); Art.mood(g, 'happy'); }), 1000);
+      api.timeout(inA(() => { api.sfx('stamp'); FX.at(api.$('.s10-qed'), 'rice', { count: 30, power: 12 }); Art.mood(res, 'proud'); Art.mood(g, 'proud'); }), 1520);
     }
     api.updateSteps();
     return true;
@@ -429,20 +432,33 @@ Deck.register('10', {
     if (s.scene === 'd') api.sfx(s.n % 4 === 1 ? 'pop' : 'tick');
   },
 
-  // D → E: финал
+  // D → E: финал. Конфетти бьёт только с боков и наружу — центр («RAHMAT! СПАСИБО!») остаётся чистым
+  sideConfetti(xl, xr, opts = {}) {
+    const tilt = opts.tilt == null ? 0.35 : opts.tilt;
+    const o = { spread: 0.8, ...opts };
+    delete o.tilt;
+    FX.confetti({ ...o, x: xl, angle: -Math.PI / 2 - tilt });
+    FX.confetti({ ...o, x: xr, angle: -Math.PI / 2 + tilt });
+  },
+
   toFinal(api) {
     if (api.state.scene !== 'd') return false;
     this.setScene(api, 'e');
     api.sfx('whoosh');
     api.timeout(() => api.sfx('swoosh'), 750);
-    api.timeout(() => {
-      api.sfx('tada');
-      FX.confetti({ x: 360, angle: -Math.PI / 2 + 0.25, count: 150 });
-      FX.confetti({ x: 1560, angle: -Math.PI / 2 - 0.25, count: 150 });
-    }, 1250);
-    api.timeout(() => { api.sfx('boing'); FX.confetti({ x: 960, count: 200, power: 30 }); }, 1700);
+    api.timeout(() => { api.sfx('tada'); this.sideConfetti(300, 1620, { count: 140 }); }, 1250);
+    api.timeout(() => { api.sfx('boing'); this.sideConfetti(440, 1480, { count: 90, power: 24, tilt: 0.45, spread: 0.7 }); }, 1700);
     api.timeout(() => api.sfx('sparkle'), 2300);
-    api.timeout(() => { FX.confetti({ x: 660, count: 90 }); FX.confetti({ x: 1260, count: 90 }); }, 2800);
+    api.timeout(() => this.sideConfetti(140, 1780, { count: 70, tilt: 0.15, spread: 0.6 }), 2800);
+    return true;
+  },
+
+  // E: «→» на последнем слайде — не мёртвое нажатие, а маленький бис (если после него есть слайды — просто дальше)
+  encore(api) {
+    if (Deck.index < Deck.slides.length - 1) return false;
+    api.sfx('sparkle');
+    this.sideConfetti(300, 1620, { count: 80 });
+    FX.replay(api.$('.s10-e-thanks'), 'is-bump');
     return true;
   },
 
@@ -453,6 +469,7 @@ Deck.register('10', {
       case 'b': return this.toQuestion(api);
       case 'c': return this.answerUz(api);
       case 'd': return this.toFinal(api);
+      case 'e': return this.encore(api);
       default: return false;
     }
   },

@@ -2,7 +2,7 @@
 #s05 .s05-head { display: flex; flex-direction: column; gap: 14px; }
 #s05 .s05-head .h1 { font-size: 64px; }
 
-#s05 .s05-stage { position: absolute; left: 0; right: 0; top: 268px; display: flex; justify-content: center; }
+#s05 .s05-stage { position: absolute; left: 0; right: 0; top: 248px; display: flex; justify-content: center; }
 #s05 .s05-frame {
   position: relative;
   padding: 34px 120px 40px 90px;
@@ -42,6 +42,8 @@
 #s05.is-active .s05-t:nth-child(5) { animation-delay: 1.25s; }
 #s05.is-active .s05-t:nth-child(6) { animation-delay: 1.45s; }
 #s05.is-active .s05-t:nth-child(7) { animation-delay: 1.65s; }
+/* формула уже собрана (повторный вход, перемотка по →): без повторной сборки */
+#s05.is-built .s05-t { animation: none; }
 @keyframes s05-term { from { opacity: 0; transform: translateY(-60px) rotate(-6deg); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
 #s05 .s05-frame::after {
   content: ''; position: absolute; inset: 0; border-radius: 6px; pointer-events: none;
@@ -49,7 +51,7 @@
 }
 #s05.is-built .s05-frame::after { animation: s05-sheen 1.3s ease-out 1; }
 @keyframes s05-sheen { to { background-position: 200% 0; } }
-#s05 .s05-eureka { position: absolute; right: -40px; top: -38px; font-size: 30px; opacity: 0; transform: scale(.3) rotate(20deg); transition: opacity .3s, transform .5s var(--ease-back); }
+#s05 .s05-eureka { position: absolute; right: -40px; top: -8px; font-size: 30px; opacity: 0; transform: scale(.3) rotate(20deg); transition: opacity .3s, transform .5s var(--ease-back); }
 #s05.is-built .s05-eureka { opacity: 1; transform: rotate(var(--rot)); }
 
 /* проводки от членов формулы к карточкам */
@@ -62,12 +64,12 @@
 @keyframes s05-flow { to { stroke-dashoffset: -30; } }
 
 /* карточки */
-#s05 .s05-cards { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 640px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px; }
+#s05 .s05-cards { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 616px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px; }
 #s05 .s05-card {
   --c: var(--cream-3);
   display: flex; align-items: center; gap: 22px;
   background: var(--cream); color: var(--ink);
-  border-radius: 24px; padding: 18px 26px 18px 18px; min-height: 196px;
+  border-radius: 24px; padding: 16px 24px 16px 16px; min-height: 180px;
   box-shadow: 0 0 0 4px var(--c), 0 26px 50px rgba(0, 0, 0, .45);
   opacity: 0; transform: translateY(30px) scale(.94);
   transition: opacity .45s var(--ease-out), transform .6s var(--ease-back);
@@ -78,10 +80,10 @@
 #s05 .k-coef { --c: var(--gold); }
 #s05 .k-pn { --c: var(--cream-3); }
 #s05 .k-one { --c: var(--red); }
-#s05 .s05-ico { flex: 0 0 168px; height: 160px; display: grid; place-items: center; overflow: hidden; }
-#s05 .s05-ico .art { width: 168px; }
+#s05 .s05-ico { flex: 0 0 150px; height: 150px; display: grid; place-items: center; overflow: hidden; }
+#s05 .s05-ico .art { width: 150px; }
 #s05 .s05-ico-one { align-items: start; }
-#s05 .s05-ico-one .art { width: 150px; margin-top: 4px; }
+#s05 .s05-ico-one .art { width: 136px; margin-top: 4px; }
 #s05 .s05-txt { min-width: 0; }
 #s05 .s05-sym { font-size: 64px; line-height: 1; margin-bottom: 8px; }
 #s05 .k-coef .s05-sym { color: var(--gold-2); }
@@ -90,7 +92,7 @@
 
 /* мораль */
 #s05 .s05-foot {
-  position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 112px;
+  position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 106px;
   display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
   opacity: 0; transform: translateY(24px); transition: opacity .5s, transform .6s var(--ease-back);
 }

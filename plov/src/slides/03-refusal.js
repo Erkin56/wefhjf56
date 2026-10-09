@@ -20,8 +20,38 @@ function s03Table() {
 
 const S03_PLATE = [1, 1.7, 2.4];
 const S03_GUEST = ['Нет, спасибо!', 'Нет-нет, правда, спасибо!', 'Спасибо, я на&nbsp;диете!'];
-const S03_GRAN = ['Oling, oling!<small>«Берите, берите!»</small>', 'Вы же ничего не&nbsp;ели!', 'Диета?!'];
+const S03_GRAN = ['Oling, oling!<small>«Берите, берите!»</small>', 'Вы же ничего не&nbsp;ели!', 'Диета?!<small>Тогда только<br>маленький казанчик.</small>'];
+const S03_CLIMAX = 'Вам нужно<br>подкрепиться!'; // бабушка сама произносит кульминацию, когда казан уже стоит
+const S03_GRAN_MOOD = ['happy', 'determined', 'proud'];
 const S03_GUEST_MOOD = ['surprised', 'panic', 'shock'];
+// сколько длится шаг; нажатие в это время не теряется, а ставится в очередь
+const S03_LOCK = [650, 650, 2200];
+// классы разовых CSS-анимаций: на скрытом слайде они ставятся на паузу и «доигрывали» бы при возвращении
+const S03_TRANSIENT = [
+  ['.s03-thud', 'is-on'], ['.s03-guest', 'is-jump is-recoil'], ['.s03-itemswrap > div', 'is-hop'],
+  ['.s03-plate', 'is-jelly'], ['.s03-grandma', 'is-serve is-jelly'], ['.s03-nobtn', 'is-hit is-flip'],
+  ['.s03-count', 'is-bump'], ['.s03-say', 'is-swap'],
+];
+
+// горка плова на лягане: своя анимация через api.raf — её останавливает api.clearTimers() (уход со слайда, R, перемотка)
+function s03Amount(api, svg, amount, ms = 0, easing = ease.outBack) {
+  const g = svg && svg.querySelector('.mound');
+  if (!g) return;
+  const from = parseFloat(svg.dataset.amount || '1');
+  svg.dataset.amount = amount;
+  g.style.display = '';
+  const tok = svg._s03tok = (svg._s03tok || 0) + 1; // пишет только самая свежая анимация
+  const put = (v) => { const s = Art.amountScale(Math.max(0, v)); g.setAttribute('transform', `scale(${s.x.toFixed(4)},${s.y.toFixed(4)})`); };
+  if (!ms) { put(amount); return; }
+  const t0 = performance.now();
+  const step = (now) => {
+    if (svg._s03tok !== tok) return;
+    const t = clamp((now - t0) / ms, 0, 1);
+    put(lerp(from, amount, easing(t)));
+    if (t < 1) api.raf(step);
+  };
+  api.raf(step);
+}
 
 Deck.register('03', {
   init(api) {
@@ -36,38 +66,76 @@ Deck.register('03', {
     api.$('.s03-researcher').innerHTML = Art.researcher({ mood: 'proud' });
     // клавиша R восстанавливает HTML слайда, но не классы самой <section> — снимаем их здесь
     api.el.classList.remove('is-final', 'is-final-2');
-    api.state.n = 0;
-    api.state.final = false;
-    api.state.busy = false;
+    Object.assign(api.state, { n: 0, final: false, final2: false, busy: false, queued: false, landed: false });
     // после клика снимаем фокус, чтобы пробел/Enter не «нажимали» кнопку повторно мимо шагов слайда
-    api.$('.s03-nobtn').addEventListener('click', (e) => { e.currentTarget.blur(); this.press(api); });
+    api.$('.s03-nobtn').addEventListener('click', (e) => { e.currentTarget.blur(); this.step(api); api.updateSteps(); });
   },
 
+  // уход со слайда: досматриваем текущий шаг мгновенно и молча, чтобы ничего не «стреляло» на соседнем слайде
   leave(api) {
+    this.settle(api);
     api.$('.s03-say--guest').classList.remove('is-on');
+    S03_TRANSIENT.forEach(([sel, cls]) => api.$$(sel).forEach((el) => el.classList.remove(...cls.split(' '))));
+    api.$$('.s03-row').forEach((r) => r.classList.add('is-static'));
+    FX.clear(); // рис этого слайда не сыплется на следующий
   },
 
-  press(api) {
-    if (api.state.final || api.state.busy) return;
-    if (api.state.n >= 3) { this.finale(api); return; }
-    this.refuse(api);
+  /* Одно «нажатие» — и мышью, и клавишей. Во время анимации шага нажатие ставится в очередь
+     и выполнится, как только шаг доиграет; второе нетерпеливое нажатие мгновенно досматривает шаг
+     (см. hurry). Так ни одно нажатие не теряется. */
+  step(api) {
+    const st = api.state;
+    if (st.busy) {
+      if (!st.queued) {
+        st.queued = true;
+        const btn = api.$('.s03-nobtn');
+        if (!btn.classList.contains('is-gone')) FX.replay(btn, 'is-hit'); // кнопка отзывается сразу
+        return true;
+      }
+      return this.hurry(api);
+    }
+    if (st.n < 3) { this.refuse(api); return true; }
+    if (!st.final) { this.finale(api); return true; }
+    if (!st.final2) { this.finish(api); return true; } // панчлайн «Нужна математика!» — не проскакиваем
+    return false;
   },
 
-  say(api, who, html) {
+  // второе нажатие во время анимации: шаг доигрывается мгновенно. Кульминацию не теряем:
+  // если казан ещё в полёте — он сразу приземляется с «БУМ!», а отложенный шаг выполнится чуть позже.
+  hurry(api) {
+    const st = api.state;
+    const needLand = st.n >= 3 && !st.landed && !st.final;
+    this.settle(api);
+    if (needLand) {
+      this.land(api);
+      st.busy = true;
+      st.queued = true;
+      api.timeout(() => this.unlock(api), 700);
+      return true;
+    }
+    return this.step(api);
+  },
+
+  unlock(api) {
+    const st = api.state;
+    st.busy = false;
+    if (st.queued) { st.queued = false; this.step(api); api.updateSteps(); }
+  },
+
+  say(api, who, html, quiet = false) {
     const box = api.$(`.s03-say--${who}`);
     const b = box.querySelector('.s03-say-b');
     const was = box.classList.contains('is-on');
     b.innerHTML = `<span class="s03-say-t">${html}</span>`;
     box.classList.add('is-on');
-    if (was) FX.replay(box, 'is-swap');
+    if (was && !quiet) FX.replay(box, 'is-swap');
   },
 
   refuse(api) {
-    if (api.state.busy) return;
-    api.state.busy = true;
-    const n = ++api.state.n;
-    // после третьего отказа даём казану приземлиться, прежде чем принять следующее нажатие
-    api.timeout(() => { api.state.busy = false; }, n === 3 ? 1900 : 650);
+    const st = api.state;
+    st.busy = true;
+    const n = ++st.n;
+    api.timeout(() => this.unlock(api), S03_LOCK[n - 1]);
     const btn = api.$('.s03-nobtn');
     btn.classList.remove('btn--pulse');
     FX.replay(btn, 'is-hit');
@@ -83,8 +151,8 @@ Deck.register('03', {
     const guestSvg = guestBox.querySelector('svg');
     this.say(api, 'guest', S03_GUEST[n - 1]);
     FX.replay(guestBox, 'is-recoil');
-    if (api.state.hideT) clearTimeout(api.state.hideT);
-    api.state.hideT = api.timeout(() => api.$('.s03-say--guest').classList.remove('is-on'), n === 3 ? 2600 : 2000);
+    if (st.hideT) clearTimeout(st.hideT);
+    st.hideT = api.timeout(() => api.$('.s03-say--guest').classList.remove('is-on'), n === 3 ? 2600 : 2000);
 
     const gran = api.$('.s03-grandma');
     const granSvg = gran.querySelector('svg');
@@ -94,7 +162,7 @@ Deck.register('03', {
 
     if (n === 1) {
       api.timeout(() => {
-        Art.mood(granSvg, 'happy');
+        Art.mood(granSvg, S03_GRAN_MOOD[0]);
         FX.replay(gran, 'is-serve');
         this.say(api, 'gran', S03_GRAN[0]);
         api.sfx('swoosh');
@@ -102,7 +170,7 @@ Deck.register('03', {
         FX.plov({ x: c.x + 30, y: c.y - 40, angle: -Math.PI / 2 + .62, spread: .5, power: 17, count: 60, life: 70 });
       }, 280);
       api.timeout(() => {
-        Art.setAmount(plateSvg, S03_PLATE[1], 700);
+        s03Amount(api, plateSvg, S03_PLATE[1], 700);
         FX.replay(plateBox, 'is-jelly');
         api.sfx('plop');
         row.classList.add('is-on');
@@ -110,13 +178,13 @@ Deck.register('03', {
       }, 900);
     } else if (n === 2) {
       api.timeout(() => {
-        Art.mood(granSvg, 'determined');
+        Art.mood(granSvg, S03_GRAN_MOOD[1]);
         FX.replay(gran, 'is-jelly');
         this.say(api, 'gran', S03_GRAN[1]);
         api.sfx('pop');
       }, 280);
       api.timeout(() => {
-        Art.setAmount(plateSvg, S03_PLATE[2], 950, ease.outElastic);
+        s03Amount(api, plateSvg, S03_PLATE[2], 950, ease.outElastic);
         FX.replay(plateBox, 'is-jelly');
         api.sfx('boing');
         const c = FX.centerOf(plateSvg.querySelector('.mound'));
@@ -125,59 +193,97 @@ Deck.register('03', {
         Art.mood(guestSvg, S03_GUEST_MOOD[1]);
       }, 650);
     } else {
+      // «Диета?! Тогда только маленький казанчик.» — и с неба падает огромный казан
       api.timeout(() => {
         Art.mood(granSvg, 'shock');
         FX.replay(gran, 'is-jelly');
         this.say(api, 'gran', S03_GRAN[2]);
         api.sfx('boing');
-      }, 280);
+      }, 260);
       const kz = api.$('.s03-kazan');
+      st.landed = false;
       api.timeout(() => {
         api.sfx('whoosh');
         kz.classList.remove('is-set');
         FX.replay(kz, 'is-in');
-      }, 700);
+      }, 850);
+      api.timeout(() => this.land(api), 1470);
       api.timeout(() => {
-        // приземление: удар, тряска, рис во все стороны
-        FX.shakeStage();
-        api.sfx('stamp');
-        const c = FX.centerOf(kz.querySelector('.mound'));
-        FX.plov({ x: c.x, y: c.y - 30, count: 110, power: 22 });
-        api.$$('.s03-itemswrap > div').forEach((d, i) => api.timeout(() => FX.replay(d, 'is-hop'), i * 60));
-        FX.replay(api.$('.s03-thud'), 'is-on');
-        Art.mood(guestSvg, S03_GUEST_MOOD[2]);
-        FX.replay(guestBox, 'is-jump');
-      }, 1320);
-      api.timeout(() => {
-        Art.mood(granSvg, 'proud');
+        Art.mood(granSvg, S03_GRAN_MOOD[2]);
+        this.say(api, 'gran', S03_CLIMAX);
         row.classList.add('is-on');
         api.sfx('alarm');
-      }, 1750);
-      api.timeout(() => this.surrender(api), 2500);
-      api.timeout(() => { kz.classList.add('is-set'); kz.classList.remove('is-in'); }, 2600);
+      }, 1650);
+      api.timeout(() => this.surrender(api), 2000);
+      api.timeout(() => { kz.classList.add('is-set'); kz.classList.remove('is-in'); }, 2150);
     }
     api.updateSteps();
   },
 
-  // кнопка «НЕТ, СПАСИБО» сдаётся: превращается в белый флаг
-  surrender(api) {
+  // приземление казана: удар, тряска, рис во все стороны, гость подпрыгивает
+  land(api) {
+    api.state.landed = true;
+    const kz = api.$('.s03-kazan');
+    const guestBox = api.$('.s03-guest');
+    FX.shakeStage();
+    api.sfx('stamp');
+    const c = FX.centerOf(kz.querySelector('.mound'));
+    FX.plov({ x: c.x, y: c.y - 30, count: 110, power: 22 });
+    api.$$('.s03-itemswrap > div').forEach((d, i) => api.timeout(() => FX.replay(d, 'is-hop'), i * 60));
+    FX.replay(api.$('.s03-thud'), 'is-on');
+    Art.mood(guestBox.querySelector('svg'), S03_GUEST_MOOD[2]);
+    FX.replay(guestBox, 'is-jump');
+  },
+
+  // кнопка «НЕТ, СПАСИБО» сдаётся: превращается в белый флаг (quiet — сразу, без анимации и звука)
+  surrender(api, quiet = false) {
     const btn = api.$('.s03-nobtn');
-    if (btn.classList.contains('is-flag')) return;
+    if (btn.querySelector('.s03-flag')) return; // флаг уже поднят
+    if (btn.classList.contains('is-flag') && !quiet) return; // анимация уже идёт
     btn.classList.add('is-flag');
-    FX.replay(btn, 'is-flip');
-    api.timeout(() => {
-      btn.classList.remove('btn--red');
+    const flag = () => {
+      if (btn.querySelector('.s03-flag')) return;
+      btn.classList.remove('btn--red', 'btn--pulse');
       btn.classList.add('btn--cream');
       btn.innerHTML = '<svg class="s03-flag" viewBox="0 0 46 52" aria-hidden="true"><path class="fl-pole" d="M6,4 V50"/><path class="fl-cloth" d="M8,6 Q22,2 30,8 Q38,14 44,8 L44,30 Q38,36 30,30 Q22,24 8,28 Z"/></svg>СДАЮСЬ';
       btn.setAttribute('aria-label', 'Сдаюсь');
-    }, 250);
+    };
+    if (quiet) { flag(); return; }
+    FX.replay(btn, 'is-flip');
+    api.timeout(flag, 250);
     api.sfx('swoosh');
   },
 
+  // мгновенно привести сцену к концу текущего шага: останавливает таймеры шага, без звуков
+  settle(api) {
+    const st = api.state, n = st.n;
+    api.clearTimers();
+    st.busy = false;
+    st.queued = false;
+    if (n > 0) {
+      api.$$('.s03-row').forEach((r) => { if (+r.dataset.n <= n) r.classList.add('is-on'); });
+      s03Amount(api, api.$('.s03-plate svg'), S03_PLATE[Math.min(n, 2)]);
+      Art.mood(api.$('.s03-grandma svg'), S03_GRAN_MOOD[n - 1]);
+      Art.mood(api.$('.s03-guest svg'), S03_GUEST_MOOD[n - 1]);
+      this.say(api, 'gran', n >= 3 ? S03_CLIMAX : S03_GRAN[n - 1], true);
+    }
+    if (n >= 3) {
+      st.landed = true;
+      const kz = api.$('.s03-kazan');
+      kz.classList.add('is-set');
+      kz.classList.remove('is-in');
+      this.surrender(api, true);
+    }
+    if (st.final) {
+      api.$('.s03-nobtn').classList.add('is-gone');
+      this.finish(api, true);
+    }
+  },
+
   finale(api) {
-    if (api.state.final) return;
-    api.state.final = true;
-    this.surrender(api);
+    const st = api.state;
+    this.settle(api); // хвосты третьего отказа (строка протокола, флаг, казан) — сразу
+    st.final = true;
     const btn = api.$('.s03-nobtn');
     FX.replay(btn, 'is-hit');
     api.timeout(() => btn.classList.add('is-gone'), 340);
@@ -185,21 +291,24 @@ Deck.register('03', {
     api.el.classList.add('is-final');
     api.sfx('swoosh');
     api.timeout(() => api.sfx('fail'), 250);
-    api.timeout(() => {
-      api.el.classList.add('is-final-2');
-      api.sfx('tada');
-      const r = api.$('.s03-researcher svg');
-      if (r) api.timeout(() => r.setAttribute('data-point', 'up'), 500);
-    }, 1700);
+    api.timeout(() => this.finish(api), 900);
     api.updateSteps();
   },
 
-  next(api) {
-    if (api.state.busy) return true; // идёт анимация шага — не перескакиваем
-    if (api.state.n < 3) { this.refuse(api); return true; }
-    if (!api.state.final) { this.finale(api); return true; }
-    return false;
+  // вторая строка финала: «Нужна математика!», формулы и Эркинбой с указкой
+  finish(api, quiet = false) {
+    const st = api.state;
+    if (st.final2) return;
+    st.final2 = true;
+    api.el.classList.add('is-final-2');
+    const r = api.$('.s03-researcher svg');
+    if (quiet) { if (r) r.setAttribute('data-point', 'up'); return; }
+    api.sfx('tada');
+    if (r) api.timeout(() => r.setAttribute('data-point', 'up'), 500);
+    api.updateSteps();
   },
+
+  next(api) { return this.step(api); },
 
   progress(api) { return { done: api.state.n + (api.state.final ? 1 : 0), total: 4 }; },
 });

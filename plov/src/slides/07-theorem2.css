@@ -1,16 +1,16 @@
 /* Слайд 7. Теорема 2: тарелка сходится, съеденное растёт. График слева, весы с ляганом и гость справа, финал — на весь экран */
-#s07 .s07-head { position: absolute; left: var(--pad-x); top: 92px; display: flex; flex-direction: column; gap: 10px; }
+#s07 .s07-head { position: absolute; left: var(--pad-x); top: var(--pad-top); display: flex; flex-direction: column; gap: 14px; }
 #s07 .s07-title { font-size: 76px; white-space: nowrap; }
 
 /* ---------- график ---------- */
-#s07 .s07-chartbox { position: absolute; left: 60px; top: 226px; width: 1080px; height: 630px; }
+#s07 .s07-chartbox { position: absolute; left: var(--pad-x); top: 262px; width: 1030px; height: 598px; }
 #s07 .s07-chart .plot { display: block; }
 #s07 .plot .pg-plate .pg-path { stroke-width: 8; }
 #s07 .plot .pg-eaten .pg-path { stroke-width: 8; }
 #s07 .plot .pg-lim .pg-hlabel { font-size: 32px; }
 #s07 .plot .pg-label { font-size: 32px; }
 
-#s07 .s07-legend { position: absolute; left: 150px; top: 46px; display: flex; flex-direction: column; gap: 6px; }
+#s07 .s07-legend { position: absolute; left: 160px; top: 46px; display: flex; flex-direction: column; gap: 6px; }
 #s07 .s07-leg { display: flex; align-items: baseline; gap: 14px; font-family: var(--f-body); font-weight: 700; font-size: 30px; color: var(--cream); line-height: 1.25; }
 #s07 .s07-leg i { width: 46px; height: 8px; border-radius: 4px; align-self: center; flex: none; }
 #s07 .s07-leg--plate i { background: var(--blue); box-shadow: 0 0 14px rgba(82, 182, 255, .6); }

@@ -9,7 +9,8 @@ const dir = join(ROOT, 'src', 'slides');
 const files = readdirSync(dir).filter((f) => /^\d\d-.*\.html$/.test(f)).sort();
 
 const attr = (html, name) => (html.match(new RegExp(`${name}="([^"]*)"`)) || [])[1] || '';
-const decode = (s) => s.replace(/&nbsp;/g, ' ').replace(/&laquo;/g, '«').replace(/&raquo;/g, '»').replace(/&mdash;/g, '—').replace(/&amp;/g, '&');
+const decode = (s) => s.replace(/&nbsp;/g, ' ').replace(/&laquo;/g, '«').replace(/&raquo;/g, '»').replace(/&mdash;/g, '—')
+  .replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&thinsp;/g, ' ').replace(/&#8239;/g, ' ').replace(/&amp;/g, '&');
 
 function toMd(notes) {
   return notes

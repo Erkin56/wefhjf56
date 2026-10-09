@@ -268,7 +268,7 @@ button { font: inherit; color: inherit; }
 /* бейджи «факт / математика / шутка» — отличаем науку от юмора */
 .badge {
   display: inline-flex; align-items: center; gap: 10px;
-  font-family: var(--f-body); font-weight: 800; font-size: 19px;
+  font-family: var(--f-body); font-weight: 800; font-size: 20px;
   letter-spacing: .14em; text-transform: uppercase;
   padding: 9px 16px 8px; border-radius: 999px; line-height: 1;
   white-space: nowrap;
@@ -433,7 +433,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #edge-next:hover { background: linear-gradient(-90deg, rgba(246, 187, 42, .08), transparent); }
 
 #hint-start {
-  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 100;
+  position: fixed; right: 16px; top: 12px; z-index: 100;
   background: rgba(20, 21, 24, .88); color: var(--cream-2);
   font-family: var(--f-body); font-size: 15px; padding: 8px 16px; border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, .08);
@@ -445,6 +445,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 /* заметки докладчика (для репетиции на одном экране) */
 #notes-panel {
   position: fixed; left: 12px; right: 12px; bottom: 60px; z-index: 110;
+  pointer-events: none; /* заметки не перехватывают клики по кнопкам слайда */
   max-height: 40vh; overflow: auto;
   background: rgba(12, 13, 15, .94); color: var(--cream);
   border: 1px solid rgba(246, 187, 42, .35); border-radius: 14px;
@@ -492,24 +493,25 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s01 .s01-author { display: flex; flex-direction: column; gap: 6px; font-size: 26px; color: var(--muted); font-weight: 600; }
 #s01 .s01-author b { font-family: var(--f-display); font-weight: 800; color: var(--cream); font-size: 34px; letter-spacing: .01em; }
 #s01 .s01-action { position: relative; height: 260px; margin-top: 8px; }
-#s01 .s01-startwrap { position: absolute; left: 0; top: 18px; }
+#s01 .s01-startwrap { position: absolute; left: 0; top: 18px; z-index: 2; }
 #s01 .s01-start { transition: opacity .35s, transform .35s var(--ease-in); }
 #s01.is-started .s01-start { opacity: 0; transform: scale(.6) translateY(40px); pointer-events: none; }
 #s01 .s01-ethics {
   position: absolute; left: 0; top: 0; width: 900px;
   padding: 26px 40px 30px;
-  opacity: 0; transform: translateY(30px) rotate(-1.5deg) scale(.96);
-  transition: opacity .45s var(--ease-out), transform .6s var(--ease-back);
+  opacity: 0; visibility: hidden; transform: translateY(30px) rotate(-1.5deg) scale(.96);
+  pointer-events: none; z-index: 1; /* пока скрыта — не перекрывает кнопку «Начать эксперимент» */
+  transition: opacity .45s var(--ease-out), transform .6s var(--ease-back), visibility 0s linear .6s;
 }
-#s01.is-started .s01-ethics { opacity: 1; transform: rotate(-1.5deg); }
-#s01 .s01-badge { position: absolute; right: 28px; top: -16px; }
+#s01.is-started .s01-ethics { opacity: 1; visibility: visible; transform: rotate(-1.5deg); transition: opacity .45s var(--ease-out), transform .6s var(--ease-back), visibility 0s; }
+#s01 .s01-badge { position: absolute; right: 28px; top: -16px; font-size: 20px; }
 #s01 .s01-line { margin: 0; font-family: var(--f-body); font-weight: 700; font-size: 40px; line-height: 1.22; opacity: 0; transform: translateX(-20px); transition: opacity .4s, transform .5s var(--ease-out); }
 #s01 .s01-line.is-shown { opacity: 1; transform: none; }
 #s01 .s01-line3 { font-family: var(--f-display); font-weight: 900; font-size: 64px; color: var(--red); text-transform: uppercase; margin-top: 6px; }
 #s01 .s01-line3.is-shown { animation: jelly .7s var(--ease-out); }
 
 #s01 .s01-right { position: absolute; right: 0; top: 0; width: 900px; height: 1080px; }
-#s01 .s01-kazan { position: absolute; right: 250px; bottom: 40px; width: 640px; }
+#s01 .s01-kazan { position: absolute; right: 218px; bottom: 40px; width: 640px; } /* левая ручка казана — не впритык к строке автора */
 #s01 .s01-kazan .art { width: 100%; height: auto; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, .5)); }
 #s01 .s01-kazan.is-bounce .art { animation: jelly .7s var(--ease-out); }
 #s01 .s01-researcher { position: absolute; right: 30px; bottom: 30px; width: 340px; }
@@ -590,8 +592,10 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s02 .s02-icon svg { display: block; width: 100%; height: 100%; overflow: visible; }
 #s02 .s02-icon--plov svg { height: 250px; margin-top: -36px; }
 #s02 .s02-claim {
+  /* все три гипотезы — ровно в две строки, поэтому верхние строки стоят на одной линии */
   flex: 1; display: flex; align-items: center; justify-content: center; text-align: center;
-  font-family: var(--f-display); font-weight: 800; font-size: 40px; line-height: 1.08; letter-spacing: -.01em;
+  align-self: stretch; margin: 0 -8px;
+  font-family: var(--f-display); font-weight: 800; font-size: 38px; line-height: 1.1; letter-spacing: -.01em;
   color: var(--ink); text-wrap: balance; padding: 6px 0;
 }
 #s02 .s02-check { flex: none; pointer-events: none; }
@@ -618,14 +622,14 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s02 .s02-stamp--three { font-size: 23px; line-height: 1.18; padding: 11px 18px 8px; }
 #s02 .s02-fact { align-self: stretch; font-family: var(--f-body); font-weight: 600; font-size: 21px; line-height: 1.3; color: var(--cream-2); opacity: 0; transform: translateY(14px); transition: opacity .45s var(--ease-out), transform .55s var(--ease-out); flex: none; }
 #s02 .s02-fact.is-shown { opacity: 1; transform: none; }
-#s02 .s02-fact .badge { font-size: 17px; padding: 7px 12px 6px; vertical-align: 3px; margin-right: 4px; }
+#s02 .s02-fact .badge { font-size: 20px; padding: 7px 12px 6px; vertical-align: 2px; margin-right: 4px; }
 #s02 .s02-fact b { font-weight: 800; color: var(--cream); }
 #s02 .s02-fact--tree { font-size: 27px; line-height: 1.2; }
 #s02 .s02-fact--tree .badge { vertical-align: 5px; }
 #s02 .s02-fact--unesco { font-size: 20px; line-height: 1.28; }
 
 /* карта (карточка 1) */
-#s02 .s02-mapbox { display: block; width: 100%; height: 262px; flex: none; margin-top: -6px; }
+#s02 .s02-mapbox { display: block; width: 100%; height: 272px; flex: none; margin-top: -10px; } /* ≥ 270: подписи городов не мельче 20px */
 #s02 .s02-map { display: block; width: 100%; height: 100%; overflow: visible; }
 #s02 .s02-uz { fill: var(--cream); fill-opacity: 0; stroke: var(--cream); stroke-width: 3.5; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset .85s var(--ease-out), fill-opacity .6s ease .5s; }
 #s02 .s02-map.is-drawn .s02-uz { stroke-dashoffset: 0; fill-opacity: .1; }
@@ -710,13 +714,21 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 
 /* «вылет» древа за пределы карточки и экрана */
 #s02 .s02-dim { position: absolute; inset: 0; background: var(--bg); opacity: 0; visibility: hidden; transition: opacity .35s var(--ease-out), visibility 0s linear .35s; z-index: 30; pointer-events: none; }
-#s02 .s02-dim.is-on { opacity: .95; visibility: visible; transition: opacity .35s var(--ease-out), visibility 0s; }
+#s02 .s02-dim.is-on { opacity: 1; visibility: visible; transition: opacity .35s var(--ease-out), visibility 0s; }
 #s02 .s02-treefly { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; z-index: 31; pointer-events: none; opacity: 0; visibility: hidden; }
 #s02 .s02-treefly.is-on { opacity: 1; visibility: visible; }
 #s02 .s02-treefly.is-out { opacity: 0; transition: opacity .3s ease !important; }
+/* пока древо на весь экран — клик по нему (или по затемнению) возвращает его в карточку */
+#s02 .s02-dim.is-on, #s02 .s02-treefly.is-on:not(.is-settling) { pointer-events: auto; cursor: pointer; }
 #s02 .s02-treefly-svg, #s02 .s02-treefly-svg svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+/* ветки уходят «за экран», но гаснут до подвала и не перечёркивают его */
+#s02 .s02-treefly-svg {
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 930px, transparent 1012px);
+  mask-image: linear-gradient(180deg, #000 0, #000 930px, transparent 1012px);
+}
 #s02 .s02-treefly .s02-tree.is-grown .te { stroke-dashoffset: 0; transition: stroke-dashoffset .4s var(--ease-out) var(--dl, 0ms); }
 #s02 .s02-treefly .s02-tree.is-grown .tn-in { opacity: 1; transform: none; transition: opacity .2s ease var(--dl, 0ms), transform .45s var(--ease-back) var(--dl, 0ms); }
+#s02 .s02-treefly .s02-tree.is-instant .te, #s02 .s02-treefly .s02-tree.is-instant .tn-in { transition: none; }
 #s02 .s02-treecount {
   position: absolute; right: 110px; top: 92px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
   background: var(--panel); border-radius: 18px; padding: 16px 24px 14px; box-shadow: 0 0 0 3px var(--gold) inset, 0 20px 40px rgba(0, 0, 0, .5);
@@ -724,8 +736,18 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 }
 #s02 .s02-treecount .counter { font-size: 64px; }
 #s02 .s02-tc-top { display: flex; align-items: center; gap: 14px; }
-#s02 .s02-tc-top .badge { font-size: 15px; padding: 6px 10px 5px; }
+#s02 .s02-tc-top .badge { font-size: 20px; padding: 7px 12px 6px; }
 #s02 .s02-treefly.is-settling .s02-treecount { opacity: 0; }
+
+/* панчлайн поверх «вылетевшего» древа: мем-подпись в свободной полосе между третьим рядом и рядом лиц */
+#s02 .s02-quip {
+  position: absolute; left: 0; right: 0; top: 818px; z-index: 32; pointer-events: none;
+  display: flex; justify-content: center;
+  opacity: 0; visibility: hidden; transform: scale(.4) rotate(-6deg);
+  transition: opacity .2s ease, transform .5s var(--ease-back), visibility 0s linear .5s;
+}
+#s02 .s02-quip.is-on { opacity: 1; visibility: visible; transform: none; transition: opacity .2s ease, transform .5s var(--ease-back), visibility 0s; }
+#s02 .s02-quip .sticker { --rot: -1deg; font-size: 46px; line-height: 1.1; text-transform: none; letter-spacing: -.005em; padding: 16px 32px 14px; }
 
 /* ---------- низ: сноска и вывод по ГОСТу ---------- */
 #s02 .s02-bottom { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 874px; height: 110px; z-index: 2; display: flex; align-items: center; gap: 34px; }
@@ -757,7 +779,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s02 .s02-tb-k { border-right: 1.5px solid var(--ink); font-weight: 600; color: var(--ink-2); }
 #s02 .s02-tb-v { font-weight: 800; }
 #s02 .s02-tb .math { font-style: normal; font-size: 26px; margin-left: 6px; }
-#s02 .s02-gost-badge { position: absolute; right: 272px; top: -16px; opacity: 0; transform: scale(.4); transition: opacity .25s, transform .45s var(--ease-back); }
+#s02 .s02-gost-badge { font-size: 20px; position: absolute; right: 272px; top: -16px; opacity: 0; transform: scale(.4); transition: opacity .25s, transform .45s var(--ease-back); }
 #s02 .s02-gost.is-done .s02-gost-badge { opacity: 1; transform: none; }
 #s02 .s02-gost.is-done .s02-sheet { animation: s02-thud .45s var(--ease-out); }
 @keyframes s02-thud { 0% { transform: none; } 35% { transform: translateY(5px) scale(1.01); } 100% { transform: none; } }
@@ -800,6 +822,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s03 .s03-row.is-on .s03-row-no { color: var(--red-2); }
 #s03 .s03-row.is-on .s03-row-txt { opacity: 1; transform: none; }
 #s03 .s03-row[data-n="3"].is-on .s03-row-txt { animation: s03-slam .55s var(--ease-out) both; }
+#s03 .s03-row.is-static .s03-row-txt { animation: none; } /* после ухода со слайда удар не повторяется */
 @keyframes s03-slam { 0% { opacity: 0; transform: scale(1.9) rotate(-4deg); } 60% { opacity: 1; transform: scale(.95); } 100% { opacity: 1; transform: none; } }
 
 #s03 .s03-btnwrap { margin-top: 34px; }
@@ -829,12 +852,13 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s03 .tb-dia { fill: var(--red-3); }
 #s03 .tb-tassel { fill: var(--gold); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
 
-#s03 .s03-kazanwrap { left: 618px; top: 10px; width: 400px; pointer-events: none; }
+/* огромный казан приземляется перед дастарханом, справа от гостя, и затмевает всё на столе */
+#s03 .s03-kazanwrap { left: 540px; top: -40px; width: 560px; z-index: 5; pointer-events: none; }
 #s03 .s03-kazan { opacity: 0; visibility: hidden; transform-origin: 50% 85%; }
 #s03 .s03-kazan .art { filter: drop-shadow(0 16px 20px rgba(0, 0, 0, .5)); }
 #s03 .s03-kazan.is-in { visibility: visible; animation: s03-drop .62s cubic-bezier(.5, 0, .85, .45) both, s03-land .55s var(--ease-out) .62s; }
 #s03 .s03-kazan.is-set { visibility: visible; opacity: 1; }
-@keyframes s03-drop { 0% { opacity: 1; transform: translateY(-900px) rotate(-9deg); } 100% { opacity: 1; transform: translateY(0) rotate(0); } }
+@keyframes s03-drop { 0% { opacity: 1; transform: translateY(-1150px) rotate(-9deg); } 100% { opacity: 1; transform: translateY(0) rotate(0); } }
 @keyframes s03-land { 0% { transform: scale(1.12, .8); } 45% { transform: scale(.95, 1.07); } 100% { transform: none; } }
 
 #s03 .s03-itemswrap { left: 0; top: 0; width: 1020px; height: 744px; pointer-events: none; }
@@ -874,8 +898,11 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 @keyframes s03-thud { 0% { opacity: 0; transform: scale(.2) rotate(-30deg); } 18% { opacity: 1; transform: scale(1.12) rotate(-8deg); } 30% { transform: scale(1) rotate(-8deg); } 80% { opacity: 1; transform: rotate(-8deg); } 100% { opacity: 0; transform: translateY(-30px) rotate(-8deg); } }
 
 /* ---------- финал ---------- */
-#s03 .s03-dim { position: absolute; inset: 0; z-index: 8; background: radial-gradient(ellipse at 45% 55%, rgba(12, 13, 15, .72), rgba(12, 13, 15, .9)); opacity: 0; pointer-events: none; transition: opacity .6s var(--ease-out); }
+#s03 .s03-dim { position: absolute; inset: 0; z-index: 8; background: radial-gradient(ellipse at 45% 55%, rgba(12, 13, 15, .86), rgba(12, 13, 15, .95)); opacity: 0; pointer-events: none; transition: opacity .6s var(--ease-out); }
 #s03.is-final .s03-dim { opacity: 1; }
+/* протокол под финальной карточкой гаснет, чтобы его буквы не торчали из-под неё */
+#s03 .s03-proto { transition: opacity .5s var(--ease-out); }
+#s03.is-final .s03-proto { opacity: .12; }
 #s03 .s03-final { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 300px; height: 660px; z-index: 9; pointer-events: none; }
 #s03 .s03-final-card {
   position: absolute; left: 40px; top: 40px; width: 1250px; padding: 44px 60px 48px;
@@ -920,7 +947,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s04 .s04-head { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 4; }
 
 /* ---------- левая колонка ---------- */
-#s04 .s04-left { position: absolute; left: var(--pad-x); top: 262px; width: 560px; z-index: 3; }
+#s04 .s04-left { position: absolute; left: var(--pad-x); top: 262px; width: 590px; z-index: 3; }
 #s04 .s04-meter { padding: 24px 34px 22px; border-radius: 24px; }
 #s04 .s04-meter-head { display: flex; align-items: center; justify-content: space-between; height: 40px; }
 #s04 .s04-meter-head .counter-label { font-size: 21px; color: var(--cream-3); }
@@ -941,8 +968,9 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s04 .s04-mark { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 4px; margin-left: -2px; background: var(--cream); opacity: .8; }
 #s04 .s04-scale { display: flex; justify-content: space-between; margin-top: 8px; font-family: var(--f-mono); font-weight: 700; font-size: 22px; color: var(--muted); }
 
-#s04 .s04-btns { display: flex; flex-direction: column; align-items: flex-start; gap: 26px; margin-top: 34px; }
-#s04 .s04-btn { font-size: 31px; padding: 22px 36px 20px 24px; }
+/* кнопки одной ширины с прибором: аккуратная колонка, подпись слева */
+#s04 .s04-btns { display: flex; flex-direction: column; align-items: stretch; gap: 26px; margin-top: 34px; }
+#s04 .s04-btn { font-size: 31px; padding: 22px 36px 20px 24px; width: 100%; justify-content: flex-start; }
 #s04 .s04-btn.is-hit { animation: s04-press .3s var(--ease-out); }
 @keyframes s04-press { 0% { transform: translateY(8px) scale(.97); box-shadow: 0 1px 0 var(--c2), 0 6px 14px rgba(0, 0, 0, .4); } 100% { transform: none; } }
 
@@ -1054,7 +1082,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s05 .s05-head { display: flex; flex-direction: column; gap: 14px; }
 #s05 .s05-head .h1 { font-size: 64px; }
 
-#s05 .s05-stage { position: absolute; left: 0; right: 0; top: 268px; display: flex; justify-content: center; }
+#s05 .s05-stage { position: absolute; left: 0; right: 0; top: 248px; display: flex; justify-content: center; }
 #s05 .s05-frame {
   position: relative;
   padding: 34px 120px 40px 90px;
@@ -1094,6 +1122,8 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s05.is-active .s05-t:nth-child(5) { animation-delay: 1.25s; }
 #s05.is-active .s05-t:nth-child(6) { animation-delay: 1.45s; }
 #s05.is-active .s05-t:nth-child(7) { animation-delay: 1.65s; }
+/* формула уже собрана (повторный вход, перемотка по →): без повторной сборки */
+#s05.is-built .s05-t { animation: none; }
 @keyframes s05-term { from { opacity: 0; transform: translateY(-60px) rotate(-6deg); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
 #s05 .s05-frame::after {
   content: ''; position: absolute; inset: 0; border-radius: 6px; pointer-events: none;
@@ -1101,7 +1131,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 }
 #s05.is-built .s05-frame::after { animation: s05-sheen 1.3s ease-out 1; }
 @keyframes s05-sheen { to { background-position: 200% 0; } }
-#s05 .s05-eureka { position: absolute; right: -40px; top: -38px; font-size: 30px; opacity: 0; transform: scale(.3) rotate(20deg); transition: opacity .3s, transform .5s var(--ease-back); }
+#s05 .s05-eureka { position: absolute; right: -40px; top: -8px; font-size: 30px; opacity: 0; transform: scale(.3) rotate(20deg); transition: opacity .3s, transform .5s var(--ease-back); }
 #s05.is-built .s05-eureka { opacity: 1; transform: rotate(var(--rot)); }
 
 /* проводки от членов формулы к карточкам */
@@ -1114,12 +1144,12 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 @keyframes s05-flow { to { stroke-dashoffset: -30; } }
 
 /* карточки */
-#s05 .s05-cards { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 640px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px; }
+#s05 .s05-cards { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 616px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px; }
 #s05 .s05-card {
   --c: var(--cream-3);
   display: flex; align-items: center; gap: 22px;
   background: var(--cream); color: var(--ink);
-  border-radius: 24px; padding: 18px 26px 18px 18px; min-height: 196px;
+  border-radius: 24px; padding: 16px 24px 16px 16px; min-height: 180px;
   box-shadow: 0 0 0 4px var(--c), 0 26px 50px rgba(0, 0, 0, .45);
   opacity: 0; transform: translateY(30px) scale(.94);
   transition: opacity .45s var(--ease-out), transform .6s var(--ease-back);
@@ -1130,10 +1160,10 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s05 .k-coef { --c: var(--gold); }
 #s05 .k-pn { --c: var(--cream-3); }
 #s05 .k-one { --c: var(--red); }
-#s05 .s05-ico { flex: 0 0 168px; height: 160px; display: grid; place-items: center; overflow: hidden; }
-#s05 .s05-ico .art { width: 168px; }
+#s05 .s05-ico { flex: 0 0 150px; height: 150px; display: grid; place-items: center; overflow: hidden; }
+#s05 .s05-ico .art { width: 150px; }
 #s05 .s05-ico-one { align-items: start; }
-#s05 .s05-ico-one .art { width: 150px; margin-top: 4px; }
+#s05 .s05-ico-one .art { width: 136px; margin-top: 4px; }
 #s05 .s05-txt { min-width: 0; }
 #s05 .s05-sym { font-size: 64px; line-height: 1; margin-bottom: 8px; }
 #s05 .k-coef .s05-sym { color: var(--gold-2); }
@@ -1142,7 +1172,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 
 /* мораль */
 #s05 .s05-foot {
-  position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 112px;
+  position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 106px;
   display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
   opacity: 0; transform: translateY(24px); transition: opacity .5s, transform .6s var(--ease-back);
 }
@@ -1172,9 +1202,9 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s06 .s06-frac { display: inline-flex; flex-direction: column; align-items: center; line-height: 1; font-size: .78em; vertical-align: middle; }
 #s06 .s06-frac span:first-child { border-bottom: 3px solid currentColor; padding: 0 .12em .06em; }
 #s06 .s06-frac span:last-child { padding-top: .06em; }
-#s06 .s06-frac--sm { font-size: .8em; }
+#s06 .s06-frac--sm { font-size: .9em; }
 #s06 .s06-frac--sm span:first-child { border-bottom-width: 2px; }
-#s06 .s06-proof { font-family: var(--f-serif); font-size: 25px; line-height: 1.5; color: var(--ink-2); }
+#s06 .s06-proof { font-family: var(--f-serif); font-size: 28px; line-height: 1.45; color: var(--ink-2); }
 
 #s06 .s06-readout { display: flex; align-items: center; gap: 18px; background: var(--panel); border-radius: 22px; padding: 14px 24px 14px 10px; box-shadow: 0 0 0 1px var(--line) inset; }
 #s06 .s06-plate { flex: 0 0 190px; height: 150px; display: grid; place-items: center; overflow: hidden; }
@@ -1193,25 +1223,36 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s06 .s06-verdict { position: absolute; left: 236px; top: 520px; width: 1020px; height: 330px; pointer-events: none; }
 #s06 .s06-verdict .stamp { position: absolute; opacity: 0; }
 #s06 .s06-st1 { left: 40px; top: 0; font-size: 54px; background: rgba(23, 24, 27, .8); }
-#s06 .s06-st2 { left: 120px; top: 150px; font-size: 40px; background: rgba(23, 24, 27, .85); }
+#s06 .s06-st2 { left: 134px; top: 150px; font-size: 40px; background: rgba(23, 24, 27, .85); }
 #s06 .s06-verdict .stamp.is-slam { opacity: 1; }
-#s06 .s06-guest { position: absolute; left: 560px; top: 905px; width: 250px; transform: translateY(240px) rotate(8deg); transition: transform .7s var(--ease-back); pointer-events: none; z-index: 3; }
-#s06 .s06-guest.is-on { transform: translateY(0) rotate(-4deg); }
+/* гость: круглый стикер-реакция слева от красной печати (внутри графика, над осью x) */
+#s06 .s06-guest {
+  position: absolute; left: 221px; top: 681px; width: 150px; height: 150px; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, var(--cream) 0 58%, var(--cream-2) 100%);
+  box-shadow: 0 0 0 6px var(--bg), 0 0 0 11px var(--red), 0 18px 34px rgba(0, 0, 0, .5);
+  opacity: 0; transform: scale(.2) rotate(-40deg);
+  transition: opacity .25s, transform .6s var(--ease-back);
+  pointer-events: none; z-index: 3;
+}
+#s06 .s06-guest.is-on { opacity: 1; transform: rotate(-8deg); }
+#s06 .s06-guest .art { display: block; width: 100%; height: 100%; }
+#s06 .s06-guest.is-on .art { animation: s06-panic .16s ease-in-out .6s 6 alternate; }
+@keyframes s06-panic { from { transform: translateX(-3px) rotate(-2deg); } to { transform: translateX(3px) rotate(2deg); } }
 
 /* 07-theorem2.css */
 /* Слайд 7. Теорема 2: тарелка сходится, съеденное растёт. График слева, весы с ляганом и гость справа, финал — на весь экран */
-#s07 .s07-head { position: absolute; left: var(--pad-x); top: 92px; display: flex; flex-direction: column; gap: 10px; }
+#s07 .s07-head { position: absolute; left: var(--pad-x); top: var(--pad-top); display: flex; flex-direction: column; gap: 14px; }
 #s07 .s07-title { font-size: 76px; white-space: nowrap; }
 
 /* ---------- график ---------- */
-#s07 .s07-chartbox { position: absolute; left: 60px; top: 226px; width: 1080px; height: 630px; }
+#s07 .s07-chartbox { position: absolute; left: var(--pad-x); top: 262px; width: 1030px; height: 598px; }
 #s07 .s07-chart .plot { display: block; }
 #s07 .plot .pg-plate .pg-path { stroke-width: 8; }
 #s07 .plot .pg-eaten .pg-path { stroke-width: 8; }
 #s07 .plot .pg-lim .pg-hlabel { font-size: 32px; }
 #s07 .plot .pg-label { font-size: 32px; }
 
-#s07 .s07-legend { position: absolute; left: 150px; top: 46px; display: flex; flex-direction: column; gap: 6px; }
+#s07 .s07-legend { position: absolute; left: 160px; top: 46px; display: flex; flex-direction: column; gap: 6px; }
 #s07 .s07-leg { display: flex; align-items: baseline; gap: 14px; font-family: var(--f-body); font-weight: 700; font-size: 30px; color: var(--cream); line-height: 1.25; }
 #s07 .s07-leg i { width: 46px; height: 8px; border-radius: 4px; align-self: center; flex: none; }
 #s07 .s07-leg--plate i { background: var(--blue); box-shadow: 0 0 14px rgba(82, 182, 255, .6); }
@@ -1432,20 +1473,30 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s08.is-critical .s08-heat::after { animation: s08-blink .5s steps(1, end) infinite; }
 @keyframes s08-blink { 0% { opacity: 1; } 50% { opacity: 0; } }
 
-/* ---------- заголовок ---------- */
-#s08 .s08-head { position: absolute; left: var(--pad-x); top: 96px; z-index: 4; }
-#s08 .s08-title {
-  display: inline-block; padding: 8px 22px 12px; margin-left: -22px; border-radius: 18px;
+/* ---------- заголовок: на стандартном месте (надзаголовок y=104, заголовок y=147); подложка — когда гора плова дорастает до него ---------- */
+#s08 .s08-head {
+  position: absolute; left: calc(var(--pad-x) - 22px); top: calc(var(--pad-top) - 10px); z-index: 4;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+  padding: 10px 22px 12px; border-radius: 18px;
   background: rgba(23, 24, 27, 0); transition: background .5s, box-shadow .5s;
 }
-#s08.is-flood .s08-title { background: rgba(23, 24, 27, .94); box-shadow: 0 12px 34px rgba(0, 0, 0, .45); }
+#s08.is-flood .s08-head { background: rgba(23, 24, 27, .94); box-shadow: 0 12px 34px rgba(0, 0, 0, .45); }
+
+/* k = 2: гора плова закрывает и полосы «беамера» — подкладываем под шапку и подвал тёмные полосы, чтобы их было видно */
+#s08::before, #s08::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 64px; z-index: 15; pointer-events: none;
+  background: rgba(12, 13, 15, .78); opacity: 0; transition: opacity .35s;
+}
+#s08::before { top: 0; box-shadow: 0 6px 18px rgba(12, 13, 15, .45); }
+#s08::after { bottom: 0; height: 60px; box-shadow: 0 -6px 18px rgba(12, 13, 15, .45); }
+#s08.is-critical::before, #s08.is-critical::after { opacity: 1; }
 
 /* ---------- левая панель ---------- */
-#s08 .s08-panelwrap { position: absolute; left: var(--pad-x); top: 206px; width: 900px; height: 780px; z-index: 3; }
+#s08 .s08-panelwrap { position: absolute; left: var(--pad-x); top: 262px; width: 900px; height: 728px; z-index: 3; }
 #s08 .s08-panel {
   position: relative; width: 100%; height: 100%;
   display: flex; flex-direction: column;
-  padding: 18px 44px 28px;
+  padding: 14px 44px 24px;
   border-radius: 28px;
   background: linear-gradient(180deg, var(--panel), var(--bg-2));
   box-shadow: 0 0 0 2px var(--line) inset, 0 2px 0 rgba(246, 187, 42, .25) inset, 0 34px 80px rgba(0, 0, 0, .6);
@@ -1455,14 +1506,14 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 /* гигантская формула */
 #s08 .s08-formula {
   display: flex; align-items: baseline; gap: 0;
-  font-size: 200px; line-height: 1.02; color: var(--gold);
-  height: 222px; letter-spacing: 0;
+  font-size: 188px; line-height: 1.02; color: var(--gold);
+  height: 204px; letter-spacing: 0;
 }
 #s08 .s08-kbox { display: inline-block; white-space: nowrap; }
 #s08 .s08-k { font-size: 1em; text-shadow: 0 0 46px rgba(246, 187, 42, .35); }
 #s08 .s08-formula .s08-ksub {
-  font-size: 54px; font-style: italic; color: var(--cream-2);
-  vertical-align: -38px; margin-left: 6px; letter-spacing: .01em;
+  font-size: 52px; font-style: italic; color: var(--cream-2);
+  vertical-align: -34px; margin-left: 6px; letter-spacing: .01em;
 }
 #s08 .s08-eq { color: var(--cream-3); font-size: .78em; margin: 0 .16em 0 .14em; }
 #s08 .s08-kval {
@@ -1484,13 +1535,13 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 }
 #s08 .s08-range::-webkit-slider-thumb { width: 56px; height: 56px; margin-top: -20px; transition: border-color .3s, transform .15s; }
 #s08.is-critical .s08-range::-webkit-slider-thumb { border-color: var(--red); }
-#s08 .s08-ticks { position: relative; height: 36px; font-family: var(--f-mono); font-weight: 700; font-size: 26px; color: var(--muted); }
+#s08 .s08-ticks { position: relative; height: 32px; font-family: var(--f-mono); font-weight: 700; font-size: 26px; color: var(--muted); }
 #s08 .s08-ticks span { position: absolute; top: 0; left: calc(28px + (100% - 56px) * var(--p)); transform: translateX(-50%); }
 
 /* модель (математика) */
-#s08 .s08-model { margin-top: 18px; padding: 24px 32px 22px; }
+#s08 .s08-model { margin-top: 14px; padding: 20px 32px 18px; }
 #s08 .s08-badge-m { position: absolute; right: 28px; top: -16px; }
-#s08 .s08-eqno { position: absolute; right: 32px; top: 36px; font-size: 38px; color: var(--ink-2); }
+#s08 .s08-eqno { position: absolute; right: 32px; top: 32px; font-size: 38px; color: var(--ink-2); }
 #s08 .s08-rec { font-size: 52px; line-height: 1.1; color: var(--ink); }
 #s08 .s08-kn { font-weight: 400; color: var(--red-2); }
 #s08 .s08-adds { display: flex; align-items: center; gap: 14px; margin-top: 14px; flex-wrap: nowrap; }
@@ -1521,11 +1572,11 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s08 .s08-readout { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
 #s08 .s08-ro-label { font-family: var(--f-body); font-weight: 700; font-size: 30px; color: var(--cream-2); }
 #s08 .s08-ro-val { display: flex; align-items: baseline; gap: 16px; margin-top: 4px; white-space: nowrap; }
-#s08 .s08-ro-num { font-family: var(--f-mono); font-weight: 800; font-size: 104px; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; letter-spacing: -.02em; transition: color .3s; }
+#s08 .s08-ro-num { font-family: var(--f-mono); font-weight: 800; font-size: 100px; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; letter-spacing: -.02em; transition: color .3s; }
 #s08.is-critical .s08-ro-num { color: var(--red); }
 #s08 .s08-ro-unit { font-family: var(--f-body); font-weight: 800; font-size: 42px; color: var(--cream); }
 #s08 .s08-spark { width: 290px; flex: none; }
-#s08 .s08-bars { height: 128px; display: flex; align-items: flex-end; gap: 6px; border-bottom: 3px solid var(--cream-3); padding: 0 2px; }
+#s08 .s08-bars { height: 108px; display: flex; align-items: flex-end; gap: 6px; border-bottom: 3px solid var(--cream-3); padding: 0 2px; }
 #s08 .s08-bars i { flex: 1; min-height: 4px; border-radius: 5px 5px 0 0; background: var(--gold); transition: background .3s; }
 #s08 .s08-bars i.is-hot { background: var(--red); }
 #s08 .s08-spark-cap { margin-top: 8px; font-family: var(--f-body); font-size: 20px; font-weight: 600; color: var(--muted); white-space: nowrap; }
@@ -1543,7 +1594,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 
 /* ---------- критический уровень ---------- */
 #s08 .s08-alert {
-  position: absolute; left: 1050px; width: 760px; top: 250px; z-index: 6;
+  position: absolute; left: 1050px; width: 760px; top: 292px; z-index: 6;
   display: flex; justify-content: center; pointer-events: none;
   opacity: 0; transform: scale(.5) rotate(-6deg);
   transition: opacity .25s, transform .45s var(--ease-back);
@@ -1568,7 +1619,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s08:not(.is-critical) .s08-reset { animation: none; }
 
 #s08 .s08-sos {
-  position: absolute; left: 1050px; width: 760px; top: 496px; z-index: 7;
+  position: absolute; left: 1050px; width: 760px; top: 528px; z-index: 7;
   display: flex; justify-content: center;
   opacity: 0; transform: translateY(30px) scale(.9); pointer-events: none;
   transition: opacity .3s .25s, transform .5s var(--ease-back) .25s;
@@ -1600,7 +1651,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s08.is-const .s08-tag { opacity: 1; transform: translate(-50%, 0) rotate(-3deg); }
 #s08.is-const .s08-gma--ru .s08-tag { transform: translate(-50%, 0) rotate(3deg); }
 
-#s08 .s08-const { position: absolute; left: 1050px; width: 760px; top: 262px; z-index: 7; display: flex; justify-content: center; pointer-events: none; transition: opacity .3s; }
+#s08 .s08-const { position: absolute; left: 1050px; width: 760px; top: 292px; z-index: 7; display: flex; justify-content: center; pointer-events: none; transition: opacity .3s; }
 #s08.is-critical .s08-const, #s08.is-critical .s08-tag { opacity: 0; }
 #s08 .s08-stamp { font-size: 44px; line-height: 1.08; padding: 18px 34px 14px; background: rgba(23, 24, 27, .9); opacity: 0; }
 #s08 .s08-badge-c { position: absolute; right: 70px; top: -26px; opacity: 0; transform: scale(.4); transition: opacity .3s, transform .45s var(--ease-back); }
@@ -1634,11 +1685,11 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s09 .s09-title { font-size: 64px; line-height: 1.04; white-space: nowrap; }
 
 /* ---------- индикатор «Вероятность побега» (игровой HUD) ---------- */
-#s09 .s09-hudwrap { position: absolute; right: var(--pad-x); top: 236px; width: 456px; z-index: 6; }
+#s09 .s09-hudwrap { position: absolute; right: var(--pad-x); top: 236px; width: 470px; z-index: 6; }
 #s09 .s09-hud {
   position: relative;
-  display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; column-gap: 22px; row-gap: 12px; align-items: center;
-  background: var(--panel); border-radius: 22px; padding: 16px 22px 18px;
+  display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; column-gap: 18px; row-gap: 12px; align-items: center;
+  background: var(--panel); border-radius: 22px; padding: 30px 28px 18px 22px;
   box-shadow: 0 0 0 2px var(--line) inset, 0 20px 40px rgba(0, 0, 0, .4);
   --lvl: var(--gold);
   transition: box-shadow .4s;
@@ -1649,11 +1700,11 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s09 .s09-hud.is-zero { box-shadow: 0 0 0 3px var(--red) inset, 0 0 40px rgba(232, 67, 45, .35), 0 20px 40px rgba(0, 0, 0, .4); }
 @keyframes s09-hit { 0%, 100% { transform: none; } 20% { transform: translate(-8px, 3px) rotate(-1deg); } 45% { transform: translate(7px, -2px) rotate(1deg); } 70% { transform: translate(-4px, 1px); } }
 #s09 .s09-hud-row { display: contents; }
-#s09 .s09-hud-label { grid-column: 1; grid-row: 1; font-family: var(--f-body); font-weight: 800; font-size: 19px; letter-spacing: .12em; text-transform: uppercase; color: var(--cream-2); white-space: nowrap; }
+#s09 .s09-hud-label { grid-column: 1; grid-row: 1; font-family: var(--f-body); font-weight: 800; font-size: 20px; letter-spacing: .08em; text-transform: uppercase; color: var(--cream-2); white-space: nowrap; }
 #s09 .s09-hud-val {
   grid-column: 2; grid-row: 1 / span 2;
   font-family: var(--f-mono); font-weight: 800; font-size: 56px; line-height: 1; color: var(--lvl);
-  font-variant-numeric: tabular-nums; min-width: 4.1ch; text-align: right;
+  font-variant-numeric: tabular-nums; min-width: 4ch; text-align: right;
   text-shadow: 0 0 24px color-mix(in srgb, var(--lvl) 35%, transparent);
   transition: color .4s;
 }
@@ -1662,12 +1713,13 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s09 .s09-hud-bar i.is-off { background: var(--line); opacity: .45; transform: scaleY(.7); }
 #s09 .s09-hud.lvl-low .s09-hud-bar i:not(.is-off) { animation: s09-blink .8s steps(2, jump-none) infinite; }
 @keyframes s09-blink { 50% { opacity: .35; } }
+#s09 .badge { font-size: 20px; }   /* core: 19px; на проекторе — не меньше 20 */
 #s09 .s09-hud-badge { position: absolute; right: 22px; top: -17px; }
 
 /* кнопка «Подвести итог» — появляется после трёх попыток */
-#s09 .s09-sumwrap { position: absolute; right: 588px; top: 262px; z-index: 7; visibility: hidden; opacity: 0; transform: translateY(-14px) scale(.85); transition: opacity .35s, transform .45s var(--ease-back), visibility 0s linear .45s; }
+#s09 .s09-sumwrap { position: absolute; right: 604px; top: 262px; z-index: 7; visibility: hidden; opacity: 0; transform: translateY(-14px) scale(.85); transition: opacity .35s, transform .45s var(--ease-back), visibility 0s linear .45s; }
 #s09 .s09-sumwrap.is-shown { visibility: visible; opacity: 1; transform: none; transition: opacity .35s, transform .45s var(--ease-back), visibility 0s; }
-#s09 .s09-sum { font-size: 23px; padding: 15px 24px 13px; gap: 12px; }
+#s09 .s09-sum { font-size: 22px; padding: 15px 22px 13px; gap: 10px; }
 #s09 .s09-arr { width: 30px; height: 20px; }
 
 /* ---------- сцена ---------- */
@@ -1690,7 +1742,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 
 /* гость: обёртка с data-in → .s09-guest (ходьба) → .s09-guest-bob (шаги) */
 #s09 .s09-guestwrap { position: absolute; left: 1196px; top: 360px; width: 252px; z-index: 2; }
-#s09 .s09-guest { --gx: 0px; transform: translateX(var(--gx)); transition: transform .8s cubic-bezier(.45, .05, .35, 1); }
+#s09 .s09-guest { --gx: 0px; transform: translateX(var(--gx)); transition: transform .55s cubic-bezier(.45, .05, .35, 1); }
 #s09 .s09-guest-bob { transform-origin: 50% 100%; }
 #s09 .s09-guest-bob.is-walking { animation: s09-walk .32s ease-in-out infinite alternate; }
 #s09 .s09-guest-bob.is-happy { animation: jelly .6s var(--ease-out); }
@@ -1721,7 +1773,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s09 .s09-clock .s09-gag { transform: scale(.2) rotate(-30deg); }
 #s09 .s09-clock.is-in .s09-gag { opacity: 1; transform: none; transition: opacity .2s, transform .5s var(--ease-back); }
 #s09 .s09-clock-in { transform-origin: 50% 70%; }
-#s09 .s09-clock.is-ringing .s09-clock-in { animation: s09-ring .07s linear 20 alternate; }
+#s09 .s09-clock.is-ringing .s09-clock-in { animation: s09-ring .07s linear 10 alternate; }
 #s09 .s09-ringlines { opacity: 0; transition: opacity .15s; }
 #s09 .s09-clock.is-ringing .s09-ringlines { opacity: 1; }
 @keyframes s09-ring { from { transform: rotate(-9deg) translateY(-3px); } to { transform: rotate(9deg) translateY(0); } }
@@ -1761,8 +1813,9 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s09 .s09-bub-tail path { fill: var(--cream); stroke: var(--ink); stroke-width: 5px; stroke-linejoin: round; paint-order: stroke; }
 
 /* печать «Попытка не удалась» */
-#s09 .s09-stampwrap { position: absolute; left: 560px; top: 398px; width: 720px; z-index: 7; display: flex; justify-content: center; }
-#s09 .s09-stamp { font-size: 70px; line-height: 1.02; padding: 18px 40px 14px; border-width: 10px; opacity: 0; background: rgba(23, 24, 27, .7); box-shadow: 0 20px 50px rgba(0, 0, 0, .45); }
+/* ложится на выбранную кнопку-отговорку: центр задаёт JS (--sx/--sy), над кнопками (z 8), под итогом (z 9) */
+#s09 .s09-stampwrap { position: absolute; left: var(--sx, 960px); top: var(--sy, 900px); z-index: 9; transform: translate(-50%, -50%); pointer-events: none; }
+#s09 .s09-stamp { font-size: 44px; line-height: 1.02; padding: 12px 26px 8px; border-width: 8px; opacity: 0; background: rgba(23, 24, 27, .86); box-shadow: 0 16px 40px rgba(0, 0, 0, .5); }
 #s09 .s09-stamp.is-slam { animation: stamp-slam .5s var(--ease-out) both; }
 #s09 .s09-stamp.is-slam.is-off { animation: s09-stampout .45s var(--ease-in) both; }
 @keyframes s09-stampout { from { opacity: 1; transform: rotate(var(--rot)); } to { opacity: 0; transform: scale(.85) rotate(var(--rot)); } }
@@ -1811,7 +1864,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
   position: absolute; right: -9px; bottom: -7px; width: 32px; height: 32px; border-radius: 50%;
   display: grid; place-items: center;
   background: var(--gold); color: var(--ink); box-shadow: 0 0 0 3px var(--cream);
-  font-family: var(--f-mono); font-weight: 800; font-size: 18px;
+  font-family: var(--f-mono); font-weight: 800; font-size: 20px;
   transition: background .3s, box-shadow .3s;
 }
 #s09 .s09-opt.is-chosen .s09-letter .key { box-shadow: 0 0 0 3px var(--gold); background: var(--cream); }
@@ -1890,7 +1943,11 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
   transition: background .4s, outline-color .4s, box-shadow .4s;
 }
 #s10 .s10-row:focus-visible { outline: 4px solid var(--cream); }
-#s10 .s10-row--3 { min-height: 196px; padding-top: 16px; padding-bottom: 16px; }
+/* до раскрытия строка 3 такой же высоты, как 1 и 2 (невидимый текст просто «висит» внутри); при раскрытии растёт до своего размера */
+#s10 .s10-row--3 { height: 146px; padding-top: 16px; padding-bottom: 16px; interpolate-size: allow-keywords; transition: background .4s, outline-color .4s, box-shadow .4s, height .45s var(--ease-out); }
+#s10.s10-c3 .s10-row--3 { height: auto; min-height: 196px; }
+#s10 .s10-row--3 .s10-body { height: 0; }                 /* пока скрыт — не раздувает сетку: номер и плашка по центру строки */
+#s10.s10-c3 .s10-row--3 .s10-body { height: auto; }
 #s10 .s10-num {
   width: 100px; height: 100px; border-radius: 50%;
   display: grid; place-items: center;
@@ -1902,7 +1959,8 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s10 .s10-text { font-family: var(--f-display); font-weight: 800; font-size: 60px; line-height: 1.02; letter-spacing: -.01em; color: var(--cream); }
 #s10 .s10-row--3 .s10-text { font-size: 46px; white-space: nowrap; }
 #s10 .s10-row--3 .s10-text em { display: block; font-style: normal; font-weight: 900; font-size: 74px; color: var(--red); margin-top: 4px; letter-spacing: -.02em; }
-#s10 .s10-formula { font-size: 32px; color: var(--cream-3); }
+#s10 .s10-formula { font-size: 35px; color: var(--cream-3); }   /* индексы (.58em) ≥ 20px */
+#s10 .badge { font-size: 20px; }                                  /* core: 19px; на проекторе — не меньше 20 */
 #s10 .s10-arr { font-family: var(--f-body); font-style: normal; font-weight: 600; }
 #s10 .s10-formula sub .s10-arr { padding: 0 .08em; }
 #s10 .s10-mini { display: block; width: 196px; height: 116px; }
@@ -1918,7 +1976,9 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s10 .s10-redact::after { content: 'засекречено до защиты'; font-family: var(--f-body); font-weight: 800; font-size: 20px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); background: var(--bg); padding: 6px 14px; border-radius: 6px; }
 
 /* мини-графики */
-#s10 .s10-mini .s10-ax { fill: none; stroke: var(--muted); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+#s10 .s10-mini .s10-ax { fill: none; stroke: var(--muted); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity .3s .2s; }
+/* оси появляются вместе с выводом — до раскрытия пустые «графики» выглядели бы как незагрузившиеся */
+#s10.s10-c1 .s10-row--1 .s10-ax, #s10.s10-c2 .s10-row--2 .s10-ax, #s10.s10-c3 .s10-row--3 .s10-ax { opacity: 1; }
 #s10 .s10-mini .s10-asym { fill: none; stroke: var(--gold); stroke-width: 3; stroke-dasharray: 8 8; opacity: 0; transition: opacity .4s .3s; }
 #s10 .s10-mini .s10-ln { fill: none; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 #s10 .s10-mini .s10-draw { stroke-dasharray: 1 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.1s var(--ease-out) calc(.3s + var(--i, 0) * 60ms); }
@@ -2029,7 +2089,12 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
   padding: 44px 74px 54px; border-radius: 80px;
   box-shadow: 0 0 0 7px var(--bg), 0 0 0 11px var(--gold), 0 30px 60px rgba(0, 0, 0, .5);
 }
-#s10 .s10-qtail { position: absolute; left: 8px; bottom: -146px; width: 200px; height: 150px; fill: var(--cream); overflow: visible; }
+#s10 .s10-qtail { position: absolute; left: 8px; bottom: -146px; width: 200px; height: 150px; overflow: visible; }
+/* хвост с той же обводкой, что у облака: 7px фон + 4px золото (две «толстые» линии под заливкой) */
+#s10 .s10-qt-o, #s10 .s10-qt-m { fill: none; stroke-linejoin: round; stroke-linecap: butt; }
+#s10 .s10-qt-o { stroke: var(--gold); stroke-width: 22px; }
+#s10 .s10-qt-m { stroke: var(--bg); stroke-width: 14px; }
+#s10 .s10-qt-f { fill: var(--cream); stroke: none; }
 
 #s10 .s10-uz { position: absolute; left: 500px; width: 1032px; top: 392px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transform: translateY(20px); transition: opacity .4s .9s, transform .5s var(--ease-out) .9s; }
 #s10.s10-sc-c .s10-uz { opacity: 1; transform: none; }
@@ -2050,7 +2115,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s10 .s10-normal-bub { font-family: var(--f-display); font-weight: 800; font-size: 58px; padding: 22px 40px 26px; max-width: none; white-space: nowrap; }
 #s10 .s10-strike { position: absolute; left: 22px; right: 22px; top: 50%; height: 10px; margin-top: -5px; border-radius: 5px; background: var(--red); transform: scaleX(0) rotate(-3deg); transform-origin: 0 50%; transition: transform .3s var(--ease-out); }
 #s10.s10-sc-d .s10-strike, #s10.s10-sc-e .s10-strike { transform: scaleX(1) rotate(-3deg); }
-#s10 .s10-andall { position: absolute; left: 378px; top: 470px; z-index: 4; font-size: 58px; transform: rotate(-8deg) scale(.5); opacity: 0; transition: opacity .3s, transform .4s var(--ease-back); }
+#s10 .s10-andall { position: absolute; left: 362px; top: 556px; z-index: 4; font-size: 58px; transform: rotate(-8deg) scale(.5); opacity: 0; transition: opacity .3s, transform .4s var(--ease-back); }
 #s10.s10-short.s10-sc-c .s10-andall { opacity: 1; transform: rotate(-8deg); transition-delay: 1.1s; }
 
 /* панель ответа */
@@ -2066,8 +2131,8 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 #s10 .s10-rahmat { font-family: var(--f-display); font-weight: 900; font-size: 66px; line-height: 1.05; color: var(--gold); letter-spacing: -.01em; }
 #s10 .s10-rahmat-tr { font-family: var(--f-body); font-weight: 700; font-size: 31px; color: var(--cream-2); margin-top: 6px; }
 #s10 .s10-panel-badge { position: absolute; right: 30px; top: 126px; }
-#s10 .s10-view { position: absolute; left: 0; right: 0; top: 168px; bottom: 0; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 64px, #000 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 64px, #000 100%); }
-#s10 .s10-list { position: absolute; left: 0; right: 0; top: 0; margin: 0; padding: 30px 60px 34px 30px; list-style: none; display: flex; flex-direction: column; gap: 14px; transition: transform .5s var(--ease-out); will-change: transform; }
+#s10 .s10-view { position: absolute; left: 0; right: 0; top: 168px; bottom: 0; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 64px, #000 calc(100% - 60px), transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 64px, #000 calc(100% - 60px), transparent 100%); }
+#s10 .s10-list { position: absolute; left: 0; right: 0; top: 0; margin: 0; padding: 30px 60px 64px 30px; list-style: none; display: flex; flex-direction: column; gap: 14px; transition: transform .5s var(--ease-out); will-change: transform; }
 #s10 .s10-item {
   display: grid; grid-template-columns: 58px 1fr; align-items: start; gap: 14px;
   background: var(--cream); color: var(--ink); border-radius: 18px; padding: 14px 22px 16px 16px;
@@ -2078,7 +2143,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 @keyframes s10-item-in { from { opacity: 0; transform: translateY(46px) scale(.9) rotate(var(--r, 0deg)); } to { opacity: 1; transform: rotate(var(--r, 0deg)); } }
 #s10 .s10-item-n { font-family: var(--f-mono); font-weight: 800; font-size: 30px; line-height: 1; color: var(--ink); background: var(--gold); border-radius: 12px; padding: 9px 0 8px; text-align: center; margin-top: 2px; }
 #s10 .s10-item-b { font-family: var(--f-body); font-weight: 700; font-size: 32px; line-height: 1.2; }
-#s10 .s10-tag { display: inline-block; vertical-align: 4px; margin-right: 6px; font-weight: 800; font-size: 18px; letter-spacing: .12em; text-transform: uppercase; padding: 5px 11px 4px; border-radius: 99px; line-height: 1.1; }
+#s10 .s10-tag { display: inline-block; vertical-align: 4px; margin-right: 6px; font-weight: 800; font-size: 20px; letter-spacing: .1em; text-transform: uppercase; padding: 5px 11px 4px; border-radius: 99px; line-height: 1.1; }
 #s10 .s10-tag--fam { background: var(--gold); color: var(--ink); }
 #s10 .s10-tag--kin { background: var(--cobalt); color: var(--cream); }
 #s10 .s10-tag--nbr { background: var(--turq); color: var(--ink); }
@@ -2102,7 +2167,9 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 /* =====================================================================
    СЦЕНА E — финал
    ===================================================================== */
-#s10 .s10-e { z-index: 10; background: radial-gradient(1400px 900px at 50% 45%, color-mix(in srgb, var(--bg) 80%, transparent), color-mix(in srgb, var(--bg) 96%, transparent)); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); }
+#s10 .s10-e { z-index: 10; background: radial-gradient(1400px 900px at 50% 45%, color-mix(in srgb, var(--bg) 88%, transparent), color-mix(in srgb, var(--bg) 97%, transparent)); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+/* актёры сцены D уходят: за финалом остаётся только размытый бесконечный список («ответ продолжается») */
+#s10.s10-sc-e :is(.s10-guest, .s10-res, .s10-q, .s10-count, .s10-go-e-wrap, .s10-spot) { opacity: 0; transition: opacity .35s ease; }
 #s10 .s10-e-cap { position: absolute; left: 90px; right: 90px; top: 84px; text-align: center; }
 #s10 .s10-e-l1 { font-family: var(--f-display); font-weight: 900; font-size: 70px; line-height: 1; letter-spacing: -.015em; color: var(--cream); white-space: nowrap; }
 #s10 .s10-e-l2 { font-family: var(--f-display); font-weight: 800; font-size: 50px; line-height: 1.16; color: var(--cream-2); margin: 22px auto 0; max-width: 1500px; text-wrap: balance; }
@@ -2114,6 +2181,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 
 #s10 .s10-e-thanks { position: absolute; left: 470px; right: 470px; top: 452px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 #s10 .s10-e-thanks span { display: block; font-family: var(--f-display); font-weight: 900; font-size: 144px; line-height: 1.04; letter-spacing: -.02em; white-space: nowrap; opacity: 0; }
+#s10 .s10-e-thanks.is-bump { animation: jelly .6s var(--ease-out); }
 #s10 .s10-e-rahmat { color: var(--gold); text-shadow: 0 10px 0 var(--gold-3), 0 26px 40px rgba(0, 0, 0, .5); }
 #s10 .s10-e-spasibo { color: var(--red); text-shadow: 0 10px 0 var(--red-3), 0 26px 40px rgba(0, 0, 0, .5); }
 #s10.s10-sc-e .s10-e-rahmat { animation: s10-boom .8s var(--ease-back) 1.2s both; }
@@ -2164,7 +2232,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
     <div class="s01-action">
       <div class="s01-startwrap" data-in="pop" style="--d:700"><button type="button" class="btn btn--xl btn--pulse s01-start">Начать эксперимент</button></div>
       <div class="card s01-ethics" aria-live="polite">
-        <span class="badge badge--joke s01-badge">Методология</span>
+        <span class="badge badge--joke s01-badge">Шуточная методология</span>
         <p class="s01-line s01-line1">Исследование проводилось на людях.</p>
         <p class="s01-line s01-line2">Точнее, на одном человеке.</p>
         <p class="s01-line s01-line3">На мне.</p>
@@ -2189,7 +2257,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 
   <aside class="notes">
     <p><span class="cue">0:00</span> <span class="say">Добрый день! Меня зовут Эркинбой. Я лингвист из Узбекистана, с 2014 года живу в Петербурге. И все эти годы изучаю одно явление: почему из узбекского дома невозможно уйти голодным.</span></p>
-    <p><span class="cue">НАЖАТЬ</span> «Начать эксперимент» (или →). Появятся три строки по очереди.</p>
+    <p><span class="cue">НАЖАТЬ</span> «Начать эксперимент» (или →). Три строки появятся по очереди (≈1,5 с); если нажать → раньше, все строки появятся сразу.</p>
     <p><span class="cue">0:15</span> <span class="say">Сразу о методологии. Исследование проводилось на людях. Точнее, на одном человеке. На мне.</span> <span class="tip">Пауза на смех, затем →.</span></p>
   </aside>
 </section>
@@ -2219,7 +2287,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
             <span class="s02-bhead"><span class="s02-bnum">Результат №&nbsp;1</span><span class="s02-bclaim">Тема: Ташкент</span></span>
             <span class="s02-stampzone"><span class="stamp s02-stamp" style="--rot:-7deg">Опровергнуто</span></span>
             <span class="s02-mapbox"></span>
-            <span class="s02-fact s02-fact--map"><span class="badge badge--fact">Факт</span> Узбекистан&nbsp;— это 12&nbsp;областей, Республика Каракалпакстан и&nbsp;город Ташкент</span>
+            <span class="s02-fact s02-fact--map"><span class="badge badge--fact">Факт</span> Узбекистан&nbsp;— это 12&nbsp;областей, Республика Каракалпакстан и&nbsp;город Ташкент.</span>
           </span>
         </span>
       </button>
@@ -2296,15 +2364,16 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
     <div class="s02-treefly-svg"></div>
     <div class="s02-treecount"><span class="s02-tc-top"><span class="badge badge--joke">Шутка</span><span class="counter-label">Размер выборки</span></span><span class="counter s02-treecount-v">n = 1</span></div>
   </div>
+  <div class="s02-quip" aria-hidden="true"><span class="sticker s02-quip-st">Это уже не&nbsp;семья. Это научная выборка</span></div>
 
   <aside class="notes">
     <p><span class="cue">0:25</span> <span class="say">Начнём с гипотез. Что российские студенты знают об узбеках? Три научные гипотезы. Проверим.</span></p>
     <p><span class="cue">НАЖАТЬ</span> карточку 1 (или → / клавиша 1). <span class="say">Все узбеки из Ташкента?</span> Печать «ОПРОВЕРГНУТО», карта с городами. <span class="say">Ташкент — столица. Но есть ещё Самарканд, Бухара, Хива… Опровергнуто.</span></p>
-    <p><span class="cue">НАЖАТЬ</span> карточку 2 (или →). <span class="say">У узбеков много родственников?</span> Древо вырывается за пределы экрана. <span class="say">Подтверждено в рамках семейного исследования. Это уже не семья. Это научная выборка.</span></p>
-    <p class="tip">Пауза на смех, пока древо возвращается в карточку (≈3 с).</p>
-    <p><span class="cue">НАЖАТЬ</span> карточку 3 (или →). <span class="say">Узбеки постоянно едят плов? А вот это — факт: в 2016 году культура плова признана ЮНЕСКО.</span></p>
+    <p><span class="cue">НАЖАТЬ</span> карточку 2 (или →). <span class="say">У узбеков много родственников?</span> Древо вырывается на весь экран и остаётся. <span class="say">Это уже не семья. Это научная выборка.</span> <span class="tip">Пауза на смех.</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> (или клик по древу) — древо возвращается в карточку, печать. <span class="say">Подтверждено в рамках семейного исследования.</span></p>
+    <p><span class="cue">НАЖАТЬ</span> карточку 3 (или →). <span class="say">Узбеки постоянно едят плов? Это не стереотип. Это нематериальное культурное наследие человечества — ЮНЕСКО, 2016 год.</span></p>
     <p><span class="cue">НАЖАТЬ →</span> (или «Сформулировать вывод»). <span class="say">Вывод: стереотипы необходимо оформлять по ГОСТу.</span> <span class="tip">Затем → к следующему слайду.</span></p>
-    <p class="tip">Мышью: клик по карточкам в любом порядке (или клавиши 1/2/3), затем «Сформулировать вывод». Повторный клик по открытой карточке — печать стучит ещё раз.</p>
+    <p class="tip">Мышью: клик по карточкам в любом порядке (или клавиши 1/2/3), затем «Сформулировать вывод». Повторный клик по открытой карточке — печать стучит ещё раз. Нажатие во время анимации сразу её завершает.</p>
   </aside>
 </section>
 
@@ -2379,8 +2448,8 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
     <p><span class="cue">1:10</span> <span class="say">Эксперимент номер один. Вопрос простой: работает ли отказ от еды? Гость вежливо говорит: „Нет, спасибо“.</span></p>
     <p><span class="cue">НАЖАТЬ</span> «НЕТ, СПАСИБО» (или →) — бабушка добавляет плов. <span class="say">Отказ номер один. Начало переговоров.</span></p>
     <p><span class="cue">НАЖАТЬ</span> ещё раз — порция растёт. <span class="say">Отказ номер два. Активизация гостеприимства.</span></p>
-    <p><span class="cue">НАЖАТЬ</span> третий раз — падает казан. <span class="say">Отказ номер три. „Вам нужно подкрепиться!“</span></p>
-    <p class="tip">Пауза на смех (казан, тряска экрана).</p>
+    <p><span class="cue">НАЖАТЬ</span> третий раз. Бабушка: «Диета?! Тогда только маленький казанчик» — и падает огромный казан. <span class="say">Отказ номер три. „Вам нужно подкрепиться!“</span></p>
+    <p class="tip">Пауза на смех (казан, тряска экрана). Нажатие во время анимации не теряется — сработает, когда шаг доиграет.</p>
     <p><span class="cue">НАЖАТЬ →</span> <span class="say">Как лингвист заявляю: „нет, спасибо“ здесь означает „положите ещё“. Лингвистика бессильна. Нужна математика!</span> <span class="tip">Затем → к следующему слайду.</span></p>
   </aside>
 </section>
@@ -2460,7 +2529,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
     <div class="s05-frame">
       <span class="s05-corner c1" aria-hidden="true"></span><span class="s05-corner c2" aria-hidden="true"></span>
       <span class="s05-corner c3" aria-hidden="true"></span><span class="s05-corner c4" aria-hidden="true"></span>
-      <div class="s05-formula math" aria-label="P n плюс 1 равно 0,3 умножить на P n плюс 1">
+      <div class="s05-formula math" aria-label="P с индексом n плюс 1 равно: 0,3, умноженное на P с индексом n, плюс 1">
         <span class="s05-t t-lhs"><var>P</var><sub><var>n</var>+1</sub></span>
         <span class="s05-t t-eq">=</span>
         <button type="button" class="s05-t s05-hot t-coef" data-part="coef" title="Что такое 0,3?">0,3</button>
@@ -2474,29 +2543,29 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
     </div>
   </div>
 
-  <svg class="s05-wires" viewBox="0 0 1920 1080" aria-hidden="true">
+  <svg class="s05-wires" viewBox="0 0 1920 1080" aria-hidden="true" data-in="fade" style="--d:200">
     <path class="w w-coef" d=""/><path class="w w-pn" d=""/><path class="w w-one" d=""/>
   </svg>
 
-  <div class="s05-cards">
+  <div class="s05-cards" data-in="fade" style="--d:200">
     <article class="s05-card k-coef" data-part="coef">
       <div class="s05-ico s05-ico-coef"></div>
       <div class="s05-txt">
-        <div class="s05-sym math">0,3</div>
+        <div class="s05-sym math">0,3:</div>
         <p>доля, оставшаяся после&nbsp;еды</p>
       </div>
     </article>
     <article class="s05-card k-pn" data-part="pn">
       <div class="s05-ico s05-ico-pn"></div>
       <div class="s05-txt">
-        <div class="s05-sym math"><var>P</var><sub><var>n</var></sub></div>
-        <p>плов до очередного приёма пищи</p>
+        <div class="s05-sym math"><var>P</var><sub><var>n</var></sub>:</div>
+        <p>плов до&nbsp;очередного приёма пищи</p>
       </div>
     </article>
     <article class="s05-card k-one" data-part="one">
       <div class="s05-ico s05-ico-one"></div>
       <div class="s05-txt">
-        <div class="s05-sym math">+1</div>
+        <div class="s05-sym math">+1:</div>
         <p>новая порция от&nbsp;бабушки</p>
       </div>
     </article>
@@ -2528,7 +2597,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
   <aside class="s06-side">
     <div class="card s06-thm" data-in="right" style="--d:300">
       <span class="badge badge--math s06-badge">Математика</span>
-      <p class="s06-thm-t"><b>Теорема 1.</b> Пусть <span class="math"><var>P</var><sub>0</sub> = 1</span> и <span class="math"><var>P</var><sub><var>n</var>+1</sub> = 0,3·<var>P</var><sub><var>n</var></sub> + 1</span>. Тогда</p>
+      <p class="s06-thm-t"><b>Теорема 1.</b> Пусть <span class="math"><var>P</var><sub>0</sub> = 1</span> и&nbsp;<span class="math"><var>P</var><sub><var>n</var>+1</sub> = 0,3·<var>P</var><sub><var>n</var></sub> + 1</span>. Тогда</p>
       <p class="s06-lim"><span class="math"><span class="s06-limop">lim<span class="s06-limsub"><var>n</var><span class="s06-arr">→</span>∞</span></span> <var>P</var><sub><var>n</var></sub> =</span> <span class="math s06-frac"><span>10</span><span>7</span></span> <span class="math">≈ 1,43</span></p>
       <p class="s06-proof"><i>Доказательство:</i> <span class="math"><var>P</var><sub><var>n</var></sub> = <span class="s06-frac s06-frac--sm"><span>10</span><span>7</span></span> − <span class="s06-frac s06-frac--sm"><span>3</span><span>7</span></span>·0,3<sup><var>n</var></sup></span>, а&nbsp;<span class="math">0,3<sup><var>n</var></sup> <span class="s06-arr">→</span> 0</span>. ∎</p>
     </div>
@@ -2559,7 +2628,8 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
     <p><span class="cue">2:40</span> <span class="say">Хорошая новость: математика спасает тарелку.</span></p>
     <p><span class="cue">НАЖАТЬ →</span> ползунок сам проедет 20 циклов. <span class="say">Смотрите: сколько бы циклов ни было, на тарелке не больше десяти седьмых порции.</span></p>
     <p><span class="cue">НАЖАТЬ →</span> <span class="say">Тарелка сходится!</span> <span class="tip">Через секунду появится вторая печать.</span> <span class="say">Но гостя это не спасает.</span></p>
-    <p class="tip">Ползунок можно двигать мышью или стрелками ← → (сначала кликните по нему). При ≥ 12 циклах печати появятся сами.</p>
+    <p class="tip">Ползунок можно тянуть мышью. При ≥ 12 циклах печати появятся сами.</p>
+    <p class="tip">→ во время анимации сразу показывает её конец.</p>
   </aside>
 </section>
 
@@ -2574,7 +2644,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
   <div class="s07-chartbox" data-in="fade" style="--d:180">
     <div class="s07-chart"></div>
     <div class="s07-legend">
-      <div class="s07-leg s07-leg--plate"><i></i><span class="s07-leg-t">на&nbsp;тарелке</span><span class="math"><var>P</var><sub><var>n</var></sub> <span class="s07-arr">→</span> 1,43</span></div>
+      <div class="s07-leg s07-leg--plate"><i></i><span class="s07-leg-t">на&nbsp;тарелке</span><span class="math"><var>P</var><sub><var>n</var></sub> <span class="s07-arr">→</span> 10/7 ≈ 1,43</span></div>
       <div class="s07-leg s07-leg--eaten"><i></i><span class="s07-leg-t">съедено всего</span><span class="math"><var>E</var><sub><var>n</var></sub> <span class="s07-arr">→</span> ∞</span></div>
       <div class="s07-ctrl">
         <button type="button" class="btn btn--sm btn--ghost s07-ff"><svg class="s07-ffi" viewBox="0 0 44 26" aria-hidden="true"><path d="M3,3 L20,13 L3,23 Z M22,3 L39,13 L22,23 Z" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>Перемотка: 20&nbsp;циклов</button>
@@ -2663,6 +2733,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
   <div class="s08-heat" aria-hidden="true"></div>
 
   <header class="s08-head" data-in style="--d:0">
+    <div class="eyebrow">Коэффициент бабушки</div>
     <h1 class="h1 s08-title">Главное открытие исследования</h1>
   </header>
 
@@ -2688,8 +2759,8 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
         <span class="s08-eqno math">(2)</span>
         <div class="s08-rec math"><var>P</var><sub>0</sub> = 1,&ensp;<var>P</var><sub><var>n</var>+1</sub> = 0,3&thinsp;·&thinsp;<var>P</var><sub><var>n</var></sub> + <b class="s08-kn"><var>k</var><sup><var>n</var></sup></b></div>
         <div class="s08-adds">
-          <span class="s08-adds-l">добавки&nbsp;<span class="math"><var>k</var><sup><var>n</var></sup></span>:</span>
-          <span class="s08-chips"><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip s08-chip--more">…</i></span>
+          <span class="s08-adds-l">добавки&nbsp;<span class="math"><var>a</var><sub><var>n</var></sub> = <var>k</var><sup><var>n</var></sup></span>:</span>
+          <span class="s08-chips"><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip s08-chip--more">…</i></span>
         </div>
         <div class="s08-verdict">
           <span class="s08-vchip"><b class="s08-vchip-t">расходится</b></span>
@@ -2749,11 +2820,11 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
   </div>
 
   <aside class="notes">
-    <p><span class="cue">3:25</span> <span class="say">Главное открытие исследования — коэффициент бабушки. Он равен полутора.</span></p>
-    <p><span class="cue">НАЖАТЬ →</span> ползунок едет к 1. <span class="say">Если бы все добавки были одинаковыми, ряд бы сходился к десяти седьмым. Но в природе такое не встречается.</span></p>
-    <p><span class="cue">НАЖАТЬ →</span> обратно к 1,5. <span class="say">На самом деле каждая следующая добавка в полтора раза больше. Ряд расходится.</span></p>
-    <p><span class="cue">НАЖАТЬ →</span> к 2: сирена. <span class="say">При k, равном двум, — критический уровень гостеприимства. Шестьсот порций.</span> <span class="tip">Пауза на смех, пока воет сирена.</span></p>
-    <p><span class="cue">НАЖАТЬ</span> «Аварийный сброс» (или →): k вернётся к 1,5, придут две бабушки. <span class="say">Аварийный сброс возвращает систему к норме. Норма — полтора. Контрольная группа — бабушка из Петербурга с пирожками — дала тот же коэффициент. Это международная научная константа.</span></p>
+    <p><span class="cue">3:25</span> <span class="say">Главное открытие — коэффициент бабушки. Он равен полутора.</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> ползунок едет к 1. <span class="say">Если бы добавки были одинаковыми, всё сходилось бы к десяти седьмым. В природе не встречается.</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> обратно к 1,5. <span class="say">На деле каждая добавка в полтора раза больше. Ряд расходится.</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> к 2: сирена. <span class="say">При k, равном двум, — критический уровень гостеприимства. Больше шестисот порций.</span> <span class="tip">Пауза, пока воет сирена.</span></p>
+    <p><span class="cue">НАЖАТЬ</span> «Аварийный сброс» (или →). <span class="say">Сброс — обратно к полутора. Бабушка из Петербурга с пирожками дала тот же коэффициент. Международная научная константа.</span></p>
     <p class="tip">Ползунок можно тянуть мышью: при k = 1 ряд сходится, при любом k &gt; 1 — расходится.</p>
   </aside>
 </section>
@@ -2806,8 +2877,6 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
       </div>
     </div>
 
-    <div class="s09-stampwrap"><span class="stamp s09-stamp" style="--rot:-9deg">Попытка<br>не&nbsp;удалась</span></div>
-
     <div class="s09-prize">
       <div class="s09-box"></div>
       <div class="sticker sticker--gold s09-prize-st" style="--rot:5deg"><span>Утешительный приз:</span><b>плов с&nbsp;собой</b></div>
@@ -2839,6 +2908,9 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
     </div>
   </div>
 
+  <!-- печать «Попытка не удалась» ложится на выбранную отговорку (позицию ставит JS) -->
+  <div class="s09-stampwrap" aria-hidden="true"><span class="stamp s09-stamp" style="--rot:-9deg">Попытка<br>не&nbsp;удалась</span></div>
+
   <!-- итог -->
   <div class="s09-final" role="status">
     <div class="card s09-final-card">
@@ -2853,7 +2925,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
     <p><span class="cue">НАЖАТЬ 2</span> (или →) — будильник и ещё тарелка. <span class="say">Вот и поешь, чтобы завтра силы были!</span></p>
     <p><span class="cue">НАЖАТЬ 3</span> (или →) — плов прямо на диссертации. <span class="say">Сначала поешь нормально. Потом занимайся своей наукой!</span> <span class="tip">Пауза на смех: «Это, кстати, мой случай».</span></p>
     <p><span class="cue">4:22</span> <span class="cue">НАЖАТЬ →</span> (или «Подвести итог») <span class="say">Вероятность побега в рамках нашей шуточной модели — ноль процентов. Но есть утешительный приз: плов с собой.</span></p>
-    <p class="tip">Порядок вариантов — любой, как подскажет зал. После каждой попытки — печать и грустный тромбон, не перебивайте их. Бабушка ничего не запрещает — она только заботится.</p>
+    <p class="tip">Порядок — любой, как подскажет зал. Попытка идёт 1,5 с: печать на отговорке и грустный тромбон. Нажатие → во время попытки сразу ставит печать. Бабушка ничего не запрещает — она только заботится.</p>
   </aside>
 </section>
 
@@ -2940,7 +3012,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
     <div class="s10-res"><div class="s10-res-in"></div></div>
 
     <div class="s10-q" aria-live="polite">
-      <div class="s10-qbub">Как дела?<svg class="s10-qtail" viewBox="0 0 200 150" aria-hidden="true"><path d="M74,0 L178,0 Q104,52 0,150 Q66,64 74,0 Z"/></svg></div>
+      <div class="s10-qbub">Как дела?<svg class="s10-qtail" viewBox="0 0 200 150" aria-hidden="true"><path class="s10-qt-o" d="M178,0 Q104,52 0,150 Q66,64 74,0"/><path class="s10-qt-m" d="M178,0 Q104,52 0,150 Q66,64 74,0"/><path class="s10-qt-f" d="M74,0 L178,0 Q104,52 0,150 Q66,64 74,0 Z"/><rect class="s10-qt-f" x="54" y="-16" width="146" height="19.5"/></svg></div>
     </div>
     <div class="s10-uz">
       <div class="s10-uz-l1">Yaxshimisiz? Uydagilar yaxshimi?</div>
@@ -2991,11 +3063,11 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 
   <aside class="notes">
     <p><span class="cue">4:30</span> <span class="say">Научные выводы.</span></p>
-    <p><span class="cue">НАЖАТЬ →</span> ×3 (или клик по строкам): <span class="say">Первое: тарелка сходится. Второе: гость расходится. Третье: с бабушкой расходится вообще всё.</span> <span class="tip">Пауза на смех — печать «Ч. Т. Д.».</span></p>
-    <p><span class="cue">4:40</span> <span class="cue">НАЖАТЬ →</span> «Практическое применение». <span class="say">Приходите знакомиться с узбекской культурой — в Узбекский культурный центр Герценовского университета. Плов не обещаем. Но формулу вы уже знаете.</span></p>
-    <p><span class="cue">4:48</span> <span class="cue">НАЖАТЬ →</span> «Вопросы из зала». <span class="say">И последний вопрос. Как дела?</span></p>
-    <p><span class="cue">НАЖАТЬ 2</span> (или →) «Ответить по-узбекски». <span class="say">Rahmat, yaxshi! Родители передают привет, дядя из Самарканда спрашивает, когда я женюсь…</span> <span class="tip">Для контраста можно сначала 1 — «Нормально.»</span></p>
-    <p><span class="cue">4:55</span> <span class="cue">НАЖАТЬ →</span> (или «Регламент!») <span class="say">Мои пять минут закончились. Для узбека это только начало ответа на вопрос „Как дела?“. Rahmat! Спасибо!</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> ×3: <span class="say">Тарелка сходится. Гость расходится. А с бабушкой расходится вообще всё.</span> <span class="tip">Пауза — печать «Ч. Т. Д.».</span></p>
+    <p><span class="cue">4:40</span> <span class="cue">НАЖАТЬ →</span> <span class="say">Приходите в Узбекский культурный центр Герценовского университета. Плов не обещаем. Но формулу вы уже знаете.</span></p>
+    <p><span class="cue">4:47</span> <span class="cue">НАЖАТЬ →</span> <span class="say">И последний вопрос: как дела?</span></p>
+    <p><span class="cue">НАЖАТЬ 2</span> (или →) <span class="say">Rahmat, yaxshi! Родители передают привет…</span> <span class="tip">Молча дать списку пробежать 4–5 пунктов — зал читает сам. Для контраста можно сначала 1 — «Нормально.»</span></p>
+    <p><span class="cue">4:55</span> <span class="cue">НАЖАТЬ →</span> <span class="say">Мои пять минут закончились. Для узбека это только начало ответа. Rahmat! Спасибо!</span></p>
     <p class="tip">Поклон. Конфетти. Аплодисменты.</p>
   </aside>
 </section>
@@ -3315,6 +3387,9 @@ const Deck = (() => {
   function scale() {
     const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
     $('#stage').style.setProperty('--scale', s);
+    // если снизу есть поле (экран 16:10 или 4:3) — панель управления уезжает туда и не закрывает подвал слайда
+    const band = (window.innerHeight - 1080 * s) / 2;
+    $('#navbar').style.bottom = band >= 44 ? `${Math.max(0, Math.round((band - 44) / 2))}px` : '';
   }
 
   function renderChrome() {
@@ -3419,10 +3494,14 @@ button.alt{background:#2a2c31;color:#f5ebd5}.next{margin-left:auto;color:#a39d90
 </body></html>`);
       d.close();
       const send = (act) => window.postMessage({ plov: act }, '*');
-      d.getElementById('p-next').onclick = () => send('next');
-      d.getElementById('p-prev').onclick = () => send('prev');
-      d.getElementById('p-reset').onclick = () => send('reset');
-      presenter.addEventListener('keydown', (e) => { onKey(e); });
+      // после клика кнопка теряет фокус, иначе пробел/Enter повторили бы «Перезапуск» или «Назад»
+      [['p-next', 'next'], ['p-prev', 'prev'], ['p-reset', 'reset']].forEach(([id, act]) => {
+        d.getElementById(id).onclick = (e) => { send(act); e.currentTarget.blur(); };
+      });
+      presenter.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' || e.code === 'Enter' || e.code === 'NumpadEnter') { e.preventDefault(); startClock(); advance(); return; }
+        onKey(e);
+      });
       updatePresenter();
     } catch (e) {
       console.warn('Окно докладчика недоступно, показываю заметки на экране', e);
@@ -3576,6 +3655,12 @@ button.alt{background:#2a2c31;color:#f5ebd5}.next{margin-left:auto;color:#a39d90
     let uiT;
     document.addEventListener('mousemove', () => { document.body.classList.add('show-ui'); clearTimeout(uiT); uiT = setTimeout(() => document.body.classList.remove('show-ui'), 2200); });
     document.addEventListener('pointerdown', () => { Sfx.unlock(); hideHint(); }, { capture: true });
+    // кнопка на слайде после клика мышью теряет фокус: пробел/Enter снова листают, а не жмут её повторно
+    // (e.detail === 0 — нажатие с клавиатуры через Tab, фокус оставляем)
+    $('#stage').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && e.detail > 0) b.blur(); });
+    // ползунок после перетаскивания мышью отпускает фокус: стрелки снова управляют слайдами
+    $('#stage').addEventListener('pointerup', (e) => { if (e.target.matches && e.target.matches('input[type="range"]')) setTimeout(() => e.target.blur(), 0); });
+    document.addEventListener('fullscreenchange', hideHint);
     // любой клик по кнопке на слайде запускает общий таймер
     $('#stage').addEventListener('click', (e) => { if (e.target.closest('button, input')) startClock(); });
     setTimeout(hideHint, 7000);
@@ -4404,40 +4489,67 @@ window.rng = rng;
 <script>
 // ===== 01-title.js =====
 ;(function(){
-/* Слайд 1. «Начать эксперимент» → три строки методологии по очереди */
+/* Слайд 1. «Начать эксперимент» → три строки методологии по очереди.
+   «Далее» во время появления строк сразу показывает их все (ничего не пропускаем),
+   следующее «Далее» — переход к слайду 2. */
+const S01_LINES = [300, 800, 1400]; // мс: строка 1, строка 2, «НА МНЕ.»
+
 Deck.register('01', {
   init(api) {
+    // R восстанавливает только innerHTML: класс секции снимаем сами
+    api.el.classList.remove('is-started');
     api.$('.s01-kazan').innerHTML = Art.kazan({ w: 600 });
     api.$('.s01-researcher').innerHTML = Art.researcher({ mood: 'serious' });
-    api.state.started = false;
-    api.$('.s01-start').addEventListener('click', () => this.start(api));
+    Object.assign(api.state, { started: false, revealed: false, timers: [] });
+    api.$('.s01-start').addEventListener('click', (e) => {
+      e.currentTarget.blur(); // иначе пробел/Enter «нажимали» бы невидимую кнопку
+      this.start(api);
+    });
   },
   enter(api) {
     // учёный «показывает» на казан указкой
     const r = api.$('.art-researcher');
     api.timeout(() => r.setAttribute('data-point', 'up'), 1300);
   },
+  leave(api) {
+    // ушли посреди появления строк — доводим без звуков, чтобы таймеры не играли на слайде 2
+    if (api.state.started && !api.state.revealed) this.finish(api, true);
+  },
   start(api) {
-    if (api.state.started) return;
-    api.state.started = true;
+    const st = api.state;
+    if (st.started) return;
+    st.started = true;
     api.el.classList.add('is-started');
     api.sfx('tada');
     const k = api.$('.s01-kazan');
     FX.replay(k, 'is-bounce'); // анимируем вложенный .art, а не обёртку с data-in
     FX.at(k, 'plov', { count: 90, power: 22, y: FX.centerOf(k).y - 120 });
     const lines = api.$$('.s01-line');
-    const r = api.$('.art-researcher');
-    api.timeout(() => { lines[0].classList.add('is-shown'); api.sfx('pop'); }, 450);
-    api.timeout(() => { lines[1].classList.add('is-shown'); api.sfx('pop'); }, 1500);
-    api.timeout(() => {
-      lines[2].classList.add('is-shown'); api.sfx('boing');
-      Art.mood(r, 'proud');
-      api.$('.s01-me').classList.add('is-shown');
-    }, 2700);
+    st.timers = [
+      api.timeout(() => { lines[0].classList.add('is-shown'); api.sfx('pop'); }, S01_LINES[0]),
+      api.timeout(() => { lines[1].classList.add('is-shown'); api.sfx('pop'); }, S01_LINES[1]),
+      api.timeout(() => { this.finish(api); }, S01_LINES[2]),
+    ];
     api.updateSteps();
   },
+  // показать всё сразу: строка «На мне.», «это я», гордый исследователь
+  finish(api, silent = false) {
+    const st = api.state;
+    if (st.revealed) return;
+    st.timers.forEach(clearTimeout);
+    st.timers = [];
+    st.revealed = true;
+    api.$$('.s01-line').forEach((l) => l.classList.add('is-shown'));
+    const r = api.$('.art-researcher');
+    r.setAttribute('data-point', 'up');
+    Art.mood(r, 'proud');
+    api.$('.s01-me').classList.add('is-shown');
+    if (!silent) api.sfx('boing');
+  },
   next(api) {
-    if (!api.state.started) { this.start(api); return true; }
+    const st = api.state;
+    if (!st.started) { this.start(api); return true; }
+    if (!st.revealed) { this.finish(api); return true; }
     return false;
   },
   progress(api) { return { done: api.state.started ? 1 : 0, total: 1 }; },
@@ -4453,7 +4565,9 @@ Deck.register('01', {
    1) «ОПРОВЕРГНУТО» + карта Узбекистана с городами;
    2) генеалогическое древо вырывается за пределы экрана и возвращается в карточку + печать;
    3) медаль, ляган плова и факт про ЮНЕСКО (2016).
-   Затем — вывод «по ГОСТу». «Далее»: карточки 1 → 2 → 3 (пропуская открытые) → вывод → следующий слайд. */
+   Затем — вывод «по ГОСТу».
+   «Далее»: карточка 1 → карточка 2 (древо на весь экран) → древо в карточку → карточка 3 → вывод → следующий слайд.
+   Нажатие во время анимации не пропускает шаг, а сразу доводит текущую анимацию до конца. */
 
 const S02_CX = 960;
 
@@ -4493,15 +4607,15 @@ function s02Avatar(x, y, r, kind, tone = 'var(--cream)', happy = false) {
 const S02_TREE = [
   { y: 150, h: 66, fs: 28, nodes: [] }, // бабушка и дедушка — особый случай
   { y: 352, h: 58, fs: 25, pad: 40, nodes: [['Тётя № 1', null, 'f'], ['Дядя № 1', null, 'm'], ['Тётя № 2', null, 'f'], ['Мама', null, 'f'], ['Дядя № 2', null, 'm'], ['Тётя № 3', null, 'f'], ['Дядя № 3', null, 'm']] },
-  { y: 556, h: 62, fs: 19, pad: 18, nodes: [
-    ['двоюродный', 'брат № 23', 'm'], ['двоюродная', 'сестра № 19', 'f'], ['двоюродный', 'брат № 15', 'm'], ['двоюродная', 'сестра № 11', 'f'],
-    ['двоюродный', 'брат № 7', 'm'], ['сестра', null, 'f'], ['Я', 'Эркинбой', 'm', 'me'], ['брат', null, 'm'],
-    ['двоюродная', 'сестра № 4', 'f'], ['двоюродный', 'брат № 8', 'm'], ['двоюродная', 'сестра № 12', 'f'], ['двоюродный', 'брат № 16', 'm'], ['двоюродная', 'сестра № 20', 'f']] },
-  { y: 762, h: 62, fs: 19, pad: 16, nodes: [
-    ['троюродный', 'брат № 31', 'm'], ['невестка', null, 'f'], ['сват', null, 'm'], ['троюродная', 'тётя № 4', 'f'], ['друг папы', '«как брат»', 'm'],
-    ['сват свата', null, 'm'], ['сватья', null, 'f'], ['шурин', null, 'm'], ['золовка', null, 'f'], ['соседи —', '«почти родственники»', 'f'],
-    ['деверь', null, 'm'], ['свояченица', null, 'f'], ['свояк', null, 'm'], ['сноха', null, 'f'], ['зять', null, 'm'],
-    ['соседка —', '«почти бабушка»', 'f'], ['троюродный', 'дядя № 6', 'm'], ['сват', null, 'm'], ['троюродная', 'сестра № 9', 'f']] },
+  { y: 556, h: 62, fs: 20, pad: 16, nodes: [
+    ['Двоюродный', 'брат № 23', 'm'], ['Двоюродная', 'сестра № 19', 'f'], ['Двоюродный', 'брат № 15', 'm'], ['Двоюродная', 'сестра № 11', 'f'],
+    ['Двоюродный', 'брат № 7', 'm'], ['Сестра', null, 'f'], ['Я', 'Эркинбой', 'm', 'me'], ['Брат', null, 'm'],
+    ['Двоюродная', 'сестра № 4', 'f'], ['Двоюродный', 'брат № 8', 'm'], ['Двоюродная', 'сестра № 12', 'f'], ['Двоюродный', 'брат № 16', 'm'], ['Двоюродная', 'сестра № 20', 'f']] },
+  { y: 762, h: 62, fs: 20, pad: 14, nodes: [
+    ['Троюродный', 'брат № 31', 'm'], ['Невестка', null, 'f'], ['Сват', null, 'm'], ['Троюродная', 'тётя № 4', 'f'], ['Друг папы', '«как брат»', 'm'],
+    ['Сват свата', null, 'm'], ['Сватья', null, 'f'], ['Шурин', null, 'm'], ['Золовка', null, 'f'], ['Соседи —', '«почти родственники»', 'f'],
+    ['Деверь', null, 'm'], ['Свояченица', null, 'f'], ['Свояк', null, 'm'], ['Сноха', null, 'f'], ['Зять', null, 'm'],
+    ['Соседка —', '«почти бабушка»', 'f'], ['Троюродный', 'дядя № 6', 'm'], ['Сват', null, 'm'], ['Троюродная', 'сестра № 9', 'f']] },
   { y: 952, h: 56, fs: 0, gap: 92, count: 33 },  // только лица — и дальше за край экрана
 ];
 const S02_LEAVES = 2; // от каждого лица последнего ряда — ещё ветки вниз, за экран
@@ -4595,12 +4709,12 @@ function s02BuildTree() {
 const S02_CITIES = [
   // [название, подпись: dx, dy, якорь]
   ['Ташкент', 0, 0, 'cap'],
-  ['Самарканд', 0, 24, 'middle'],
-  ['Бухара', 0, -13, 'middle'],
+  ['Самарканд', 0, -13, 'middle'],
+  ['Бухара', -12, 7, 'end'],
   ['Хива', 0, 24, 'middle'],
   ['Нукус', 0, -13, 'middle'],
   ['Фергана', 0, 25, 'middle'],
-  ['Термез', 12, 7, 'start'],
+  ['Карши', 0, 25, 'middle'],
 ];
 function s02Map() {
   const W = 480, H = 270;
@@ -4617,7 +4731,7 @@ function s02Map() {
       cities += `<g class="s02-city"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6.5"/><text x="${(x + dx).toFixed(1)}" y="${(y + dy).toFixed(1)}" text-anchor="${anchor}">${name}</text></g>`;
     }
   }
-  return `<svg class="s02-map" viewBox="0 0 ${W} ${H}" aria-label="Карта Узбекистана: Ташкент, Самарканд, Бухара, Хива, Нукус, Фергана, Термез"><path class="s02-uz" pathLength="100" d="${Art.uzOutlinePath(proj)}"/>${cities}</svg>`;
+  return `<svg class="s02-map" viewBox="0 0 ${W} ${H}" aria-label="Карта Узбекистана: Ташкент, Самарканд, Бухара, Хива, Нукус, Фергана, Карши"><path class="s02-uz" pathLength="100" d="${Art.uzOutlinePath(proj)}"/>${cities}</svg>`;
 }
 
 /* ---------- иконки лицевых сторон ---------- */
@@ -4687,7 +4801,8 @@ function s02Medal() {
 Deck.register('02', {
   init(api) {
     const st = api.state;
-    Object.assign(st, { open: [false, false, false], gost: false, jobs: [], typer: null });
+    // tree: idle → growing → up (держится до нажатия) → settling → done
+    Object.assign(st, { open: [false, false, false], gost: false, jobs: [], typer: null, tree: 'idle', countTok: null });
     st.cards = api.$$('.s02-card');
     st.stamps = st.cards.map((c) => c.querySelector('.s02-stamp'));
 
@@ -4707,6 +4822,8 @@ Deck.register('02', {
     st.fly = api.$('.s02-treefly');
     st.flyTree = st.fly.querySelector('.s02-tree');
     st.dim = api.$('.s02-dim');
+    st.quip = api.$('.s02-quip');
+    st.countEl = st.fly.querySelector('.s02-treecount-v');
 
     // вывод по ГОСТу
     st.gostEl = api.$('.s02-gost');
@@ -4716,6 +4833,9 @@ Deck.register('02', {
 
     st.cards.forEach((c, i) => c.addEventListener('click', () => { c.blur(); this.open(api, i); }));
     st.gostBtn.addEventListener('click', () => { st.gostBtn.blur(); this.conclude(api); });
+    // древо на весь экран: клик мышью — то же, что «Далее»
+    st.fly.addEventListener('click', () => this.tap(api));
+    st.dim.addEventListener('click', () => this.tap(api));
   },
 
   enter(api) {
@@ -4723,7 +4843,7 @@ Deck.register('02', {
     api.timeout(() => st.r.setAttribute('data-point', 'down'), 1100);
   },
 
-  leave(api) { this.flush(api); },
+  leave(api) { this.complete(api); },
 
   /* ---------- таймлайн шагов: при быстром «Далее» или уходе со слайда — мгновенно доводим ---------- */
   seq(api, steps) {
@@ -4735,6 +4855,7 @@ Deck.register('02', {
     }
   },
   busy(api) { return api.state.jobs.some((j) => !j.done); },
+  // довести текущую анимацию до конечного кадра (без звуков)
   flush(api) {
     const st = api.state;
     if (st.typer) { clearInterval(st.typer); st.typer = null; }
@@ -4743,6 +4864,17 @@ Deck.register('02', {
       const jobs = st.jobs.splice(0);
       for (const j of jobs) if (!j.done) { clearTimeout(j.t); j.done = true; j.fn(true); }
     }
+  },
+  // всё до конца, включая возврат древа в карточку (уход со слайда, R, другая карточка, вывод)
+  complete(api) {
+    this.flush(api);
+    if (api.state.tree === 'up') this.settleTree(api, true);
+  },
+  // клик по древу / клавиша карточки, пока древо на весь экран
+  tap(api) {
+    if (this.busy(api)) this.flush(api);
+    else if (api.state.tree === 'up') this.settleTree(api);
+    api.updateSteps();
   },
   mood(api, m) {
     const st = api.state;
@@ -4756,14 +4888,15 @@ Deck.register('02', {
     const st = api.state;
     const card = st.cards[i];
     if (!card) return;
+    if (st.tree === 'growing' || st.tree === 'up') { this.tap(api); return; }
     if (st.open[i]) {
       // повторное нажатие — печать «пристукивает» ещё раз
-      if (this.busy(api)) return;
+      if (this.busy(api)) { this.flush(api); return; }
       FX.replay(st.stamps[i], 'is-slam');
       api.sfx('stamp');
       return;
     }
-    this.flush(api);
+    this.complete(api);
     st.open[i] = true;
     card.classList.add('is-open');
     card.setAttribute('aria-pressed', 'true');
@@ -4780,71 +4913,110 @@ Deck.register('02', {
     const map = card.querySelector('.s02-map');
     const cities = Array.from(card.querySelectorAll('.s02-city'));
     this.seq(api, [
-      [380, (s) => { map.classList.add('is-drawn'); if (!s) api.sfx('swoosh'); }],
-      ...cities.map((c, k) => [720 + k * 105, (s) => { c.classList.add('is-shown'); if (!s) api.sfx(k ? 'pop' : 'sparkle'); }]),
-      [1520, (s) => {
+      [300, (s) => { map.classList.add('is-drawn'); if (!s) api.sfx('swoosh'); }],
+      ...cities.map((c, k) => [560 + k * 80, (s) => { c.classList.add('is-shown'); if (!s) api.sfx(k ? 'pop' : 'sparkle'); }]),
+      [1120, (s) => {
         st.stamps[0].classList.add('is-slam');
         this.mood(api, 'smug');
         if (!s) { api.sfx('stamp'); FX.shakeStage(); }
       }],
-      [1760, (s) => { card.querySelector('.s02-fact').classList.add('is-shown'); this.afterReveal(api, s); }],
+      [1300, (s) => { card.querySelector('.s02-fact').classList.add('is-shown'); this.afterReveal(api); }],
     ]);
   },
 
-  // 2. «Много родственников» → древо вырывается за экран, возвращается, печать
+  // 2. «Много родственников» → древо вырывается на весь экран и держится до следующего нажатия
   revealTree(api, card) {
     const st = api.state;
+    st.tree = 'growing';
     this.seq(api, [
-      [240, (s) => this.treeGrow(api, card, s)],
-      [2600, (s) => this.treeSettle(api, card, s)],
-      [3260, (s) => this.treeDone(api, card, s)],
-      [3340, (s) => {
+      [120, (s) => this.treeGrow(api, card, s)],
+      [1150, (s) => this.treeQuip(api, s)],
+    ]);
+  },
+  treeGrow(api, card, silent) {
+    const st = api.state, fly = st.fly;
+    fly.classList.remove('is-out', 'is-settling');
+    st.dim.classList.add('is-on');
+    this.mood(api, 'shock');
+    if (silent) {
+      // сразу конечный кадр: древо на весь экран
+      fly.style.transition = 'none';
+      fly.style.transform = 'translate(0px, 0px) scale(1)';
+      st.flyTree.classList.add('is-instant', 'is-grown');
+      fly.classList.add('is-on');
+      st.countTok = null;
+      st.countEl.textContent = `n = ${Fmt.int(st.treeN)}`;
+      return;
+    }
+    const r = s02Rect(card);
+    const k0 = (r.w * .86) / 1920;
+    const x0 = r.x + r.w / 2 - 960 * k0, y0 = r.y + r.h * .62 - 540 * k0;
+    fly.style.transition = 'none';
+    fly.style.transform = `translate(${x0.toFixed(1)}px, ${y0.toFixed(1)}px) scale(${k0.toFixed(4)})`;
+    st.flyTree.classList.remove('is-grown', 'is-instant');
+    fly.classList.add('is-on');
+    void fly.offsetWidth;
+    fly.style.transition = 'transform 1s cubic-bezier(.2, .8, .25, 1)';
+    fly.style.transform = 'translate(0px, 0px) scale(1)';
+    st.flyTree.classList.add('is-grown');
+    api.sfx('whoosh');
+    // «чпок-чпок» по рядам и счётчик выборки
+    this.seq(api, S02_TREE.map((_, li) => [60 + li * 165, (s) => { if (!s) api.sfx('pop'); }]));
+    const tok = st.countTok = {};
+    Tween.num(1, st.treeN, 1000, (v) => { if (st.countTok === tok) st.countEl.textContent = `n = ${Fmt.int(v)}`; }, ease.inOutCubic);
+  },
+  treeQuip(api, silent) {
+    const st = api.state;
+    st.tree = 'up';
+    if (silent) {
+      // догнать незаконченные переходы роста
+      st.fly.style.transition = 'none';
+      st.fly.style.transform = 'translate(0px, 0px) scale(1)';
+      st.flyTree.classList.add('is-instant');
+      st.countTok = null;
+      st.countEl.textContent = `n = ${Fmt.int(st.treeN)}`;
+    } else {
+      api.sfx('boing');
+    }
+    st.quip.classList.add('is-on');
+  },
+  // древо возвращается в карточку: печать «ПОДТВЕРЖДЕНО…» и подпись
+  settleTree(api, silent = false) {
+    const st = api.state;
+    const card = st.cards[1];
+    st.tree = 'settling';
+    api.updateSteps();
+    const rest = [
+      [560, (s) => this.treeDone(api, card, s)],
+      [620, (s) => {
         st.stamps[1].classList.add('is-slam');
         this.mood(api, 'happy');
         if (!s) api.sfx('stamp');
       }],
-      [3600, (s) => { card.querySelector('.s02-fact').classList.add('is-shown'); this.afterReveal(api, s); }],
-    ]);
+      [800, () => { card.querySelector('.s02-fact').classList.add('is-shown'); st.tree = 'done'; this.afterReveal(api); }],
+    ];
+    if (silent) { rest.forEach(([, fn]) => fn(true)); return; }
+    this.treeSettle(api, card);
+    this.seq(api, rest);
   },
-  treeGrow(api, card, silent) {
-    if (silent) return;
-    const st = api.state, fly = st.fly;
-    const r = s02Rect(card);
-    const k0 = (r.w * .86) / 1920;
-    const x0 = r.x + r.w / 2 - 960 * k0, y0 = r.y + r.h * .62 - 540 * k0;
-    fly.classList.remove('is-out', 'is-settling');
-    fly.style.transition = 'none';
-    fly.style.transform = `translate(${x0.toFixed(1)}px, ${y0.toFixed(1)}px) scale(${k0.toFixed(4)})`;
-    st.flyTree.classList.remove('is-grown');
-    fly.classList.add('is-on');
-    void fly.offsetWidth;
-    fly.style.transition = 'transform 1.05s cubic-bezier(.2, .8, .25, 1)';
-    fly.style.transform = 'translate(0px, 0px) scale(1)';
-    st.flyTree.classList.add('is-grown');
-    st.dim.classList.add('is-on');
-    this.mood(api, 'shock');
-    api.sfx('whoosh');
-    // «чпок-чпок» по рядам и счётчик выборки
-    this.seq(api, S02_TREE.map((_, li) => [60 + li * 165, (s) => { if (!s) api.sfx('pop'); }]));
-    const nv = fly.querySelector('.s02-treecount-v');
-    Tween.num(1, st.treeN, 1450, (v) => { nv.textContent = `n = ${Fmt.int(v)}`; }, ease.inOutCubic);
-  },
-  treeSettle(api, card, silent) {
-    if (silent) return;
+  treeSettle(api, card) {
     const st = api.state, fly = st.fly;
     const r = s02Rect(card.querySelector('.s02-treethumb'));
     const k = r.w / 1920;
+    st.quip.classList.remove('is-on');
     fly.classList.add('is-settling');
-    fly.style.transition = 'transform .62s cubic-bezier(.6, 0, .25, 1)';
+    fly.style.transition = 'transform .6s cubic-bezier(.6, 0, .25, 1)';
     fly.style.transform = `translate(${r.x.toFixed(1)}px, ${r.y.toFixed(1)}px) scale(${k.toFixed(4)})`;
     st.dim.classList.remove('is-on');
     api.sfx('swoosh');
   },
   treeDone(api, card, silent) {
     const st = api.state, fly = st.fly;
+    st.countTok = null;
     card.querySelector('.s02-nv').textContent = Fmt.int(st.treeN);
     card.classList.add('is-tree');
     st.dim.classList.remove('is-on');
+    st.quip.classList.remove('is-on');
     if (silent) {
       fly.style.transition = 'none';
       fly.classList.remove('is-on', 'is-out', 'is-settling');
@@ -4860,28 +5032,29 @@ Deck.register('02', {
     const medal = card.querySelector('.s02-medal');
     const plate = card.querySelector('.s02-plate');
     this.seq(api, [
-      [420, (s) => { medal.classList.add('is-in'); if (!s) api.sfx('sparkle'); }],
-      [720, (s) => { plate.classList.add('is-in'); if (!s) { api.sfx('plop'); FX.at(plate, 'plov', { count: 46, power: 15 }); } }],
-      [1240, (s) => {
+      [300, (s) => { medal.classList.add('is-in'); if (!s) api.sfx('sparkle'); }],
+      [560, (s) => { plate.classList.add('is-in'); if (!s) { api.sfx('plop'); FX.at(plate, 'plov', { count: 46, power: 15 }); } }],
+      [1000, (s) => {
         st.stamps[2].classList.add('is-slam');
         this.mood(api, 'proud');
-        if (!s) { api.sfx('stamp'); FX.confetti({ count: 120 }); }
+        // конфетти — из-под третьей карточки, чтобы не закрывать подпись второй
+        if (!s) { api.sfx('stamp'); FX.confetti({ count: 110, x: 1540, spread: 1, life: 100 }); }
       }],
-      [1380, (s) => { if (!s) api.sfx('tada'); }],
-      [1500, (s) => { card.querySelector('.s02-fact').classList.add('is-shown'); this.afterReveal(api, s); }],
+      [1120, (s) => { if (!s) api.sfx('tada'); }],
+      [1250, (s) => { card.querySelector('.s02-fact').classList.add('is-shown'); this.afterReveal(api); }],
     ]);
   },
 
   afterReveal(api) {
     const st = api.state;
-    if (st.open.every(Boolean) && !st.gost) st.gostBtn.classList.add('is-shown');
+    if (st.open.every(Boolean) && st.tree === 'done' && !st.gost) st.gostBtn.classList.add('is-shown');
   },
 
   /* ---------- вывод: «Стереотипы необходимо оформлять по ГОСТу» ---------- */
   conclude(api) {
     const st = api.state;
     if (st.gost || !st.open.every(Boolean)) return;
-    this.flush(api);
+    this.complete(api);
     st.gost = true;
     api.updateSteps();
     st.gostBtn.classList.remove('is-shown');
@@ -4891,9 +5064,9 @@ Deck.register('02', {
     api.sfx('whoosh');
     this.mood(api, 'serious');
     const text = st.typeText;
-    const per = 24;
+    const per = 20;
     this.seq(api, [
-      [330, (s) => {
+      [250, (s) => {
         if (s) return;
         let n = 0;
         st.typer = api.interval(() => {
@@ -4903,7 +5076,7 @@ Deck.register('02', {
           if (n >= text.length) { clearInterval(st.typer); st.typer = null; }
         }, per);
       }],
-      [330 + text.length * per + 140, (s) => {
+      [250 + text.length * per + 120, (s) => {
         if (st.typer) { clearInterval(st.typer); st.typer = null; }
         st.type.textContent = text;
         st.type.classList.remove('is-caret');
@@ -4915,16 +5088,19 @@ Deck.register('02', {
 
   next(api) {
     const st = api.state;
+    if (this.busy(api)) { this.flush(api); return true; } // идёт анимация — доводим её, шаг не пропускаем
+    if (st.tree === 'up') { this.settleTree(api); return true; }
     const i = st.open.indexOf(false);
     if (i >= 0) { this.open(api, i); return true; }
     if (!st.gost) { this.conclude(api); return true; }
-    this.flush(api);
+    this.complete(api);
     return false;
   },
   progress(api) {
     const st = api.state;
-    if (!st.open) return { done: 0, total: 4 };
-    return { done: st.open.filter(Boolean).length + (st.gost ? 1 : 0), total: 4 };
+    if (!st.open) return { done: 0, total: 5 };
+    const treeBack = st.tree === 'settling' || st.tree === 'done' ? 1 : 0;
+    return { done: st.open.filter(Boolean).length + treeBack + (st.gost ? 1 : 0), total: 5 };
   },
   keys: {
     Digit1(api) { this.open(api, 0); },
@@ -4960,8 +5136,38 @@ function s03Table() {
 
 const S03_PLATE = [1, 1.7, 2.4];
 const S03_GUEST = ['Нет, спасибо!', 'Нет-нет, правда, спасибо!', 'Спасибо, я на&nbsp;диете!'];
-const S03_GRAN = ['Oling, oling!<small>«Берите, берите!»</small>', 'Вы же ничего не&nbsp;ели!', 'Диета?!'];
+const S03_GRAN = ['Oling, oling!<small>«Берите, берите!»</small>', 'Вы же ничего не&nbsp;ели!', 'Диета?!<small>Тогда только<br>маленький казанчик.</small>'];
+const S03_CLIMAX = 'Вам нужно<br>подкрепиться!'; // бабушка сама произносит кульминацию, когда казан уже стоит
+const S03_GRAN_MOOD = ['happy', 'determined', 'proud'];
 const S03_GUEST_MOOD = ['surprised', 'panic', 'shock'];
+// сколько длится шаг; нажатие в это время не теряется, а ставится в очередь
+const S03_LOCK = [650, 650, 2200];
+// классы разовых CSS-анимаций: на скрытом слайде они ставятся на паузу и «доигрывали» бы при возвращении
+const S03_TRANSIENT = [
+  ['.s03-thud', 'is-on'], ['.s03-guest', 'is-jump is-recoil'], ['.s03-itemswrap > div', 'is-hop'],
+  ['.s03-plate', 'is-jelly'], ['.s03-grandma', 'is-serve is-jelly'], ['.s03-nobtn', 'is-hit is-flip'],
+  ['.s03-count', 'is-bump'], ['.s03-say', 'is-swap'],
+];
+
+// горка плова на лягане: своя анимация через api.raf — её останавливает api.clearTimers() (уход со слайда, R, перемотка)
+function s03Amount(api, svg, amount, ms = 0, easing = ease.outBack) {
+  const g = svg && svg.querySelector('.mound');
+  if (!g) return;
+  const from = parseFloat(svg.dataset.amount || '1');
+  svg.dataset.amount = amount;
+  g.style.display = '';
+  const tok = svg._s03tok = (svg._s03tok || 0) + 1; // пишет только самая свежая анимация
+  const put = (v) => { const s = Art.amountScale(Math.max(0, v)); g.setAttribute('transform', `scale(${s.x.toFixed(4)},${s.y.toFixed(4)})`); };
+  if (!ms) { put(amount); return; }
+  const t0 = performance.now();
+  const step = (now) => {
+    if (svg._s03tok !== tok) return;
+    const t = clamp((now - t0) / ms, 0, 1);
+    put(lerp(from, amount, easing(t)));
+    if (t < 1) api.raf(step);
+  };
+  api.raf(step);
+}
 
 Deck.register('03', {
   init(api) {
@@ -4976,38 +5182,76 @@ Deck.register('03', {
     api.$('.s03-researcher').innerHTML = Art.researcher({ mood: 'proud' });
     // клавиша R восстанавливает HTML слайда, но не классы самой <section> — снимаем их здесь
     api.el.classList.remove('is-final', 'is-final-2');
-    api.state.n = 0;
-    api.state.final = false;
-    api.state.busy = false;
+    Object.assign(api.state, { n: 0, final: false, final2: false, busy: false, queued: false, landed: false });
     // после клика снимаем фокус, чтобы пробел/Enter не «нажимали» кнопку повторно мимо шагов слайда
-    api.$('.s03-nobtn').addEventListener('click', (e) => { e.currentTarget.blur(); this.press(api); });
+    api.$('.s03-nobtn').addEventListener('click', (e) => { e.currentTarget.blur(); this.step(api); api.updateSteps(); });
   },
 
+  // уход со слайда: досматриваем текущий шаг мгновенно и молча, чтобы ничего не «стреляло» на соседнем слайде
   leave(api) {
+    this.settle(api);
     api.$('.s03-say--guest').classList.remove('is-on');
+    S03_TRANSIENT.forEach(([sel, cls]) => api.$$(sel).forEach((el) => el.classList.remove(...cls.split(' '))));
+    api.$$('.s03-row').forEach((r) => r.classList.add('is-static'));
+    FX.clear(); // рис этого слайда не сыплется на следующий
   },
 
-  press(api) {
-    if (api.state.final || api.state.busy) return;
-    if (api.state.n >= 3) { this.finale(api); return; }
-    this.refuse(api);
+  /* Одно «нажатие» — и мышью, и клавишей. Во время анимации шага нажатие ставится в очередь
+     и выполнится, как только шаг доиграет; второе нетерпеливое нажатие мгновенно досматривает шаг
+     (см. hurry). Так ни одно нажатие не теряется. */
+  step(api) {
+    const st = api.state;
+    if (st.busy) {
+      if (!st.queued) {
+        st.queued = true;
+        const btn = api.$('.s03-nobtn');
+        if (!btn.classList.contains('is-gone')) FX.replay(btn, 'is-hit'); // кнопка отзывается сразу
+        return true;
+      }
+      return this.hurry(api);
+    }
+    if (st.n < 3) { this.refuse(api); return true; }
+    if (!st.final) { this.finale(api); return true; }
+    if (!st.final2) { this.finish(api); return true; } // панчлайн «Нужна математика!» — не проскакиваем
+    return false;
   },
 
-  say(api, who, html) {
+  // второе нажатие во время анимации: шаг доигрывается мгновенно. Кульминацию не теряем:
+  // если казан ещё в полёте — он сразу приземляется с «БУМ!», а отложенный шаг выполнится чуть позже.
+  hurry(api) {
+    const st = api.state;
+    const needLand = st.n >= 3 && !st.landed && !st.final;
+    this.settle(api);
+    if (needLand) {
+      this.land(api);
+      st.busy = true;
+      st.queued = true;
+      api.timeout(() => this.unlock(api), 700);
+      return true;
+    }
+    return this.step(api);
+  },
+
+  unlock(api) {
+    const st = api.state;
+    st.busy = false;
+    if (st.queued) { st.queued = false; this.step(api); api.updateSteps(); }
+  },
+
+  say(api, who, html, quiet = false) {
     const box = api.$(`.s03-say--${who}`);
     const b = box.querySelector('.s03-say-b');
     const was = box.classList.contains('is-on');
     b.innerHTML = `<span class="s03-say-t">${html}</span>`;
     box.classList.add('is-on');
-    if (was) FX.replay(box, 'is-swap');
+    if (was && !quiet) FX.replay(box, 'is-swap');
   },
 
   refuse(api) {
-    if (api.state.busy) return;
-    api.state.busy = true;
-    const n = ++api.state.n;
-    // после третьего отказа даём казану приземлиться, прежде чем принять следующее нажатие
-    api.timeout(() => { api.state.busy = false; }, n === 3 ? 1900 : 650);
+    const st = api.state;
+    st.busy = true;
+    const n = ++st.n;
+    api.timeout(() => this.unlock(api), S03_LOCK[n - 1]);
     const btn = api.$('.s03-nobtn');
     btn.classList.remove('btn--pulse');
     FX.replay(btn, 'is-hit');
@@ -5023,8 +5267,8 @@ Deck.register('03', {
     const guestSvg = guestBox.querySelector('svg');
     this.say(api, 'guest', S03_GUEST[n - 1]);
     FX.replay(guestBox, 'is-recoil');
-    if (api.state.hideT) clearTimeout(api.state.hideT);
-    api.state.hideT = api.timeout(() => api.$('.s03-say--guest').classList.remove('is-on'), n === 3 ? 2600 : 2000);
+    if (st.hideT) clearTimeout(st.hideT);
+    st.hideT = api.timeout(() => api.$('.s03-say--guest').classList.remove('is-on'), n === 3 ? 2600 : 2000);
 
     const gran = api.$('.s03-grandma');
     const granSvg = gran.querySelector('svg');
@@ -5034,7 +5278,7 @@ Deck.register('03', {
 
     if (n === 1) {
       api.timeout(() => {
-        Art.mood(granSvg, 'happy');
+        Art.mood(granSvg, S03_GRAN_MOOD[0]);
         FX.replay(gran, 'is-serve');
         this.say(api, 'gran', S03_GRAN[0]);
         api.sfx('swoosh');
@@ -5042,7 +5286,7 @@ Deck.register('03', {
         FX.plov({ x: c.x + 30, y: c.y - 40, angle: -Math.PI / 2 + .62, spread: .5, power: 17, count: 60, life: 70 });
       }, 280);
       api.timeout(() => {
-        Art.setAmount(plateSvg, S03_PLATE[1], 700);
+        s03Amount(api, plateSvg, S03_PLATE[1], 700);
         FX.replay(plateBox, 'is-jelly');
         api.sfx('plop');
         row.classList.add('is-on');
@@ -5050,13 +5294,13 @@ Deck.register('03', {
       }, 900);
     } else if (n === 2) {
       api.timeout(() => {
-        Art.mood(granSvg, 'determined');
+        Art.mood(granSvg, S03_GRAN_MOOD[1]);
         FX.replay(gran, 'is-jelly');
         this.say(api, 'gran', S03_GRAN[1]);
         api.sfx('pop');
       }, 280);
       api.timeout(() => {
-        Art.setAmount(plateSvg, S03_PLATE[2], 950, ease.outElastic);
+        s03Amount(api, plateSvg, S03_PLATE[2], 950, ease.outElastic);
         FX.replay(plateBox, 'is-jelly');
         api.sfx('boing');
         const c = FX.centerOf(plateSvg.querySelector('.mound'));
@@ -5065,59 +5309,97 @@ Deck.register('03', {
         Art.mood(guestSvg, S03_GUEST_MOOD[1]);
       }, 650);
     } else {
+      // «Диета?! Тогда только маленький казанчик.» — и с неба падает огромный казан
       api.timeout(() => {
         Art.mood(granSvg, 'shock');
         FX.replay(gran, 'is-jelly');
         this.say(api, 'gran', S03_GRAN[2]);
         api.sfx('boing');
-      }, 280);
+      }, 260);
       const kz = api.$('.s03-kazan');
+      st.landed = false;
       api.timeout(() => {
         api.sfx('whoosh');
         kz.classList.remove('is-set');
         FX.replay(kz, 'is-in');
-      }, 700);
+      }, 850);
+      api.timeout(() => this.land(api), 1470);
       api.timeout(() => {
-        // приземление: удар, тряска, рис во все стороны
-        FX.shakeStage();
-        api.sfx('stamp');
-        const c = FX.centerOf(kz.querySelector('.mound'));
-        FX.plov({ x: c.x, y: c.y - 30, count: 110, power: 22 });
-        api.$$('.s03-itemswrap > div').forEach((d, i) => api.timeout(() => FX.replay(d, 'is-hop'), i * 60));
-        FX.replay(api.$('.s03-thud'), 'is-on');
-        Art.mood(guestSvg, S03_GUEST_MOOD[2]);
-        FX.replay(guestBox, 'is-jump');
-      }, 1320);
-      api.timeout(() => {
-        Art.mood(granSvg, 'proud');
+        Art.mood(granSvg, S03_GRAN_MOOD[2]);
+        this.say(api, 'gran', S03_CLIMAX);
         row.classList.add('is-on');
         api.sfx('alarm');
-      }, 1750);
-      api.timeout(() => this.surrender(api), 2500);
-      api.timeout(() => { kz.classList.add('is-set'); kz.classList.remove('is-in'); }, 2600);
+      }, 1650);
+      api.timeout(() => this.surrender(api), 2000);
+      api.timeout(() => { kz.classList.add('is-set'); kz.classList.remove('is-in'); }, 2150);
     }
     api.updateSteps();
   },
 
-  // кнопка «НЕТ, СПАСИБО» сдаётся: превращается в белый флаг
-  surrender(api) {
+  // приземление казана: удар, тряска, рис во все стороны, гость подпрыгивает
+  land(api) {
+    api.state.landed = true;
+    const kz = api.$('.s03-kazan');
+    const guestBox = api.$('.s03-guest');
+    FX.shakeStage();
+    api.sfx('stamp');
+    const c = FX.centerOf(kz.querySelector('.mound'));
+    FX.plov({ x: c.x, y: c.y - 30, count: 110, power: 22 });
+    api.$$('.s03-itemswrap > div').forEach((d, i) => api.timeout(() => FX.replay(d, 'is-hop'), i * 60));
+    FX.replay(api.$('.s03-thud'), 'is-on');
+    Art.mood(guestBox.querySelector('svg'), S03_GUEST_MOOD[2]);
+    FX.replay(guestBox, 'is-jump');
+  },
+
+  // кнопка «НЕТ, СПАСИБО» сдаётся: превращается в белый флаг (quiet — сразу, без анимации и звука)
+  surrender(api, quiet = false) {
     const btn = api.$('.s03-nobtn');
-    if (btn.classList.contains('is-flag')) return;
+    if (btn.querySelector('.s03-flag')) return; // флаг уже поднят
+    if (btn.classList.contains('is-flag') && !quiet) return; // анимация уже идёт
     btn.classList.add('is-flag');
-    FX.replay(btn, 'is-flip');
-    api.timeout(() => {
-      btn.classList.remove('btn--red');
+    const flag = () => {
+      if (btn.querySelector('.s03-flag')) return;
+      btn.classList.remove('btn--red', 'btn--pulse');
       btn.classList.add('btn--cream');
       btn.innerHTML = '<svg class="s03-flag" viewBox="0 0 46 52" aria-hidden="true"><path class="fl-pole" d="M6,4 V50"/><path class="fl-cloth" d="M8,6 Q22,2 30,8 Q38,14 44,8 L44,30 Q38,36 30,30 Q22,24 8,28 Z"/></svg>СДАЮСЬ';
       btn.setAttribute('aria-label', 'Сдаюсь');
-    }, 250);
+    };
+    if (quiet) { flag(); return; }
+    FX.replay(btn, 'is-flip');
+    api.timeout(flag, 250);
     api.sfx('swoosh');
   },
 
+  // мгновенно привести сцену к концу текущего шага: останавливает таймеры шага, без звуков
+  settle(api) {
+    const st = api.state, n = st.n;
+    api.clearTimers();
+    st.busy = false;
+    st.queued = false;
+    if (n > 0) {
+      api.$$('.s03-row').forEach((r) => { if (+r.dataset.n <= n) r.classList.add('is-on'); });
+      s03Amount(api, api.$('.s03-plate svg'), S03_PLATE[Math.min(n, 2)]);
+      Art.mood(api.$('.s03-grandma svg'), S03_GRAN_MOOD[n - 1]);
+      Art.mood(api.$('.s03-guest svg'), S03_GUEST_MOOD[n - 1]);
+      this.say(api, 'gran', n >= 3 ? S03_CLIMAX : S03_GRAN[n - 1], true);
+    }
+    if (n >= 3) {
+      st.landed = true;
+      const kz = api.$('.s03-kazan');
+      kz.classList.add('is-set');
+      kz.classList.remove('is-in');
+      this.surrender(api, true);
+    }
+    if (st.final) {
+      api.$('.s03-nobtn').classList.add('is-gone');
+      this.finish(api, true);
+    }
+  },
+
   finale(api) {
-    if (api.state.final) return;
-    api.state.final = true;
-    this.surrender(api);
+    const st = api.state;
+    this.settle(api); // хвосты третьего отказа (строка протокола, флаг, казан) — сразу
+    st.final = true;
     const btn = api.$('.s03-nobtn');
     FX.replay(btn, 'is-hit');
     api.timeout(() => btn.classList.add('is-gone'), 340);
@@ -5125,21 +5407,24 @@ Deck.register('03', {
     api.el.classList.add('is-final');
     api.sfx('swoosh');
     api.timeout(() => api.sfx('fail'), 250);
-    api.timeout(() => {
-      api.el.classList.add('is-final-2');
-      api.sfx('tada');
-      const r = api.$('.s03-researcher svg');
-      if (r) api.timeout(() => r.setAttribute('data-point', 'up'), 500);
-    }, 1700);
+    api.timeout(() => this.finish(api), 900);
     api.updateSteps();
   },
 
-  next(api) {
-    if (api.state.busy) return true; // идёт анимация шага — не перескакиваем
-    if (api.state.n < 3) { this.refuse(api); return true; }
-    if (!api.state.final) { this.finale(api); return true; }
-    return false;
+  // вторая строка финала: «Нужна математика!», формулы и Эркинбой с указкой
+  finish(api, quiet = false) {
+    const st = api.state;
+    if (st.final2) return;
+    st.final2 = true;
+    api.el.classList.add('is-final-2');
+    const r = api.$('.s03-researcher svg');
+    if (quiet) { if (r) r.setAttribute('data-point', 'up'); return; }
+    api.sfx('tada');
+    if (r) api.timeout(() => r.setAttribute('data-point', 'up'), 500);
+    api.updateSteps();
   },
+
+  next(api) { return this.step(api); },
 
   progress(api) { return { done: api.state.n + (api.state.final ? 1 : 0), total: 4 }; },
 });
@@ -5183,9 +5468,38 @@ function s04Kapgir() {
 const S04_EAT = 0.3;
 const S04_MAX_VIS = 3.6;   // дальше горка не растёт визуально (чтобы не закрыть заголовок)
 const S04_SAY = ['Oling, oling!<small>«Берите, берите!»</small>', 'Остывает же!', 'Ещё горяченький!', 'Последний разочек!'];
+const S04_GUEST_ADD = ['surprised', 'panic', 'shock'];
 const s04Round = (x) => Math.round(x * 1e10) / 1e10;
 const s04Exact2 = (x) => Math.abs(x * 100 - Math.round(x * 100)) < 1e-7;
 const s04Chip = (x) => (s04Exact2(x) ? Fmt.num(x, 2) : '≈' + Fmt.num(x, 2));
+// классы разовых CSS-анимаций: на скрытом слайде они ставятся на паузу и «доигрывали» бы при возвращении
+const S04_TRANSIENT = [
+  ['.s04-pop', 'is-on'], ['.s04-delta', 'is-on'], ['.s04-guest', 'is-chew is-shake'], ['.s04-plate', 'is-jelly'],
+  ['.s04-grandma', 'is-serve is-jelly'], ['.s04-kap', 'is-serve'], ['.s04-btn', 'is-hit'], ['.s04-val', 'is-bump'], ['.s04-say', 'is-swap'],
+];
+
+// анимация через api.raf: её останавливает api.clearTimers() (перемотка шага, уход со слайда, клавиша R)
+function s04Tween(api, ms, fn, easing = ease.outCubic) {
+  const t0 = performance.now();
+  const step = (now) => {
+    const t = clamp((now - t0) / ms, 0, 1);
+    if (fn(easing(t), t) === false) return;
+    if (t < 1) api.raf(step);
+  };
+  api.raf(step);
+}
+// горка плова на лягане (как Art.setAmount, но останавливаемая); ms = 0 — сразу
+function s04Amount(api, svg, amount, ms = 0, easing = ease.outBack) {
+  const g = svg && svg.querySelector('.mound');
+  if (!g) return;
+  const from = parseFloat(svg.dataset.amount || '1');
+  svg.dataset.amount = amount;
+  g.style.display = '';
+  const tok = svg._s04tok = (svg._s04tok || 0) + 1; // пишет только самая свежая анимация
+  const put = (v) => { const s = Art.amountScale(Math.max(0, v)); g.setAttribute('transform', `scale(${s.x.toFixed(4)},${s.y.toFixed(4)})`); };
+  if (!ms) { put(amount); return; }
+  s04Tween(api, ms, (k) => { if (svg._s04tok !== tok) return false; put(lerp(from, amount, k)); return true; }, easing);
+}
 
 Deck.register('04', {
   init(api) {
@@ -5196,18 +5510,25 @@ Deck.register('04', {
     api.$('.s04-kap').innerHTML = s04Kapgir();
     api.$('.s04-piala').innerHTML = Art.piala();
     api.$('.s04-non').innerHTML = Art.non();
-    Object.assign(api.state, { amount: 1, shown: 1, steps: 0, last: null, caption: false, busy: false, full: 0, adds: 0, eats: 0, values: [1], ops: [] });
+    Object.assign(api.state, { amount: 1, steps: 0, last: null, caption: false, busy: false, seq: 0, full: 0, adds: 0, eats: 0, values: [1], ops: [] });
     // после клика снимаем фокус: дальше → / кликер идут по шагам слайда, а не «нажимают» кнопку ещё раз
-    api.$('.s04-eat').addEventListener('click', (e) => { e.currentTarget.blur(); this.eat(api); });
-    api.$('.s04-add').addEventListener('click', (e) => { e.currentTarget.blur(); this.add(api); });
+    api.$('.s04-eat').addEventListener('click', (e) => { e.currentTarget.blur(); this.eat(api); api.updateSteps(); });
+    api.$('.s04-add').addEventListener('click', (e) => { e.currentTarget.blur(); this.add(api); api.updateSteps(); });
     this.renderMeter(api, 1);
     this.renderTrail(api);
+  },
+
+  // уход со слайда: текущий шаг досматривается мгновенно и молча — никаких «глотков» на соседнем слайде
+  leave(api) {
+    this.settle(api);
+    S04_TRANSIENT.forEach(([sel, cls]) => api.$$(sel).forEach((el) => el.classList.remove(...cls.split(' '))));
+    FX.clear(); // рис этого слайда не сыплется на следующий
   },
 
   /* ---------- отображение ---------- */
   renderMeter(api, v, final = true) {
     // «1 порция» / «0,30 порции»: число и единица разделены пробелом (возможно, неразрывным)
-    const [, num, unit] = Fmt.portions(v).match(/^(.*?)[\s\u00a0\u202f]+(\S+)$/);
+    const [, num, unit] = Fmt.portions(v).match(/^(.*?)[\s  ]+(\S+)$/);
     api.$('.s04-val').innerHTML = (final && !s04Exact2(v) ? '<small>≈</small>' : '') + num;
     api.$('.s04-unit').textContent = unit;
     const track = api.$('.s04-track');
@@ -5254,41 +5575,68 @@ Deck.register('04', {
     st.steps++;
     st.last = op;
     if (op === 'eat') st.eats++; else st.adds++;
+    api.timeout(() => this.show(api, op, prev, next), delayMs);
+  },
+
+  show(api, op, prev, next) {
+    const st = api.state;
     const plateSvg = api.$('.s04-plate svg');
     const delta = api.$('.s04-delta');
     delta.className = `s04-delta math is-${op}`;
     delta.textContent = op === 'eat' ? '×0,3' : '+1';
-    api.timeout(() => {
-      FX.replay(delta, 'is-on');
-      Art.setAmount(plateSvg, Math.min(next, S04_MAX_VIS), op === 'eat' ? 750 : 650, op === 'eat' ? ease.outCubic : ease.outBack);
-      const val = api.$('.s04-val');
-      // после R (перезапуска) старый api «мёртв» — не трогаем новый DOM
-      const live = () => api.el._api === api && api.state.amount === next;
-      Tween.num(prev, next, 650, (v) => { if (live()) this.renderMeter(api, v, false); }).then(() => {
-        if (live()) { this.renderMeter(api, next); FX.replay(val, 'is-bump'); }
-      });
-      const pop = api.$('.s04-pop');
-      // метка «−70%» / «+1» — над вершиной горки (берём большую из двух: до и после)
-      const sy = Art.amountScale(Math.min(Math.max(prev, next), S04_MAX_VIS)).y;
-      pop.style.top = `${Math.round(clamp(744 - 176 * sy - 96, 250, 640) - 240)}px`;
-      pop.className = `s04-pop is-${op}`;
-      pop.querySelector('.s04-pop-t').textContent = op === 'eat' ? '−70%' : '+1';
-      FX.replay(pop, 'is-on');
-      this.renderTrail(api, true);
-      api.updateSteps();
-    }, delayMs);
+    FX.replay(delta, 'is-on');
+    s04Amount(api, plateSvg, Math.min(next, S04_MAX_VIS), op === 'eat' ? 750 : 650, op === 'eat' ? ease.outCubic : ease.outBack);
+    const val = api.$('.s04-val');
+    const seq = ++st.seq;
+    s04Tween(api, 650, (k, t) => {
+      if (st.seq !== seq) return false;
+      if (t < 1) { this.renderMeter(api, lerp(prev, next, k), false); return true; }
+      this.renderMeter(api, next);
+      FX.replay(val, 'is-bump');
+      return true;
+    });
+    // метка «−70%» / «+1» — над вершиной горки (берём большую из двух: до и после)
+    const pop = api.$('.s04-pop');
+    const sy = Art.amountScale(Math.min(Math.max(prev, next), S04_MAX_VIS)).y;
+    const top = Math.round(744 - 176 * sy - 96 - 240);
+    if (st.caption) { pop.style.left = ''; pop.style.top = `${clamp(top, 200, 400)}px`; } // под панчлайном
+    else if (top >= 90) { pop.style.left = ''; pop.style.top = `${Math.min(top, 400)}px`; }
+    else { pop.style.left = '600px'; pop.style.top = '84px'; } // горка уже высокая: метка сбоку от вершины, ниже заголовка
+    pop.className = `s04-pop is-${op}`;
+    pop.querySelector('.s04-pop-t').textContent = op === 'eat' ? '−70%' : '+1';
+    FX.replay(pop, 'is-on');
+    this.renderTrail(api, true);
+    api.updateSteps();
   },
 
-  lock(api, ms) {
-    if (api.state.busy) return false;
-    api.state.busy = true;
-    api.timeout(() => { api.state.busy = false; }, ms);
-    return true;
+  // начало шага; если предыдущий ещё анимируется — сначала мгновенно досматриваем его (нажатие не теряется)
+  begin(api, ms) {
+    const st = api.state;
+    if (st.busy) this.settle(api);
+    st.busy = true;
+    api.timeout(() => { st.busy = false; }, ms);
+  },
+
+  // мгновенно привести сцену к текущему состоянию: остановить анимации шага, без звуков
+  settle(api) {
+    const st = api.state;
+    api.clearTimers();
+    st.busy = false;
+    st.seq++;
+    s04Amount(api, api.$('.s04-plate svg'), Math.min(st.amount, S04_MAX_VIS));
+    this.renderMeter(api, st.amount);
+    this.renderTrail(api);
+    const gs = api.$('.s04-guest svg'), gm = api.$('.s04-grandma svg');
+    gs.style.setProperty('--full', st.full.toFixed(2));
+    if (st.caption) { Art.mood(gs, 'dizzy'); Art.mood(gm, 'kind'); }
+    else if (st.last === 'eat') { Art.mood(gs, st.eats === 1 ? 'happy' : 'full'); Art.mood(gm, 'proud'); }
+    else if (st.last === 'add') { Art.mood(gs, S04_GUEST_ADD[Math.min(st.adds - 1, S04_GUEST_ADD.length - 1)]); Art.mood(gm, 'happy'); }
+    if (st.caption || st.last === 'eat') api.$('.s04-say').classList.remove('is-on');
   },
 
   /* ---------- действия ---------- */
   eat(api) {
-    if (!this.lock(api, 800)) return;
+    this.begin(api, 800);
     const st = api.state;
     const btn = api.$('.s04-eat');
     FX.replay(btn, 'is-hit');
@@ -5304,10 +5652,11 @@ Deck.register('04', {
     const gs = g.querySelector('svg');
     st.full = Math.min(1.2, st.full + .3);
     const firstBite = st.eats === 0;
+    const full = st.full;
     api.timeout(() => {
       FX.replay(g, 'is-chew');
       Art.mood(gs, firstBite ? 'happy' : 'full');
-      gs.style.setProperty('--full', st.full.toFixed(2));
+      gs.style.setProperty('--full', full.toFixed(2));
       api.sfx('gulp');
     }, 260);
     api.timeout(() => api.sfx('gulp'), 560);
@@ -5317,7 +5666,7 @@ Deck.register('04', {
   },
 
   add(api) {
-    if (!this.lock(api, 950)) return;
+    this.begin(api, 950);
     const st = api.state;
     const btn = api.$('.s04-add');
     FX.replay(btn, 'is-hit');
@@ -5331,13 +5680,13 @@ Deck.register('04', {
     api.sfx('whoosh');
     const g = api.$('.s04-guest');
     const plateBox = api.$('.s04-plate');
+    const mood = S04_GUEST_ADD[Math.min(st.adds, S04_GUEST_ADD.length - 1)];
     api.timeout(() => {
       api.sfx('plop');
       FX.replay(plateBox, 'is-jelly');
       const m = FX.centerOf(plateBox.querySelector('.mound'));
       FX.plov({ x: m.x, y: m.y - m.h * .4, count: 46, power: 12 });
-      const moods = ['surprised', 'panic', 'shock'];
-      Art.mood(g.querySelector('svg'), moods[Math.min(st.adds - 1, moods.length - 1)]);
+      Art.mood(g.querySelector('svg'), mood);
       FX.replay(g, 'is-shake');
     }, 500);
     this.commit(api, 'add', next, 500);
@@ -5346,6 +5695,7 @@ Deck.register('04', {
   showCaption(api) {
     const st = api.state;
     if (st.caption) return;
+    if (st.busy) this.settle(api);
     st.caption = true;
     api.$('.s04-say').classList.remove('is-on');
     api.$('.s04-caption').classList.add('is-on');
@@ -5358,9 +5708,9 @@ Deck.register('04', {
 
   next(api) {
     const st = api.state;
-    if (st.busy) return true; // анимация шага ещё идёт — не перескакиваем
     if (st.steps < 4) { if (st.last === 'eat') this.add(api); else this.eat(api); return true; }
     if (!st.caption) { this.showCaption(api); return true; }
+    if (st.busy) { this.settle(api); return true; } // после панчлайна кнопки мышью ещё работают: досматриваем их шаг
     return false;
   },
 
@@ -5392,22 +5742,35 @@ Deck.register('05', {
   init(api) {
     api.state.shown = new Set();
     api.state.moral = false;
+    api.state.built = false;
     api.$('.s05-ico-pn').innerHTML = Art.plate({ w: 300, amount: 1, seed: 21, headroom: -.1 });
     api.$('.s05-ico-coef').innerHTML = Art.plate({ w: 300, amount: .3, seed: 22, headroom: -.1 });
     api.$('.s05-ico-one').innerHTML = Art.grandma({ variant: 'uz', mood: 'happy', holding: 'none' });
-    api.$$('.s05-hot').forEach((b) => b.addEventListener('click', () => this.show(api, b.dataset.part)));
+    // после клика мышью снимаем фокус с кнопки: иначе пробел/Enter кликера нажимал бы её снова, а не листал
+    api.$$('.s05-hot').forEach((b) => b.addEventListener('click', (e) => { this.show(api, b.dataset.part); if (e.detail) b.blur(); }));
     api.$$('.s05-card').forEach((c) => c.addEventListener('click', () => this.show(api, c.dataset.part)));
   },
-  enter(api, { first }) {
+  enter(api) {
+    // формула собирается под барабанную дробь только один раз (после R — снова)
+    if (api.state.built) { this.rewire(api); return; }
     api.el.classList.remove('is-built');
-    if (first) api.timeout(() => api.sfx('drumroll', 1.5), 250);
-    api.timeout(() => {
-      api.el.classList.add('is-built');
-      if (first) api.sfx('ding');
-      // перерисовать проводки уже открытых карточек (после возврата на слайд)
-      api.state.shown.forEach((p) => this.wire(api, p));
-    }, 2350);
+    api.timeout(() => api.sfx('drumroll', 1.5), 250);
+    api.timeout(() => this.build(api, { sound: true }), 2350);
   },
+  leave(api) {
+    api.clearTimers();
+    this.build(api); // ушли до конца сборки — при возврате формула уже целая
+  },
+  // закончить сборку формулы (по таймеру или перемоткой)
+  build(api, { sound = false } = {}) {
+    if (api.state.built) return;
+    api.state.built = true;
+    api.clearTimers();
+    api.el.classList.add('is-built');
+    if (sound) api.sfx('ding');
+    this.rewire(api);
+  },
+  rewire(api) { api.state.shown.forEach((p) => this.wire(api, p)); },
   wire(api, part) {
     const term = api.$(`.s05-hot[data-part="${part}"]`);
     const card = api.$(`.s05-card[data-part="${part}"]`);
@@ -5421,6 +5784,7 @@ Deck.register('05', {
   },
   show(api, part) {
     if (!ORDER.includes(part)) return;
+    this.build(api); // нажали во время сборки — сразу целая формула
     const card = api.$(`.s05-card[data-part="${part}"]`);
     api.$$('.s05-hot').forEach((t) => t.classList.toggle('is-hl', t.dataset.part === part));
     if (api.state.shown.has(part)) { FX.replay(card, 'is-pulse'); api.sfx('tick'); return; }
@@ -5461,87 +5825,138 @@ const POINTS = Array.from({ length: N_MAX + 1 }, (_, n) => [n, P(n)]);
 Deck.register('06', {
   init(api) {
     const st = api.state;
-    st.n = 0; st.verdict = false; st.swept = false;
+    st.n = 0; st.verdict = false; st.slam2 = false; st.animating = false; st.anim = 0; st.shownN = null;
     st.plot = new Plot(api.$('.s06-chart'), {
       width: 1160, height: 660, margin: { l: 120, r: 40, t: 50, b: 100 },
       x: [0, N_MAX], y: [0.8, 1.6],
       xTicks: [0, 5, 10, 15, 20], yTicks: [0.8, 1, 1.2, 1.4, 1.6],
       fmtY: (v) => Fmt.num(v, 1),
       xLabel: 'циклы, <tspan font-style="italic">n</tspan>',
-      yLabel: '<tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="24" font-style="italic">n</tspan>',
+      // подпись оси поднята, индекс опущен на dy: не наезжает на деление «1,6»
+      yLabel: '<tspan font-style="italic" dy="-14">P</tspan><tspan font-size="24" font-style="italic" dy="9">n</tspan>',
     });
     st.plot.hline('lim', LIM, { label: '10/7 ≈ 1,43', color: 'var(--gold)', labelX: 1110 });
     st.plot.series('P', { color: 'var(--blue)', dots: true, dotR: 8, revealAll: false }).data(POINTS);
     api.$('.s06-plate').innerHTML = Art.plate({ w: 300, amount: 1, seed: 31, headroom: -.05 });
-    api.$('.s06-guest').innerHTML = Art.guest({ mood: 'panic' });
+    // гость — круглый стикер-реакция: только голова и плечи
+    const guest = api.$('.s06-guest');
+    guest.innerHTML = Art.guest({ mood: 'panic' });
+    guest.querySelector('svg').setAttribute('viewBox', '40 64 280 280');
+
     const range = api.$('#s06-range');
-    range.addEventListener('input', () => this.setN(api, +range.value, { user: true }));
-    this.render(api, 0);
+    range.addEventListener('input', () => {
+      range.step = '1';
+      const n = clamp(Math.round(+range.value), 0, N_MAX);
+      range.style.setProperty('--fill', `${(n / N_MAX) * 100}%`);
+      this.setN(api, n, { user: true });
+    });
+    // после мыши фокус не остаётся на ползунке, иначе → / ← двигали бы ползунок, а не слайды
+    const release = () => { const r = api.el.querySelector('#s06-range'); if (r && document.activeElement === r) r.blur(); };
+    range.addEventListener('change', release);
+    if (!api.el.dataset.s06up) { api.el.dataset.s06up = '1'; api.el.addEventListener('pointerup', release); } // секция переживает R
+    // если на ползунок пришли с клавиатуры (Tab): на краях стрелки снова листают презентацию
+    range.addEventListener('keydown', (e) => {
+      const v = +range.value;
+      const out = (e.code === 'ArrowRight' && v >= N_MAX) ? 'advance' : (e.code === 'ArrowLeft' && v <= 0) ? 'back' : null;
+      if (!out) return;
+      e.preventDefault();
+      range.blur();
+      Deck[out]();
+    });
+    this.render(api, 0, { quiet: true });
+    this.slider(api, 0);
   },
   enter(api) {
-    // после возврата на слайд — восстановить картинку
+    // после возврата на слайд — картинка уже доведена до конца в leave()
     api.state.plot.reveal('P', api.state.n);
   },
-  // обновить показания для (возможно дробного) положения t
-  render(api, t) {
+  leave(api) {
+    const st = api.state;
+    api.clearTimers();
+    if (st.animating) this.finish(api, { quiet: true });
+    if (st.verdict) this.slam2(api, { quiet: true });
+  },
+  // показания для (возможно дробного) положения t
+  render(api, t, { quiet = false } = {}) {
+    const st = api.state;
     const n = Math.round(t);
+    if (st.shownN === n) return;
+    st.shownN = n;
     api.$('.s06-nv').textContent = n;
     api.$('.s06-psub').textContent = n;
     api.$('.s06-pv').textContent = Fmt.num(P(n), 3);
+    Art.setAmount(api.$('.s06-plate .art'), P(n), quiet ? 1 : 260, ease.outCubic);
+    if (n > 0 && !quiet) api.sfx('tick');
+  },
+  // ползунок (бегунок и заливка) — в то же положение, что и график
+  slider(api, t) {
     const range = api.$('#s06-range');
+    range.value = t;
     range.style.setProperty('--fill', `${(t / N_MAX) * 100}%`);
-    if (api.state.shownN !== n) {
-      api.state.shownN = n;
-      Art.setAmount(api.$('.s06-plate .art'), P(n), 260, ease.outCubic);
-      if (n > 0) api.sfx('tick');
-    }
   },
   setN(api, n, { user = false, ms } = {}) {
     const st = api.state;
     const from = st.plot.revealed('P');
+    const range = api.$('#s06-range');
     st.n = n;
     const dur = ms ?? clamp(Math.abs(n - from) * 90, 250, 1400);
     const t0 = performance.now();
-    st.anim = (st.anim || 0) + 1;
-    const token = st.anim;
+    const token = ++st.anim;
+    st.animating = true;
+    if (!user) range.step = 'any'; // бегунок едет плавно, а не прыжками по 1
     const step = () => {
       if (token !== st.anim) return;
       const k = clamp((performance.now() - t0) / dur, 0, 1);
       const t = lerp(from, n, ease.inOutCubic(k));
       st.plot.reveal('P', t);
       this.render(api, t);
-      if (k < 1) api.raf(step);
-      else if (user && n >= 12 && !st.verdict) api.timeout(() => this.verdict(api), 350);
+      if (!user) this.slider(api, t);
+      if (k < 1) { api.raf(step); return; }
+      st.animating = false;
+      if (!user) { range.step = '1'; this.slider(api, n); }
+      if (user && n >= 12 && !st.verdict) api.timeout(() => this.verdict(api), 350);
     };
     api.raf(step);
     api.updateSteps();
   },
-  sweep(api) {
+  // мгновенно довести график до цели (→ во время анимации и уход со слайда)
+  finish(api, { quiet = false } = {}) {
     const st = api.state;
-    st.swept = true;
-    const range = api.$('#s06-range');
-    range.value = N_MAX;
-    this.setN(api, N_MAX, { ms: 2400 });
+    st.anim++;
+    st.animating = false;
+    st.plot.reveal('P', st.n);
+    this.render(api, st.n, { quiet });
+    api.$('#s06-range').step = '1';
+    this.slider(api, st.n);
+  },
+  sweep(api) {
+    const from = api.state.plot.revealed('P');
+    this.setN(api, N_MAX, { ms: clamp((N_MAX - from) * 120, 400, 2400) });
     api.sfx('whoosh');
   },
   verdict(api) {
     const st = api.state;
     if (st.verdict) return;
     st.verdict = true;
-    const s1 = api.$('.s06-st1'), s2 = api.$('.s06-st2');
-    s1.classList.add('is-slam'); api.sfx('stamp'); api.sfx('ding');
+    api.$('.s06-st1').classList.add('is-slam'); api.sfx('stamp'); api.sfx('ding');
     FX.shakeStage();
-    api.timeout(() => {
-      s2.classList.add('is-slam'); api.sfx('stamp'); api.sfx('fail');
-      api.$('.s06-guest').classList.add('is-on');
-      FX.shakeStage();
-    }, 1100);
+    api.timeout(() => this.slam2(api), 1100);
     api.updateSteps();
+  },
+  slam2(api, { quiet = false } = {}) {
+    const st = api.state;
+    if (st.slam2) return;
+    st.slam2 = true;
+    api.$('.s06-st2').classList.add('is-slam');
+    api.$('.s06-guest').classList.add('is-on');
+    if (!quiet) { api.sfx('stamp'); api.sfx('fail'); FX.shakeStage(); }
   },
   next(api) {
     const st = api.state;
+    if (st.animating && st.n >= N_MAX) { this.finish(api); return true; } // перемотка проезда
     if (st.n < N_MAX) { this.sweep(api); return true; }
     if (!st.verdict) { this.verdict(api); return true; }
+    if (!st.slam2) { api.clearTimers(); this.slam2(api); return true; } // вторая печать — сразу
     return false;
   },
   progress(api) { return { done: (api.state.n >= N_MAX ? 1 : 0) + (api.state.verdict ? 1 : 0), total: 2 }; },
@@ -5594,7 +6009,7 @@ Deck.register('07', {
 
     // график: обе серии на одной плоскости, ось Y плавно растёт вместе со съеденным
     const plot = new Plot(api.$('.s07-chart'), {
-      width: 1080, height: 630, margin: { l: 110, r: 40, t: 44, b: 84 },
+      width: 1030, height: 598, margin: { l: 120, r: 40, t: 44, b: 84 },
       x: [0, 5], y: [0, 3], xTickCount: 6, yTickCount: 5,
       fmtX: (v) => (Number.isInteger(v) ? Fmt.int(v) : ''),
       fmtY: (v) => (Number.isInteger(v) ? Fmt.int(v) : Fmt.num(v, 1)),
@@ -5631,9 +6046,12 @@ Deck.register('07', {
     this.render(api, 0);
     this.syncUi(api);
 
-    st.$more.addEventListener('click', () => this.addCycle(api, true));
-    api.$('.s07-ff').addEventListener('click', () => this.fastForward(api));
-    api.$('.s07-sum').addEventListener('click', () => this.climax(api));
+    // после клика мышью снимаем фокус с кнопки: иначе пробел/Enter кликера «нажимают» уже скрытую кнопку
+    // (core.js отдаёт Space/Enter сфокусированной кнопке), и «Далее» молчит
+    const onClick = (sel, fn) => api.$(sel).addEventListener('click', (e) => { e.currentTarget.blur(); fn(); });
+    onClick('.s07-more', () => this.addCycle(api, true));
+    onClick('.s07-ff', () => this.fastForward(api));
+    onClick('.s07-sum', () => this.climax(api));
     st.$final.addEventListener('click', () => { if (api.state.climax && !api.state.arrow) this.showArrow(api); });
   },
 
@@ -5919,6 +6337,7 @@ Deck.register('07', {
 ;(function(){
 /* Слайд 8. Коэффициент бабушки.
    Модель: P0 = 1, P(n+1) = 0,3·P(n) + k^n (добавки a_n = k^n, первая — одна порция).
+   Фишки добавок: округлённые значения помечаются «≈» (1,5³ = 3,375 → «≈3,38»).
    k = 1 → ряд сходится к 10/7; любое k > 1 → расходится (P(n) ≈ k^n / (k − 0,3)).
    Шаги «Далее»: 1) k → 1; 2) k → 1,5; 3) k → 2 (критический уровень); 4) аварийный сброс + две бабушки. */
 const S08 = (() => {
@@ -6052,7 +6471,7 @@ const S08 = (() => {
     });
     nd.garlic.setAttribute('transform', `translate(0,${(-H + 6).toFixed(1)}) scale(${(bs * 1.05).toFixed(3)})`);
     const peakY = BASE_Y - H - 50 * bs;
-    api.el.classList.toggle('is-flood', peakY < 212 && W > 700);
+    api.el.classList.toggle('is-flood', peakY < 250 && W > 700); // вершина дошла до заголовка (он кончается на y≈236)
     api.el.classList.toggle('is-offtop', BASE_Y - H < -40);
   }
 
@@ -6135,7 +6554,10 @@ Deck.register('08', {
     if (Math.abs(parseFloat(ui.range.value) - k) > 1e-9) ui.range.value = String(k);
     ui.range.style.setProperty('--fill', `calc(28px + (100% - 56px) * ${(k - 1).toFixed(4)})`);
     ui.kval.textContent = S08.trim(k);
-    ui.chips.forEach((c, i) => { c.textContent = S08.trim(Math.pow(k, i)); });
+    ui.chips.forEach((c, i) => {
+      const v = Math.pow(k, i);
+      c.textContent = (Math.abs(v * 100 - Math.round(v * 100)) > 1e-9 ? '≈' : '') + S08.trim(v);
+    });
 
     // показания: ровно по рекуррентной формуле
     const ps = S08.series(k, S08.CYCLES);
@@ -6215,15 +6637,16 @@ Deck.register('08', {
     this.apply(api, Math.round(raw * 20) / 20);
   },
 
-  animateTo(api, to, ms = 1000, easing = ease.inOutCubic) {
+  // hold — пауза перед движением (после досрочного завершения предыдущего шага, чтобы его итог успели увидеть)
+  animateTo(api, to, ms = 1000, easing = ease.inOutCubic, hold = 0) {
     const s = api.state, r = s.ui.range;
-    const from = s.k;
     const token = { to };
     s.anim = token;
     r.step = 'any';
-    const t0 = performance.now();
+    let from = null, t0 = 0;
     const loop = (now) => {
       if (s.anim !== token) return;
+      if (from === null) { from = s.k; t0 = now; }
       const t = clamp((now - t0) / ms, 0, 1);
       if (t < 1) { this.apply(api, lerp(from, to, easing(t))); api.raf(loop); return; }
       s.anim = null;
@@ -6231,10 +6654,22 @@ Deck.register('08', {
       this.apply(api, to);
       FX.replay(s.ui.kval, 'is-bump');
     };
-    api.raf(loop);
+    if (hold > 0) api.timeout(() => api.raf(loop), hold); else api.raf(loop);
   },
 
-  emergency(api) {
+  // «Далее» во время движения ползунка: довести текущий шаг до цели (со всеми его эффектами), а не обрывать
+  finishAnim(api) {
+    const s = api.state;
+    if (!s.anim) return false;
+    const to = s.anim.to;
+    s.anim = null;
+    s.ui.range.step = '0.05';
+    this.apply(api, to);
+    FX.replay(s.ui.kval, 'is-bump');
+    return true;
+  },
+
+  emergency(api, hold = 0) {
     const s = api.state;
     const first = !s.constShown;
     s.constShown = true;
@@ -6243,7 +6678,7 @@ Deck.register('08', {
     api.sfx('whoosh');
     s.resetting = true;
     api.timeout(() => { s.resetting = false; }, 1200);
-    this.animateTo(api, 1.5, 1100, ease.inOutCubic);
+    this.animateTo(api, 1.5, 1100, ease.inOutCubic, hold);
     const arts = api.$$('.s08-gma-art .art');
     if (!first) { api.timeout(() => api.sfx('boing'), 900); return; }
     api.el.classList.add('is-const');
@@ -6277,15 +6712,17 @@ Deck.register('08', {
   next(api) {
     const s = api.state;
     if (s.constShown) return false;
+    // быстрый кликер: предыдущий шаг ещё едет — сначала завершаем его (k = 1 успевает «сойтись», k = 2 — включить сирену)
+    const hold = this.finishAnim(api) ? 450 : 0;
     if (s.step < 3) {
       const to = S08.TARGETS[s.step];
       const ms = [1000, 900, 1300][s.step];
       s.step++;
       api.updateSteps();
-      this.animateTo(api, to, ms);
+      this.animateTo(api, to, ms, ease.inOutCubic, hold);
       return true;
     }
-    this.emergency(api);
+    this.emergency(api, hold);
     return true;
   },
 
@@ -6317,8 +6754,56 @@ const S09 = (() => {
   const ODDS = [100, 60, 25, 5];   // шуточная «вероятность побега» после 0, 1, 2, 3 попыток; итог — 0
   const FULL = [0, .3, .6, .9];    // сытость гостя
   const GMA_PLATE = [1, 1.35, 1.7, 2.05];
-  const ROT = [-9, -6, -11];
+  const ROT = [-7, -5, -8];
   const WALK = 300;                // сколько пикселей до двери
+  const STAMP_AT = 1400;           // когда в попытке падает печать (мс)
+
+  /* ---------- короткие звуки ----------
+     В core нет укороченных вариантов «fail» (≈1,9 с) и «alarm» (≈1,4 с), а попытка длится 1,5 с,
+     поэтому здесь — свой маленький синтезатор с тем же тембром. Уважает выключенный звук (M). */
+  const Snd = (() => {
+    let ctx = null, out = null;
+    function ac() {
+      if (window.Sfx && Sfx.muted) return null;
+      try {
+        if (!ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return null;
+          ctx = new AC();
+          out = ctx.createGain(); out.gain.value = .55; out.connect(ctx.destination);
+        }
+        if (ctx.state === 'suspended') ctx.resume();
+        return ctx;
+      } catch (e) { return null; }
+    }
+    function tone(c, { type = 'sawtooth', f0, f1 = null, t = 0, dur = .2, vol = .14 }) {
+      const now = c.currentTime + t;
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(f0, now);
+      if (f1) o.frequency.linearRampToValueAtTime(f1, now + dur);
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(vol, now + .005);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      o.connect(g); g.connect(out);
+      o.start(now); o.stop(now + dur + .05);
+    }
+    const safe = (fn) => () => { try { const c = ac(); if (c) fn(c); } catch (e) { /* звук не критичен */ } };
+    return {
+      // грустный тромбон: 3 × 0,18 с + 0,4 с ≈ 0,95 с
+      fail: safe((c) => {
+        [392, 370, 349.2].forEach((f, i) => tone(c, { f0: f, t: i * .18, dur: .17 }));
+        tone(c, { f0: 329.6, f1: 309.8, t: .54, dur: .42 });
+      }),
+      // будильник: два «дзынь-дзынь» ≈ 0,7 с
+      ring: safe((c) => {
+        for (let i = 0; i < 2; i++) {
+          tone(c, { type: 'square', f0: 880, t: i * .36, dur: .17, vol: .09 });
+          tone(c, { type: 'square', f0: 660, t: i * .36 + .18, dur: .17, vol: .09 });
+        }
+      }),
+    };
+  })();
 
   /* ---------- рисунки ---------- */
   function star(cx, cy, R, r, n = 8) {
@@ -6455,11 +6940,11 @@ const S09 = (() => {
   }
 
   /* ---------- шаги и состояние ---------- */
-  // запустить последовательность шагов [мс, fn(loud)]; незавершённую — можно мгновенно «досыпать» через settle
+  // запустить последовательность шагов [мс, fn(loud), 'stamp'?]; незавершённую — можно мгновенно «досыпать» через settle
   function play(api, steps) {
     const s = api.state;
     const tok = ++s.tok;
-    const q = steps.map(([ms, fn]) => ({ ms, fn, done: false }));
+    const q = steps.map(([ms, fn, tag]) => ({ ms, fn, tag, done: false }));
     s.queue = q;
     q.forEach((st) => api.timeout(() => {
       if (s.tok !== tok || st.done) return;
@@ -6467,12 +6952,15 @@ const S09 = (() => {
       if (q.every((x) => x.done)) s.queue = null;
     }, st.ms));
   }
-  function settle(api) {
+  // досыпать незавершённую попытку: всё ставится сразу, печать всё равно «падает» (анимация + звук, если audible)
+  function settle(api, audible) {
     const s = api.state;
     if (!s.queue) return false;
     const q = s.queue;
     s.queue = null; s.tok++;
+    const stampPending = q.some((st) => !st.done && st.tag === 'stamp');
     q.forEach((st) => { if (!st.done) { st.done = true; st.fn(false); } });
+    if (audible && stampPending) api.sfx('stamp');
     return true;
   }
   const busy = (api) => !!api.state.queue;
@@ -6518,6 +7006,21 @@ const S09 = (() => {
   function guestArt(api) { return api.$('.s09-guest .art-guest'); }
   function gmaArt(api) { return api.$('.s09-gma .art-grandma'); }
 
+  // печать «Попытка не удалась» — прямо на выбранной отговорке (не закрывает «аргументы» бабушки на столе)
+  function stampOn(api, i, n, loud) {
+    const s = api.state;
+    const st = api.$('.s09-stamp'), wrap = api.$('.s09-stampwrap'), opts = api.$('.s09-opts');
+    const w = api.$$('.s09-optwrap')[i];
+    wrap.style.setProperty('--sx', `${opts.offsetLeft + w.offsetLeft + w.offsetWidth / 2}px`);
+    wrap.style.setProperty('--sy', `${opts.offsetTop + w.offsetTop + w.offsetHeight / 2 - 10}px`);
+    st.style.setProperty('--rot', `${ROT[n - 1]}deg`);
+    st.classList.remove('is-off');
+    FX.replay(st, 'is-slam');
+    // печать висит, пока звучит тромбон, и уходит; при «перемотке» — не меньше секунды, чтобы её увидели
+    const tok = ++s.stampTok;
+    api.timeout(() => { if (s.stampTok === tok) st.classList.add('is-off'); }, loud ? 1700 : 1100);
+  }
+
   // одна попытка сбежать
   function attempt(api, i) {
     const s = api.state;
@@ -6527,27 +7030,29 @@ const S09 = (() => {
       FX.replay(btn, 'is-nope'); api.sfx('tick');
       return false;
     }
-    settle(api);
+    settle(api, true);                     // прошлая попытка (если ещё идёт) мгновенно завершается — с печатью
     s.used.push(i);
     const n = s.used.length;               // номер попытки 1…3
     api.updateSteps();
 
     const guest = api.$('.s09-guest'), bob = api.$('.s09-guest-bob'), doorEl = api.$('.s09-door');
-    const stamp = api.$('.s09-stamp'), gma = api.$('.s09-gma');
+    const gma = api.$('.s09-gma');
+
+    // мгновенный отклик кнопки — и мышью, и клавишей, и кликером
+    api.sfx('click');
+    FX.replay(btn, 'is-pressed');
+    api.timeout(() => btn.classList.remove('is-pressed'), 160);
+    btn.classList.add('is-chosen');
 
     play(api, [
       [0, (loud) => {
-        if (loud) { api.sfx('click'); FX.replay(btn, 'is-pressed'); api.timeout(() => btn.classList.remove('is-pressed'), 160); }
-        btn.classList.add('is-chosen');
-        s.stampTok++;
-        stamp.classList.remove('is-slam', 'is-off');
         api.$('.s09-bub').classList.remove('is-shown');
         Art.mood(guestArt(api), 'polite');
         if (loud) { bob.classList.add('is-walking'); api.sfx('whoosh'); }
         guest.style.setProperty('--gx', `${WALK}px`);
       }],
-      [480, (loud) => { if (loud) { doorEl.classList.add('is-open'); api.sfx('swoosh'); } }],
-      [820, (loud) => {
+      [260, (loud) => { if (loud) { doorEl.classList.add('is-open'); api.sfx('swoosh'); } }],
+      [520, (loud) => {
         bob.classList.remove('is-walking');
         Art.mood(gmaArt(api), GMA_MOOD[i]);
         if (loud) FX.replay(gma, 'is-talk');
@@ -6561,13 +7066,13 @@ const S09 = (() => {
         } else if (i === 1) {
           const c = api.$('.s09-clock');
           c.classList.add('is-in');
-          if (loud) { c.classList.add('is-ringing'); api.sfx('alarm'); api.timeout(() => c.classList.remove('is-ringing'), 1500); }
+          if (loud) { c.classList.add('is-ringing'); Snd.ring(); api.timeout(() => c.classList.remove('is-ringing'), 720); }
         } else {
           api.$('.s09-thesis').classList.add('is-in');
           if (loud) api.sfx('swoosh');
         }
       }],
-      [1180, (loud) => {
+      [760, (loud) => {
         if (i === 0) {
           api.$('.s09-piala').classList.add('is-in');
           if (loud) api.sfx('ding');
@@ -6576,9 +7081,9 @@ const S09 = (() => {
         } else {
           api.$('.s09-plate3').classList.add('is-in');
         }
-        Art.setAmount(gmaArt(api), GMA_PLATE[n], loud ? 600 : 1);
+        Art.setAmount(gmaArt(api), GMA_PLATE[n], loud ? 500 : 1);
       }],
-      [1420, (loud) => {
+      [900, (loud) => {
         doorEl.classList.remove('is-open');
         Art.mood(guestArt(api), 'happy');
         guestArt(api).style.setProperty('--full', FULL[n]);
@@ -6592,25 +7097,23 @@ const S09 = (() => {
           if (i === 2) FX.replay(api.$('.s09-thesis'), 'is-squash');
         }
       }],
-      [2240, (loud) => {
+      [STAMP_AT, (loud) => {
         bob.classList.remove('is-walking');
         if (loud) FX.replay(bob, 'is-happy');
         if (n === 3) Art.mood(guestArt(api), 'full');
-        stamp.style.setProperty('--rot', `${ROT[n - 1]}deg`);
-        stamp.classList.remove('is-off');
-        if (loud) FX.replay(stamp, 'is-slam'); else stamp.classList.add('is-slam');
-        btn.classList.remove('is-chosen');
+        btn.classList.remove('is-chosen', 'is-pressed');
         btn.classList.add('is-used');
         btn.setAttribute('aria-disabled', 'true');
-        if (loud) { api.sfx('stamp'); FX.shakeStage(); FX.replay(api.$('.s09-hud'), 'is-hit'); }
+        stampOn(api, i, n, loud);
+        if (loud) {
+          api.sfx('stamp'); FX.shakeStage(); FX.replay(api.$('.s09-hud'), 'is-hit');
+          api.timeout(() => Snd.fail(), 90);
+        }
         tweenOdds(api, ODDS[n], 900, loud);
         Art.mood(gmaArt(api), 'kind');
-        // печать повисит, пока звучит тромбон, и уйдёт; после третьей попытки — кнопка «Подвести итог»
-        const tok = ++s.stampTok;
-        api.timeout(() => { if (s.stampTok === tok) stamp.classList.add('is-off'); }, loud ? 2700 : 600);
-        if (n === 3) api.timeout(() => { if (s.stampTok === tok && !s.final) showSum(api, true); }, loud ? 1100 : 0);
-      }],
-      [2420, (loud) => { if (loud) api.sfx('fail'); }],
+        // после третьей попытки — кнопка «Подвести итог» (для мыши; кликер просто жмёт →)
+        if (n === 3) api.timeout(() => { if (!s.final) showSum(api, true); }, loud ? 700 : 0);
+      }, 'stamp'],
     ]);
     return true;
   }
@@ -6619,7 +7122,7 @@ const S09 = (() => {
   function finale(api) {
     const s = api.state;
     if (s.final || s.used.length < 3) return false;
-    settle(api);
+    settle(api, true);
     s.final = true;
     s.stampTok++;
     showSum(api, false);
@@ -6696,13 +7199,15 @@ const S09 = (() => {
     },
     leave(api) {
       // досыпать незавершённый шаг и остановить «бегущие» цифры (иначе после R старый твин допишет в новый DOM)
-      settle(api);
+      settle(api, false);
       api.state.oddsTok++;
       setOdds(api, api.state.odds);
+      FX.clear(); // конфетти «утешительного приза» не должно сыпаться на следующий слайд
     },
     next(api) {
       const s = api.state;
-      if (busy(api)) { settle(api); return true; }
+      // попытка ещё идёт — нажатие её «перематывает»: печать падает сразу (со звуком), ничего не теряется
+      if (busy(api)) { settle(api, true); return true; }
       const free = [0, 1, 2].find((i) => !s.used.includes(i));
       if (free !== undefined) return attempt(api, free);
       if (!s.final) return finale(api);
@@ -6740,16 +7245,16 @@ const S10 = {
     ['семья', 'Мама спрашивает, есть&nbsp;ли у&nbsp;меня шапка.'],
     ['родня', 'Двоюродный брат тоже стал лингвистом. Это у&nbsp;нас семейное.'],
     ['соседи', 'Соседи достроили второй этаж.'],
-    ['бабушка', 'У&nbsp;бабушки всё хорошо. Её&nbsp;кот тоже в&nbsp;порядке.'],
+    ['бабушка', 'У&nbsp;бабушки всё хорошо. Её&nbsp;кот тоже поправился&nbsp;— на&nbsp;два килограмма.'],
     ['знакомые', 'В&nbsp;субботу свадьба. Вы&nbsp;тоже приглашены.'],
     ['родня', 'Племянник пошёл в&nbsp;первый класс и&nbsp;уже знает, что такое предел.'],
     ['семья', 'Папа спрашивает, хорошо&nbsp;ли я&nbsp;питаюсь.'],
     ['соседи', 'Сосед купил машину. Цвет выбирала вся махалля — весь квартал.'],
     ['бабушка', 'Бабушка спрашивает, почему вы&nbsp;до&nbsp;сих пор не&nbsp;поели.'],
     ['знакомые', 'Одноклассник открыл чайхану. Передаёт привет.'],
-    ['родня', 'Тётя из&nbsp;Ферганы передала сухофрукты. Через три города.'],
-    ['семья', 'Младшая сестра поступила в&nbsp;университет.'],
-    ['соседи', 'Соседский мальчик вырос. Теперь он&nbsp;выше дяди.'],
+    ['родня', 'Тётя из&nbsp;Ферганы передала сухофрукты: через проводника, двух соседей и&nbsp;знакомого знакомого.'],
+    ['семья', 'Младшая сестра поступила на&nbsp;математику. Будет считать родственников.'],
+    ['соседи', 'Соседский мальчик вырос. Теперь он&nbsp;тоже спрашивает, когда я&nbsp;женюсь.'],
     ['родня', 'Дедушка смотрит футбол и&nbsp;даёт советы тренеру. Через телевизор.'],
     ['знакомые', 'Знакомый знакомого тоже живёт в&nbsp;Петербурге. Передаёт привет.'],
     ['родня', 'Двоюродная сестра выходит замуж. Вы, конечно, тоже приглашены.'],
@@ -7044,14 +7549,17 @@ Deck.register('10', {
     const num = api.$(`.s10-row--${s.c} .s10-num`);
     res.setAttribute('data-point', 'up');
     api.sfx('swoosh');
+    // эффекты — только пока мы ещё в сцене выводов (кликер мог уже перелистнуть на культурный центр)
+    const inA = (fn) => () => { if (s.scene === 'a') fn(); };
     if (s.c < 3) {
-      api.timeout(() => { api.sfx(s.c === 1 ? 'ding' : 'coin'); FX.at(num, 'rice', { count: 26, power: 12 }); }, 380);
-      Art.mood(res, s.c === 1 ? 'serious' : 'smug');
+      const k = s.c;
+      api.timeout(inA(() => { api.sfx(k === 1 ? 'ding' : 'coin'); FX.at(num, 'rice', { count: 26, power: 12 }); }), 380);
+      Art.mood(res, k === 1 ? 'serious' : 'smug');
     } else {
       const g = api.$('.s10-a-gma-in');
-      api.timeout(() => { api.sfx('boing'); FX.shakeStage(); Art.mood(res, 'shock'); FX.at(num, 'confetti', { count: 40, power: 14, spread: 6.28 }); }, 380);
-      api.timeout(() => { api.sfx('plop'); const c = FX.centerOf(g); FX.plov({ x: c.x, y: c.y - 30, count: 70, power: 17 }); Art.mood(g, 'happy'); }, 1000);
-      api.timeout(() => { api.sfx('stamp'); FX.at(api.$('.s10-qed'), 'rice', { count: 30, power: 12 }); Art.mood(res, 'proud'); Art.mood(g, 'proud'); }, 1520);
+      api.timeout(inA(() => { api.sfx('boing'); FX.shakeStage(); Art.mood(res, 'shock'); FX.at(num, 'confetti', { count: 40, power: 14, spread: 6.28 }); }), 380);
+      api.timeout(inA(() => { api.sfx('plop'); const c = FX.centerOf(g); FX.plov({ x: c.x, y: c.y - 30, count: 70, power: 17 }); Art.mood(g, 'happy'); }), 1000);
+      api.timeout(inA(() => { api.sfx('stamp'); FX.at(api.$('.s10-qed'), 'rice', { count: 30, power: 12 }); Art.mood(res, 'proud'); Art.mood(g, 'proud'); }), 1520);
     }
     api.updateSteps();
     return true;
@@ -7155,20 +7663,33 @@ Deck.register('10', {
     if (s.scene === 'd') api.sfx(s.n % 4 === 1 ? 'pop' : 'tick');
   },
 
-  // D → E: финал
+  // D → E: финал. Конфетти бьёт только с боков и наружу — центр («RAHMAT! СПАСИБО!») остаётся чистым
+  sideConfetti(xl, xr, opts = {}) {
+    const tilt = opts.tilt == null ? 0.35 : opts.tilt;
+    const o = { spread: 0.8, ...opts };
+    delete o.tilt;
+    FX.confetti({ ...o, x: xl, angle: -Math.PI / 2 - tilt });
+    FX.confetti({ ...o, x: xr, angle: -Math.PI / 2 + tilt });
+  },
+
   toFinal(api) {
     if (api.state.scene !== 'd') return false;
     this.setScene(api, 'e');
     api.sfx('whoosh');
     api.timeout(() => api.sfx('swoosh'), 750);
-    api.timeout(() => {
-      api.sfx('tada');
-      FX.confetti({ x: 360, angle: -Math.PI / 2 + 0.25, count: 150 });
-      FX.confetti({ x: 1560, angle: -Math.PI / 2 - 0.25, count: 150 });
-    }, 1250);
-    api.timeout(() => { api.sfx('boing'); FX.confetti({ x: 960, count: 200, power: 30 }); }, 1700);
+    api.timeout(() => { api.sfx('tada'); this.sideConfetti(300, 1620, { count: 140 }); }, 1250);
+    api.timeout(() => { api.sfx('boing'); this.sideConfetti(440, 1480, { count: 90, power: 24, tilt: 0.45, spread: 0.7 }); }, 1700);
     api.timeout(() => api.sfx('sparkle'), 2300);
-    api.timeout(() => { FX.confetti({ x: 660, count: 90 }); FX.confetti({ x: 1260, count: 90 }); }, 2800);
+    api.timeout(() => this.sideConfetti(140, 1780, { count: 70, tilt: 0.15, spread: 0.6 }), 2800);
+    return true;
+  },
+
+  // E: «→» на последнем слайде — не мёртвое нажатие, а маленький бис (если после него есть слайды — просто дальше)
+  encore(api) {
+    if (Deck.index < Deck.slides.length - 1) return false;
+    api.sfx('sparkle');
+    this.sideConfetti(300, 1620, { count: 80 });
+    FX.replay(api.$('.s10-e-thanks'), 'is-bump');
     return true;
   },
 
@@ -7179,6 +7700,7 @@ Deck.register('10', {
       case 'b': return this.toQuestion(api);
       case 'c': return this.answerUz(api);
       case 'd': return this.toFinal(api);
+      case 'e': return this.encore(api);
       default: return false;
     }
   },

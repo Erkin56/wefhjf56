@@ -26,20 +26,30 @@
 #s08.is-critical .s08-heat::after { animation: s08-blink .5s steps(1, end) infinite; }
 @keyframes s08-blink { 0% { opacity: 1; } 50% { opacity: 0; } }
 
-/* ---------- заголовок ---------- */
-#s08 .s08-head { position: absolute; left: var(--pad-x); top: 96px; z-index: 4; }
-#s08 .s08-title {
-  display: inline-block; padding: 8px 22px 12px; margin-left: -22px; border-radius: 18px;
+/* ---------- заголовок: на стандартном месте (надзаголовок y=104, заголовок y=147); подложка — когда гора плова дорастает до него ---------- */
+#s08 .s08-head {
+  position: absolute; left: calc(var(--pad-x) - 22px); top: calc(var(--pad-top) - 10px); z-index: 4;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+  padding: 10px 22px 12px; border-radius: 18px;
   background: rgba(23, 24, 27, 0); transition: background .5s, box-shadow .5s;
 }
-#s08.is-flood .s08-title { background: rgba(23, 24, 27, .94); box-shadow: 0 12px 34px rgba(0, 0, 0, .45); }
+#s08.is-flood .s08-head { background: rgba(23, 24, 27, .94); box-shadow: 0 12px 34px rgba(0, 0, 0, .45); }
+
+/* k = 2: гора плова закрывает и полосы «беамера» — подкладываем под шапку и подвал тёмные полосы, чтобы их было видно */
+#s08::before, #s08::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 64px; z-index: 15; pointer-events: none;
+  background: rgba(12, 13, 15, .78); opacity: 0; transition: opacity .35s;
+}
+#s08::before { top: 0; box-shadow: 0 6px 18px rgba(12, 13, 15, .45); }
+#s08::after { bottom: 0; height: 60px; box-shadow: 0 -6px 18px rgba(12, 13, 15, .45); }
+#s08.is-critical::before, #s08.is-critical::after { opacity: 1; }
 
 /* ---------- левая панель ---------- */
-#s08 .s08-panelwrap { position: absolute; left: var(--pad-x); top: 206px; width: 900px; height: 780px; z-index: 3; }
+#s08 .s08-panelwrap { position: absolute; left: var(--pad-x); top: 262px; width: 900px; height: 728px; z-index: 3; }
 #s08 .s08-panel {
   position: relative; width: 100%; height: 100%;
   display: flex; flex-direction: column;
-  padding: 18px 44px 28px;
+  padding: 14px 44px 24px;
   border-radius: 28px;
   background: linear-gradient(180deg, var(--panel), var(--bg-2));
   box-shadow: 0 0 0 2px var(--line) inset, 0 2px 0 rgba(246, 187, 42, .25) inset, 0 34px 80px rgba(0, 0, 0, .6);
@@ -49,14 +59,14 @@
 /* гигантская формула */
 #s08 .s08-formula {
   display: flex; align-items: baseline; gap: 0;
-  font-size: 200px; line-height: 1.02; color: var(--gold);
-  height: 222px; letter-spacing: 0;
+  font-size: 188px; line-height: 1.02; color: var(--gold);
+  height: 204px; letter-spacing: 0;
 }
 #s08 .s08-kbox { display: inline-block; white-space: nowrap; }
 #s08 .s08-k { font-size: 1em; text-shadow: 0 0 46px rgba(246, 187, 42, .35); }
 #s08 .s08-formula .s08-ksub {
-  font-size: 54px; font-style: italic; color: var(--cream-2);
-  vertical-align: -38px; margin-left: 6px; letter-spacing: .01em;
+  font-size: 52px; font-style: italic; color: var(--cream-2);
+  vertical-align: -34px; margin-left: 6px; letter-spacing: .01em;
 }
 #s08 .s08-eq { color: var(--cream-3); font-size: .78em; margin: 0 .16em 0 .14em; }
 #s08 .s08-kval {
@@ -78,13 +88,13 @@
 }
 #s08 .s08-range::-webkit-slider-thumb { width: 56px; height: 56px; margin-top: -20px; transition: border-color .3s, transform .15s; }
 #s08.is-critical .s08-range::-webkit-slider-thumb { border-color: var(--red); }
-#s08 .s08-ticks { position: relative; height: 36px; font-family: var(--f-mono); font-weight: 700; font-size: 26px; color: var(--muted); }
+#s08 .s08-ticks { position: relative; height: 32px; font-family: var(--f-mono); font-weight: 700; font-size: 26px; color: var(--muted); }
 #s08 .s08-ticks span { position: absolute; top: 0; left: calc(28px + (100% - 56px) * var(--p)); transform: translateX(-50%); }
 
 /* модель (математика) */
-#s08 .s08-model { margin-top: 18px; padding: 24px 32px 22px; }
+#s08 .s08-model { margin-top: 14px; padding: 20px 32px 18px; }
 #s08 .s08-badge-m { position: absolute; right: 28px; top: -16px; }
-#s08 .s08-eqno { position: absolute; right: 32px; top: 36px; font-size: 38px; color: var(--ink-2); }
+#s08 .s08-eqno { position: absolute; right: 32px; top: 32px; font-size: 38px; color: var(--ink-2); }
 #s08 .s08-rec { font-size: 52px; line-height: 1.1; color: var(--ink); }
 #s08 .s08-kn { font-weight: 400; color: var(--red-2); }
 #s08 .s08-adds { display: flex; align-items: center; gap: 14px; margin-top: 14px; flex-wrap: nowrap; }
@@ -115,11 +125,11 @@
 #s08 .s08-readout { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
 #s08 .s08-ro-label { font-family: var(--f-body); font-weight: 700; font-size: 30px; color: var(--cream-2); }
 #s08 .s08-ro-val { display: flex; align-items: baseline; gap: 16px; margin-top: 4px; white-space: nowrap; }
-#s08 .s08-ro-num { font-family: var(--f-mono); font-weight: 800; font-size: 104px; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; letter-spacing: -.02em; transition: color .3s; }
+#s08 .s08-ro-num { font-family: var(--f-mono); font-weight: 800; font-size: 100px; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; letter-spacing: -.02em; transition: color .3s; }
 #s08.is-critical .s08-ro-num { color: var(--red); }
 #s08 .s08-ro-unit { font-family: var(--f-body); font-weight: 800; font-size: 42px; color: var(--cream); }
 #s08 .s08-spark { width: 290px; flex: none; }
-#s08 .s08-bars { height: 128px; display: flex; align-items: flex-end; gap: 6px; border-bottom: 3px solid var(--cream-3); padding: 0 2px; }
+#s08 .s08-bars { height: 108px; display: flex; align-items: flex-end; gap: 6px; border-bottom: 3px solid var(--cream-3); padding: 0 2px; }
 #s08 .s08-bars i { flex: 1; min-height: 4px; border-radius: 5px 5px 0 0; background: var(--gold); transition: background .3s; }
 #s08 .s08-bars i.is-hot { background: var(--red); }
 #s08 .s08-spark-cap { margin-top: 8px; font-family: var(--f-body); font-size: 20px; font-weight: 600; color: var(--muted); white-space: nowrap; }
@@ -137,7 +147,7 @@
 
 /* ---------- критический уровень ---------- */
 #s08 .s08-alert {
-  position: absolute; left: 1050px; width: 760px; top: 250px; z-index: 6;
+  position: absolute; left: 1050px; width: 760px; top: 292px; z-index: 6;
   display: flex; justify-content: center; pointer-events: none;
   opacity: 0; transform: scale(.5) rotate(-6deg);
   transition: opacity .25s, transform .45s var(--ease-back);
@@ -162,7 +172,7 @@
 #s08:not(.is-critical) .s08-reset { animation: none; }
 
 #s08 .s08-sos {
-  position: absolute; left: 1050px; width: 760px; top: 496px; z-index: 7;
+  position: absolute; left: 1050px; width: 760px; top: 528px; z-index: 7;
   display: flex; justify-content: center;
   opacity: 0; transform: translateY(30px) scale(.9); pointer-events: none;
   transition: opacity .3s .25s, transform .5s var(--ease-back) .25s;
@@ -194,7 +204,7 @@
 #s08.is-const .s08-tag { opacity: 1; transform: translate(-50%, 0) rotate(-3deg); }
 #s08.is-const .s08-gma--ru .s08-tag { transform: translate(-50%, 0) rotate(3deg); }
 
-#s08 .s08-const { position: absolute; left: 1050px; width: 760px; top: 262px; z-index: 7; display: flex; justify-content: center; pointer-events: none; transition: opacity .3s; }
+#s08 .s08-const { position: absolute; left: 1050px; width: 760px; top: 292px; z-index: 7; display: flex; justify-content: center; pointer-events: none; transition: opacity .3s; }
 #s08.is-critical .s08-const, #s08.is-critical .s08-tag { opacity: 0; }
 #s08 .s08-stamp { font-size: 44px; line-height: 1.08; padding: 18px 34px 14px; background: rgba(23, 24, 27, .9); opacity: 0; }
 #s08 .s08-badge-c { position: absolute; right: 70px; top: -26px; opacity: 0; transform: scale(.4); transition: opacity .3s, transform .45s var(--ease-back); }

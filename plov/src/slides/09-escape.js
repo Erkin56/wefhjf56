@@ -15,8 +15,56 @@ const S09 = (() => {
   const ODDS = [100, 60, 25, 5];   // шуточная «вероятность побега» после 0, 1, 2, 3 попыток; итог — 0
   const FULL = [0, .3, .6, .9];    // сытость гостя
   const GMA_PLATE = [1, 1.35, 1.7, 2.05];
-  const ROT = [-9, -6, -11];
+  const ROT = [-7, -5, -8];
   const WALK = 300;                // сколько пикселей до двери
+  const STAMP_AT = 1400;           // когда в попытке падает печать (мс)
+
+  /* ---------- короткие звуки ----------
+     В core нет укороченных вариантов «fail» (≈1,9 с) и «alarm» (≈1,4 с), а попытка длится 1,5 с,
+     поэтому здесь — свой маленький синтезатор с тем же тембром. Уважает выключенный звук (M). */
+  const Snd = (() => {
+    let ctx = null, out = null;
+    function ac() {
+      if (window.Sfx && Sfx.muted) return null;
+      try {
+        if (!ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return null;
+          ctx = new AC();
+          out = ctx.createGain(); out.gain.value = .55; out.connect(ctx.destination);
+        }
+        if (ctx.state === 'suspended') ctx.resume();
+        return ctx;
+      } catch (e) { return null; }
+    }
+    function tone(c, { type = 'sawtooth', f0, f1 = null, t = 0, dur = .2, vol = .14 }) {
+      const now = c.currentTime + t;
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(f0, now);
+      if (f1) o.frequency.linearRampToValueAtTime(f1, now + dur);
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(vol, now + .005);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      o.connect(g); g.connect(out);
+      o.start(now); o.stop(now + dur + .05);
+    }
+    const safe = (fn) => () => { try { const c = ac(); if (c) fn(c); } catch (e) { /* звук не критичен */ } };
+    return {
+      // грустный тромбон: 3 × 0,18 с + 0,4 с ≈ 0,95 с
+      fail: safe((c) => {
+        [392, 370, 349.2].forEach((f, i) => tone(c, { f0: f, t: i * .18, dur: .17 }));
+        tone(c, { f0: 329.6, f1: 309.8, t: .54, dur: .42 });
+      }),
+      // будильник: два «дзынь-дзынь» ≈ 0,7 с
+      ring: safe((c) => {
+        for (let i = 0; i < 2; i++) {
+          tone(c, { type: 'square', f0: 880, t: i * .36, dur: .17, vol: .09 });
+          tone(c, { type: 'square', f0: 660, t: i * .36 + .18, dur: .17, vol: .09 });
+        }
+      }),
+    };
+  })();
 
   /* ---------- рисунки ---------- */
   function star(cx, cy, R, r, n = 8) {
@@ -153,11 +201,11 @@ const S09 = (() => {
   }
 
   /* ---------- шаги и состояние ---------- */
-  // запустить последовательность шагов [мс, fn(loud)]; незавершённую — можно мгновенно «досыпать» через settle
+  // запустить последовательность шагов [мс, fn(loud), 'stamp'?]; незавершённую — можно мгновенно «досыпать» через settle
   function play(api, steps) {
     const s = api.state;
     const tok = ++s.tok;
-    const q = steps.map(([ms, fn]) => ({ ms, fn, done: false }));
+    const q = steps.map(([ms, fn, tag]) => ({ ms, fn, tag, done: false }));
     s.queue = q;
     q.forEach((st) => api.timeout(() => {
       if (s.tok !== tok || st.done) return;
@@ -165,12 +213,15 @@ const S09 = (() => {
       if (q.every((x) => x.done)) s.queue = null;
     }, st.ms));
   }
-  function settle(api) {
+  // досыпать незавершённую попытку: всё ставится сразу, печать всё равно «падает» (анимация + звук, если audible)
+  function settle(api, audible) {
     const s = api.state;
     if (!s.queue) return false;
     const q = s.queue;
     s.queue = null; s.tok++;
+    const stampPending = q.some((st) => !st.done && st.tag === 'stamp');
     q.forEach((st) => { if (!st.done) { st.done = true; st.fn(false); } });
+    if (audible && stampPending) api.sfx('stamp');
     return true;
   }
   const busy = (api) => !!api.state.queue;
@@ -216,6 +267,21 @@ const S09 = (() => {
   function guestArt(api) { return api.$('.s09-guest .art-guest'); }
   function gmaArt(api) { return api.$('.s09-gma .art-grandma'); }
 
+  // печать «Попытка не удалась» — прямо на выбранной отговорке (не закрывает «аргументы» бабушки на столе)
+  function stampOn(api, i, n, loud) {
+    const s = api.state;
+    const st = api.$('.s09-stamp'), wrap = api.$('.s09-stampwrap'), opts = api.$('.s09-opts');
+    const w = api.$$('.s09-optwrap')[i];
+    wrap.style.setProperty('--sx', `${opts.offsetLeft + w.offsetLeft + w.offsetWidth / 2}px`);
+    wrap.style.setProperty('--sy', `${opts.offsetTop + w.offsetTop + w.offsetHeight / 2 - 10}px`);
+    st.style.setProperty('--rot', `${ROT[n - 1]}deg`);
+    st.classList.remove('is-off');
+    FX.replay(st, 'is-slam');
+    // печать висит, пока звучит тромбон, и уходит; при «перемотке» — не меньше секунды, чтобы её увидели
+    const tok = ++s.stampTok;
+    api.timeout(() => { if (s.stampTok === tok) st.classList.add('is-off'); }, loud ? 1700 : 1100);
+  }
+
   // одна попытка сбежать
   function attempt(api, i) {
     const s = api.state;
@@ -225,27 +291,29 @@ const S09 = (() => {
       FX.replay(btn, 'is-nope'); api.sfx('tick');
       return false;
     }
-    settle(api);
+    settle(api, true);                     // прошлая попытка (если ещё идёт) мгновенно завершается — с печатью
     s.used.push(i);
     const n = s.used.length;               // номер попытки 1…3
     api.updateSteps();
 
     const guest = api.$('.s09-guest'), bob = api.$('.s09-guest-bob'), doorEl = api.$('.s09-door');
-    const stamp = api.$('.s09-stamp'), gma = api.$('.s09-gma');
+    const gma = api.$('.s09-gma');
+
+    // мгновенный отклик кнопки — и мышью, и клавишей, и кликером
+    api.sfx('click');
+    FX.replay(btn, 'is-pressed');
+    api.timeout(() => btn.classList.remove('is-pressed'), 160);
+    btn.classList.add('is-chosen');
 
     play(api, [
       [0, (loud) => {
-        if (loud) { api.sfx('click'); FX.replay(btn, 'is-pressed'); api.timeout(() => btn.classList.remove('is-pressed'), 160); }
-        btn.classList.add('is-chosen');
-        s.stampTok++;
-        stamp.classList.remove('is-slam', 'is-off');
         api.$('.s09-bub').classList.remove('is-shown');
         Art.mood(guestArt(api), 'polite');
         if (loud) { bob.classList.add('is-walking'); api.sfx('whoosh'); }
         guest.style.setProperty('--gx', `${WALK}px`);
       }],
-      [480, (loud) => { if (loud) { doorEl.classList.add('is-open'); api.sfx('swoosh'); } }],
-      [820, (loud) => {
+      [260, (loud) => { if (loud) { doorEl.classList.add('is-open'); api.sfx('swoosh'); } }],
+      [520, (loud) => {
         bob.classList.remove('is-walking');
         Art.mood(gmaArt(api), GMA_MOOD[i]);
         if (loud) FX.replay(gma, 'is-talk');
@@ -259,13 +327,13 @@ const S09 = (() => {
         } else if (i === 1) {
           const c = api.$('.s09-clock');
           c.classList.add('is-in');
-          if (loud) { c.classList.add('is-ringing'); api.sfx('alarm'); api.timeout(() => c.classList.remove('is-ringing'), 1500); }
+          if (loud) { c.classList.add('is-ringing'); Snd.ring(); api.timeout(() => c.classList.remove('is-ringing'), 720); }
         } else {
           api.$('.s09-thesis').classList.add('is-in');
           if (loud) api.sfx('swoosh');
         }
       }],
-      [1180, (loud) => {
+      [760, (loud) => {
         if (i === 0) {
           api.$('.s09-piala').classList.add('is-in');
           if (loud) api.sfx('ding');
@@ -274,9 +342,9 @@ const S09 = (() => {
         } else {
           api.$('.s09-plate3').classList.add('is-in');
         }
-        Art.setAmount(gmaArt(api), GMA_PLATE[n], loud ? 600 : 1);
+        Art.setAmount(gmaArt(api), GMA_PLATE[n], loud ? 500 : 1);
       }],
-      [1420, (loud) => {
+      [900, (loud) => {
         doorEl.classList.remove('is-open');
         Art.mood(guestArt(api), 'happy');
         guestArt(api).style.setProperty('--full', FULL[n]);
@@ -290,25 +358,23 @@ const S09 = (() => {
           if (i === 2) FX.replay(api.$('.s09-thesis'), 'is-squash');
         }
       }],
-      [2240, (loud) => {
+      [STAMP_AT, (loud) => {
         bob.classList.remove('is-walking');
         if (loud) FX.replay(bob, 'is-happy');
         if (n === 3) Art.mood(guestArt(api), 'full');
-        stamp.style.setProperty('--rot', `${ROT[n - 1]}deg`);
-        stamp.classList.remove('is-off');
-        if (loud) FX.replay(stamp, 'is-slam'); else stamp.classList.add('is-slam');
-        btn.classList.remove('is-chosen');
+        btn.classList.remove('is-chosen', 'is-pressed');
         btn.classList.add('is-used');
         btn.setAttribute('aria-disabled', 'true');
-        if (loud) { api.sfx('stamp'); FX.shakeStage(); FX.replay(api.$('.s09-hud'), 'is-hit'); }
+        stampOn(api, i, n, loud);
+        if (loud) {
+          api.sfx('stamp'); FX.shakeStage(); FX.replay(api.$('.s09-hud'), 'is-hit');
+          api.timeout(() => Snd.fail(), 90);
+        }
         tweenOdds(api, ODDS[n], 900, loud);
         Art.mood(gmaArt(api), 'kind');
-        // печать повисит, пока звучит тромбон, и уйдёт; после третьей попытки — кнопка «Подвести итог»
-        const tok = ++s.stampTok;
-        api.timeout(() => { if (s.stampTok === tok) stamp.classList.add('is-off'); }, loud ? 2700 : 600);
-        if (n === 3) api.timeout(() => { if (s.stampTok === tok && !s.final) showSum(api, true); }, loud ? 1100 : 0);
-      }],
-      [2420, (loud) => { if (loud) api.sfx('fail'); }],
+        // после третьей попытки — кнопка «Подвести итог» (для мыши; кликер просто жмёт →)
+        if (n === 3) api.timeout(() => { if (!s.final) showSum(api, true); }, loud ? 700 : 0);
+      }, 'stamp'],
     ]);
     return true;
   }
@@ -317,7 +383,7 @@ const S09 = (() => {
   function finale(api) {
     const s = api.state;
     if (s.final || s.used.length < 3) return false;
-    settle(api);
+    settle(api, true);
     s.final = true;
     s.stampTok++;
     showSum(api, false);
@@ -394,13 +460,15 @@ const S09 = (() => {
     },
     leave(api) {
       // досыпать незавершённый шаг и остановить «бегущие» цифры (иначе после R старый твин допишет в новый DOM)
-      settle(api);
+      settle(api, false);
       api.state.oddsTok++;
       setOdds(api, api.state.odds);
+      FX.clear(); // конфетти «утешительного приза» не должно сыпаться на следующий слайд
     },
     next(api) {
       const s = api.state;
-      if (busy(api)) { settle(api); return true; }
+      // попытка ещё идёт — нажатие её «перематывает»: печать падает сразу (со звуком), ничего не теряется
+      if (busy(api)) { settle(api, true); return true; }
       const free = [0, 1, 2].find((i) => !s.used.includes(i));
       if (free !== undefined) return attempt(api, free);
       if (!s.final) return finale(api);

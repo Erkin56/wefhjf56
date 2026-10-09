@@ -1,5 +1,6 @@
 /* Слайд 8. Коэффициент бабушки.
    Модель: P0 = 1, P(n+1) = 0,3·P(n) + k^n (добавки a_n = k^n, первая — одна порция).
+   Фишки добавок: округлённые значения помечаются «≈» (1,5³ = 3,375 → «≈3,38»).
    k = 1 → ряд сходится к 10/7; любое k > 1 → расходится (P(n) ≈ k^n / (k − 0,3)).
    Шаги «Далее»: 1) k → 1; 2) k → 1,5; 3) k → 2 (критический уровень); 4) аварийный сброс + две бабушки. */
 const S08 = (() => {
@@ -133,7 +134,7 @@ const S08 = (() => {
     });
     nd.garlic.setAttribute('transform', `translate(0,${(-H + 6).toFixed(1)}) scale(${(bs * 1.05).toFixed(3)})`);
     const peakY = BASE_Y - H - 50 * bs;
-    api.el.classList.toggle('is-flood', peakY < 212 && W > 700);
+    api.el.classList.toggle('is-flood', peakY < 250 && W > 700); // вершина дошла до заголовка (он кончается на y≈236)
     api.el.classList.toggle('is-offtop', BASE_Y - H < -40);
   }
 
@@ -216,7 +217,10 @@ Deck.register('08', {
     if (Math.abs(parseFloat(ui.range.value) - k) > 1e-9) ui.range.value = String(k);
     ui.range.style.setProperty('--fill', `calc(28px + (100% - 56px) * ${(k - 1).toFixed(4)})`);
     ui.kval.textContent = S08.trim(k);
-    ui.chips.forEach((c, i) => { c.textContent = S08.trim(Math.pow(k, i)); });
+    ui.chips.forEach((c, i) => {
+      const v = Math.pow(k, i);
+      c.textContent = (Math.abs(v * 100 - Math.round(v * 100)) > 1e-9 ? '≈' : '') + S08.trim(v);
+    });
 
     // показания: ровно по рекуррентной формуле
     const ps = S08.series(k, S08.CYCLES);
@@ -296,15 +300,16 @@ Deck.register('08', {
     this.apply(api, Math.round(raw * 20) / 20);
   },
 
-  animateTo(api, to, ms = 1000, easing = ease.inOutCubic) {
+  // hold — пауза перед движением (после досрочного завершения предыдущего шага, чтобы его итог успели увидеть)
+  animateTo(api, to, ms = 1000, easing = ease.inOutCubic, hold = 0) {
     const s = api.state, r = s.ui.range;
-    const from = s.k;
     const token = { to };
     s.anim = token;
     r.step = 'any';
-    const t0 = performance.now();
+    let from = null, t0 = 0;
     const loop = (now) => {
       if (s.anim !== token) return;
+      if (from === null) { from = s.k; t0 = now; }
       const t = clamp((now - t0) / ms, 0, 1);
       if (t < 1) { this.apply(api, lerp(from, to, easing(t))); api.raf(loop); return; }
       s.anim = null;
@@ -312,10 +317,22 @@ Deck.register('08', {
       this.apply(api, to);
       FX.replay(s.ui.kval, 'is-bump');
     };
-    api.raf(loop);
+    if (hold > 0) api.timeout(() => api.raf(loop), hold); else api.raf(loop);
   },
 
-  emergency(api) {
+  // «Далее» во время движения ползунка: довести текущий шаг до цели (со всеми его эффектами), а не обрывать
+  finishAnim(api) {
+    const s = api.state;
+    if (!s.anim) return false;
+    const to = s.anim.to;
+    s.anim = null;
+    s.ui.range.step = '0.05';
+    this.apply(api, to);
+    FX.replay(s.ui.kval, 'is-bump');
+    return true;
+  },
+
+  emergency(api, hold = 0) {
     const s = api.state;
     const first = !s.constShown;
     s.constShown = true;
@@ -324,7 +341,7 @@ Deck.register('08', {
     api.sfx('whoosh');
     s.resetting = true;
     api.timeout(() => { s.resetting = false; }, 1200);
-    this.animateTo(api, 1.5, 1100, ease.inOutCubic);
+    this.animateTo(api, 1.5, 1100, ease.inOutCubic, hold);
     const arts = api.$$('.s08-gma-art .art');
     if (!first) { api.timeout(() => api.sfx('boing'), 900); return; }
     api.el.classList.add('is-const');
@@ -358,15 +375,17 @@ Deck.register('08', {
   next(api) {
     const s = api.state;
     if (s.constShown) return false;
+    // быстрый кликер: предыдущий шаг ещё едет — сначала завершаем его (k = 1 успевает «сойтись», k = 2 — включить сирену)
+    const hold = this.finishAnim(api) ? 450 : 0;
     if (s.step < 3) {
       const to = S08.TARGETS[s.step];
       const ms = [1000, 900, 1300][s.step];
       s.step++;
       api.updateSteps();
-      this.animateTo(api, to, ms);
+      this.animateTo(api, to, ms, ease.inOutCubic, hold);
       return true;
     }
-    this.emergency(api);
+    this.emergency(api, hold);
     return true;
   },
 

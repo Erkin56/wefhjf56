@@ -32,9 +32,38 @@ function s04Kapgir() {
 const S04_EAT = 0.3;
 const S04_MAX_VIS = 3.6;   // дальше горка не растёт визуально (чтобы не закрыть заголовок)
 const S04_SAY = ['Oling, oling!<small>«Берите, берите!»</small>', 'Остывает же!', 'Ещё горяченький!', 'Последний разочек!'];
+const S04_GUEST_ADD = ['surprised', 'panic', 'shock'];
 const s04Round = (x) => Math.round(x * 1e10) / 1e10;
 const s04Exact2 = (x) => Math.abs(x * 100 - Math.round(x * 100)) < 1e-7;
 const s04Chip = (x) => (s04Exact2(x) ? Fmt.num(x, 2) : '≈' + Fmt.num(x, 2));
+// классы разовых CSS-анимаций: на скрытом слайде они ставятся на паузу и «доигрывали» бы при возвращении
+const S04_TRANSIENT = [
+  ['.s04-pop', 'is-on'], ['.s04-delta', 'is-on'], ['.s04-guest', 'is-chew is-shake'], ['.s04-plate', 'is-jelly'],
+  ['.s04-grandma', 'is-serve is-jelly'], ['.s04-kap', 'is-serve'], ['.s04-btn', 'is-hit'], ['.s04-val', 'is-bump'], ['.s04-say', 'is-swap'],
+];
+
+// анимация через api.raf: её останавливает api.clearTimers() (перемотка шага, уход со слайда, клавиша R)
+function s04Tween(api, ms, fn, easing = ease.outCubic) {
+  const t0 = performance.now();
+  const step = (now) => {
+    const t = clamp((now - t0) / ms, 0, 1);
+    if (fn(easing(t), t) === false) return;
+    if (t < 1) api.raf(step);
+  };
+  api.raf(step);
+}
+// горка плова на лягане (как Art.setAmount, но останавливаемая); ms = 0 — сразу
+function s04Amount(api, svg, amount, ms = 0, easing = ease.outBack) {
+  const g = svg && svg.querySelector('.mound');
+  if (!g) return;
+  const from = parseFloat(svg.dataset.amount || '1');
+  svg.dataset.amount = amount;
+  g.style.display = '';
+  const tok = svg._s04tok = (svg._s04tok || 0) + 1; // пишет только самая свежая анимация
+  const put = (v) => { const s = Art.amountScale(Math.max(0, v)); g.setAttribute('transform', `scale(${s.x.toFixed(4)},${s.y.toFixed(4)})`); };
+  if (!ms) { put(amount); return; }
+  s04Tween(api, ms, (k) => { if (svg._s04tok !== tok) return false; put(lerp(from, amount, k)); return true; }, easing);
+}
 
 Deck.register('04', {
   init(api) {
@@ -45,18 +74,25 @@ Deck.register('04', {
     api.$('.s04-kap').innerHTML = s04Kapgir();
     api.$('.s04-piala').innerHTML = Art.piala();
     api.$('.s04-non').innerHTML = Art.non();
-    Object.assign(api.state, { amount: 1, shown: 1, steps: 0, last: null, caption: false, busy: false, full: 0, adds: 0, eats: 0, values: [1], ops: [] });
+    Object.assign(api.state, { amount: 1, steps: 0, last: null, caption: false, busy: false, seq: 0, full: 0, adds: 0, eats: 0, values: [1], ops: [] });
     // после клика снимаем фокус: дальше → / кликер идут по шагам слайда, а не «нажимают» кнопку ещё раз
-    api.$('.s04-eat').addEventListener('click', (e) => { e.currentTarget.blur(); this.eat(api); });
-    api.$('.s04-add').addEventListener('click', (e) => { e.currentTarget.blur(); this.add(api); });
+    api.$('.s04-eat').addEventListener('click', (e) => { e.currentTarget.blur(); this.eat(api); api.updateSteps(); });
+    api.$('.s04-add').addEventListener('click', (e) => { e.currentTarget.blur(); this.add(api); api.updateSteps(); });
     this.renderMeter(api, 1);
     this.renderTrail(api);
+  },
+
+  // уход со слайда: текущий шаг досматривается мгновенно и молча — никаких «глотков» на соседнем слайде
+  leave(api) {
+    this.settle(api);
+    S04_TRANSIENT.forEach(([sel, cls]) => api.$$(sel).forEach((el) => el.classList.remove(...cls.split(' '))));
+    FX.clear(); // рис этого слайда не сыплется на следующий
   },
 
   /* ---------- отображение ---------- */
   renderMeter(api, v, final = true) {
     // «1 порция» / «0,30 порции»: число и единица разделены пробелом (возможно, неразрывным)
-    const [, num, unit] = Fmt.portions(v).match(/^(.*?)[\s\u00a0\u202f]+(\S+)$/);
+    const [, num, unit] = Fmt.portions(v).match(/^(.*?)[\s  ]+(\S+)$/);
     api.$('.s04-val').innerHTML = (final && !s04Exact2(v) ? '<small>≈</small>' : '') + num;
     api.$('.s04-unit').textContent = unit;
     const track = api.$('.s04-track');
@@ -103,41 +139,68 @@ Deck.register('04', {
     st.steps++;
     st.last = op;
     if (op === 'eat') st.eats++; else st.adds++;
+    api.timeout(() => this.show(api, op, prev, next), delayMs);
+  },
+
+  show(api, op, prev, next) {
+    const st = api.state;
     const plateSvg = api.$('.s04-plate svg');
     const delta = api.$('.s04-delta');
     delta.className = `s04-delta math is-${op}`;
     delta.textContent = op === 'eat' ? '×0,3' : '+1';
-    api.timeout(() => {
-      FX.replay(delta, 'is-on');
-      Art.setAmount(plateSvg, Math.min(next, S04_MAX_VIS), op === 'eat' ? 750 : 650, op === 'eat' ? ease.outCubic : ease.outBack);
-      const val = api.$('.s04-val');
-      // после R (перезапуска) старый api «мёртв» — не трогаем новый DOM
-      const live = () => api.el._api === api && api.state.amount === next;
-      Tween.num(prev, next, 650, (v) => { if (live()) this.renderMeter(api, v, false); }).then(() => {
-        if (live()) { this.renderMeter(api, next); FX.replay(val, 'is-bump'); }
-      });
-      const pop = api.$('.s04-pop');
-      // метка «−70%» / «+1» — над вершиной горки (берём большую из двух: до и после)
-      const sy = Art.amountScale(Math.min(Math.max(prev, next), S04_MAX_VIS)).y;
-      pop.style.top = `${Math.round(clamp(744 - 176 * sy - 96, 250, 640) - 240)}px`;
-      pop.className = `s04-pop is-${op}`;
-      pop.querySelector('.s04-pop-t').textContent = op === 'eat' ? '−70%' : '+1';
-      FX.replay(pop, 'is-on');
-      this.renderTrail(api, true);
-      api.updateSteps();
-    }, delayMs);
+    FX.replay(delta, 'is-on');
+    s04Amount(api, plateSvg, Math.min(next, S04_MAX_VIS), op === 'eat' ? 750 : 650, op === 'eat' ? ease.outCubic : ease.outBack);
+    const val = api.$('.s04-val');
+    const seq = ++st.seq;
+    s04Tween(api, 650, (k, t) => {
+      if (st.seq !== seq) return false;
+      if (t < 1) { this.renderMeter(api, lerp(prev, next, k), false); return true; }
+      this.renderMeter(api, next);
+      FX.replay(val, 'is-bump');
+      return true;
+    });
+    // метка «−70%» / «+1» — над вершиной горки (берём большую из двух: до и после)
+    const pop = api.$('.s04-pop');
+    const sy = Art.amountScale(Math.min(Math.max(prev, next), S04_MAX_VIS)).y;
+    const top = Math.round(744 - 176 * sy - 96 - 240);
+    if (st.caption) { pop.style.left = ''; pop.style.top = `${clamp(top, 200, 400)}px`; } // под панчлайном
+    else if (top >= 90) { pop.style.left = ''; pop.style.top = `${Math.min(top, 400)}px`; }
+    else { pop.style.left = '600px'; pop.style.top = '84px'; } // горка уже высокая: метка сбоку от вершины, ниже заголовка
+    pop.className = `s04-pop is-${op}`;
+    pop.querySelector('.s04-pop-t').textContent = op === 'eat' ? '−70%' : '+1';
+    FX.replay(pop, 'is-on');
+    this.renderTrail(api, true);
+    api.updateSteps();
   },
 
-  lock(api, ms) {
-    if (api.state.busy) return false;
-    api.state.busy = true;
-    api.timeout(() => { api.state.busy = false; }, ms);
-    return true;
+  // начало шага; если предыдущий ещё анимируется — сначала мгновенно досматриваем его (нажатие не теряется)
+  begin(api, ms) {
+    const st = api.state;
+    if (st.busy) this.settle(api);
+    st.busy = true;
+    api.timeout(() => { st.busy = false; }, ms);
+  },
+
+  // мгновенно привести сцену к текущему состоянию: остановить анимации шага, без звуков
+  settle(api) {
+    const st = api.state;
+    api.clearTimers();
+    st.busy = false;
+    st.seq++;
+    s04Amount(api, api.$('.s04-plate svg'), Math.min(st.amount, S04_MAX_VIS));
+    this.renderMeter(api, st.amount);
+    this.renderTrail(api);
+    const gs = api.$('.s04-guest svg'), gm = api.$('.s04-grandma svg');
+    gs.style.setProperty('--full', st.full.toFixed(2));
+    if (st.caption) { Art.mood(gs, 'dizzy'); Art.mood(gm, 'kind'); }
+    else if (st.last === 'eat') { Art.mood(gs, st.eats === 1 ? 'happy' : 'full'); Art.mood(gm, 'proud'); }
+    else if (st.last === 'add') { Art.mood(gs, S04_GUEST_ADD[Math.min(st.adds - 1, S04_GUEST_ADD.length - 1)]); Art.mood(gm, 'happy'); }
+    if (st.caption || st.last === 'eat') api.$('.s04-say').classList.remove('is-on');
   },
 
   /* ---------- действия ---------- */
   eat(api) {
-    if (!this.lock(api, 800)) return;
+    this.begin(api, 800);
     const st = api.state;
     const btn = api.$('.s04-eat');
     FX.replay(btn, 'is-hit');
@@ -153,10 +216,11 @@ Deck.register('04', {
     const gs = g.querySelector('svg');
     st.full = Math.min(1.2, st.full + .3);
     const firstBite = st.eats === 0;
+    const full = st.full;
     api.timeout(() => {
       FX.replay(g, 'is-chew');
       Art.mood(gs, firstBite ? 'happy' : 'full');
-      gs.style.setProperty('--full', st.full.toFixed(2));
+      gs.style.setProperty('--full', full.toFixed(2));
       api.sfx('gulp');
     }, 260);
     api.timeout(() => api.sfx('gulp'), 560);
@@ -166,7 +230,7 @@ Deck.register('04', {
   },
 
   add(api) {
-    if (!this.lock(api, 950)) return;
+    this.begin(api, 950);
     const st = api.state;
     const btn = api.$('.s04-add');
     FX.replay(btn, 'is-hit');
@@ -180,13 +244,13 @@ Deck.register('04', {
     api.sfx('whoosh');
     const g = api.$('.s04-guest');
     const plateBox = api.$('.s04-plate');
+    const mood = S04_GUEST_ADD[Math.min(st.adds, S04_GUEST_ADD.length - 1)];
     api.timeout(() => {
       api.sfx('plop');
       FX.replay(plateBox, 'is-jelly');
       const m = FX.centerOf(plateBox.querySelector('.mound'));
       FX.plov({ x: m.x, y: m.y - m.h * .4, count: 46, power: 12 });
-      const moods = ['surprised', 'panic', 'shock'];
-      Art.mood(g.querySelector('svg'), moods[Math.min(st.adds - 1, moods.length - 1)]);
+      Art.mood(g.querySelector('svg'), mood);
       FX.replay(g, 'is-shake');
     }, 500);
     this.commit(api, 'add', next, 500);
@@ -195,6 +259,7 @@ Deck.register('04', {
   showCaption(api) {
     const st = api.state;
     if (st.caption) return;
+    if (st.busy) this.settle(api);
     st.caption = true;
     api.$('.s04-say').classList.remove('is-on');
     api.$('.s04-caption').classList.add('is-on');
@@ -207,9 +272,9 @@ Deck.register('04', {
 
   next(api) {
     const st = api.state;
-    if (st.busy) return true; // анимация шага ещё идёт — не перескакиваем
     if (st.steps < 4) { if (st.last === 'eat') this.add(api); else this.eat(api); return true; }
     if (!st.caption) { this.showCaption(api); return true; }
+    if (st.busy) { this.settle(api); return true; } // после панчлайна кнопки мышью ещё работают: досматриваем их шаг
     return false;
   },
 

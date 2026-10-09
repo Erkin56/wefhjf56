@@ -13,22 +13,35 @@ Deck.register('05', {
   init(api) {
     api.state.shown = new Set();
     api.state.moral = false;
+    api.state.built = false;
     api.$('.s05-ico-pn').innerHTML = Art.plate({ w: 300, amount: 1, seed: 21, headroom: -.1 });
     api.$('.s05-ico-coef').innerHTML = Art.plate({ w: 300, amount: .3, seed: 22, headroom: -.1 });
     api.$('.s05-ico-one').innerHTML = Art.grandma({ variant: 'uz', mood: 'happy', holding: 'none' });
-    api.$$('.s05-hot').forEach((b) => b.addEventListener('click', () => this.show(api, b.dataset.part)));
+    // после клика мышью снимаем фокус с кнопки: иначе пробел/Enter кликера нажимал бы её снова, а не листал
+    api.$$('.s05-hot').forEach((b) => b.addEventListener('click', (e) => { this.show(api, b.dataset.part); if (e.detail) b.blur(); }));
     api.$$('.s05-card').forEach((c) => c.addEventListener('click', () => this.show(api, c.dataset.part)));
   },
-  enter(api, { first }) {
+  enter(api) {
+    // формула собирается под барабанную дробь только один раз (после R — снова)
+    if (api.state.built) { this.rewire(api); return; }
     api.el.classList.remove('is-built');
-    if (first) api.timeout(() => api.sfx('drumroll', 1.5), 250);
-    api.timeout(() => {
-      api.el.classList.add('is-built');
-      if (first) api.sfx('ding');
-      // перерисовать проводки уже открытых карточек (после возврата на слайд)
-      api.state.shown.forEach((p) => this.wire(api, p));
-    }, 2350);
+    api.timeout(() => api.sfx('drumroll', 1.5), 250);
+    api.timeout(() => this.build(api, { sound: true }), 2350);
   },
+  leave(api) {
+    api.clearTimers();
+    this.build(api); // ушли до конца сборки — при возврате формула уже целая
+  },
+  // закончить сборку формулы (по таймеру или перемоткой)
+  build(api, { sound = false } = {}) {
+    if (api.state.built) return;
+    api.state.built = true;
+    api.clearTimers();
+    api.el.classList.add('is-built');
+    if (sound) api.sfx('ding');
+    this.rewire(api);
+  },
+  rewire(api) { api.state.shown.forEach((p) => this.wire(api, p)); },
   wire(api, part) {
     const term = api.$(`.s05-hot[data-part="${part}"]`);
     const card = api.$(`.s05-card[data-part="${part}"]`);
@@ -42,6 +55,7 @@ Deck.register('05', {
   },
   show(api, part) {
     if (!ORDER.includes(part)) return;
+    this.build(api); // нажали во время сборки — сразу целая формула
     const card = api.$(`.s05-card[data-part="${part}"]`);
     api.$$('.s05-hot').forEach((t) => t.classList.toggle('is-hl', t.dataset.part === part));
     if (api.state.shown.has(part)) { FX.replay(card, 'is-pulse'); api.sfx('tick'); return; }

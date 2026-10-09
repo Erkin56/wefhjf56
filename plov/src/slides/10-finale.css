@@ -44,7 +44,11 @@
   transition: background .4s, outline-color .4s, box-shadow .4s;
 }
 #s10 .s10-row:focus-visible { outline: 4px solid var(--cream); }
-#s10 .s10-row--3 { min-height: 196px; padding-top: 16px; padding-bottom: 16px; }
+/* до раскрытия строка 3 такой же высоты, как 1 и 2 (невидимый текст просто «висит» внутри); при раскрытии растёт до своего размера */
+#s10 .s10-row--3 { height: 146px; padding-top: 16px; padding-bottom: 16px; interpolate-size: allow-keywords; transition: background .4s, outline-color .4s, box-shadow .4s, height .45s var(--ease-out); }
+#s10.s10-c3 .s10-row--3 { height: auto; min-height: 196px; }
+#s10 .s10-row--3 .s10-body { height: 0; }                 /* пока скрыт — не раздувает сетку: номер и плашка по центру строки */
+#s10.s10-c3 .s10-row--3 .s10-body { height: auto; }
 #s10 .s10-num {
   width: 100px; height: 100px; border-radius: 50%;
   display: grid; place-items: center;
@@ -56,7 +60,8 @@
 #s10 .s10-text { font-family: var(--f-display); font-weight: 800; font-size: 60px; line-height: 1.02; letter-spacing: -.01em; color: var(--cream); }
 #s10 .s10-row--3 .s10-text { font-size: 46px; white-space: nowrap; }
 #s10 .s10-row--3 .s10-text em { display: block; font-style: normal; font-weight: 900; font-size: 74px; color: var(--red); margin-top: 4px; letter-spacing: -.02em; }
-#s10 .s10-formula { font-size: 32px; color: var(--cream-3); }
+#s10 .s10-formula { font-size: 35px; color: var(--cream-3); }   /* индексы (.58em) ≥ 20px */
+#s10 .badge { font-size: 20px; }                                  /* core: 19px; на проекторе — не меньше 20 */
 #s10 .s10-arr { font-family: var(--f-body); font-style: normal; font-weight: 600; }
 #s10 .s10-formula sub .s10-arr { padding: 0 .08em; }
 #s10 .s10-mini { display: block; width: 196px; height: 116px; }
@@ -72,7 +77,9 @@
 #s10 .s10-redact::after { content: 'засекречено до защиты'; font-family: var(--f-body); font-weight: 800; font-size: 20px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); background: var(--bg); padding: 6px 14px; border-radius: 6px; }
 
 /* мини-графики */
-#s10 .s10-mini .s10-ax { fill: none; stroke: var(--muted); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+#s10 .s10-mini .s10-ax { fill: none; stroke: var(--muted); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity .3s .2s; }
+/* оси появляются вместе с выводом — до раскрытия пустые «графики» выглядели бы как незагрузившиеся */
+#s10.s10-c1 .s10-row--1 .s10-ax, #s10.s10-c2 .s10-row--2 .s10-ax, #s10.s10-c3 .s10-row--3 .s10-ax { opacity: 1; }
 #s10 .s10-mini .s10-asym { fill: none; stroke: var(--gold); stroke-width: 3; stroke-dasharray: 8 8; opacity: 0; transition: opacity .4s .3s; }
 #s10 .s10-mini .s10-ln { fill: none; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 #s10 .s10-mini .s10-draw { stroke-dasharray: 1 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.1s var(--ease-out) calc(.3s + var(--i, 0) * 60ms); }
@@ -183,7 +190,12 @@
   padding: 44px 74px 54px; border-radius: 80px;
   box-shadow: 0 0 0 7px var(--bg), 0 0 0 11px var(--gold), 0 30px 60px rgba(0, 0, 0, .5);
 }
-#s10 .s10-qtail { position: absolute; left: 8px; bottom: -146px; width: 200px; height: 150px; fill: var(--cream); overflow: visible; }
+#s10 .s10-qtail { position: absolute; left: 8px; bottom: -146px; width: 200px; height: 150px; overflow: visible; }
+/* хвост с той же обводкой, что у облака: 7px фон + 4px золото (две «толстые» линии под заливкой) */
+#s10 .s10-qt-o, #s10 .s10-qt-m { fill: none; stroke-linejoin: round; stroke-linecap: butt; }
+#s10 .s10-qt-o { stroke: var(--gold); stroke-width: 22px; }
+#s10 .s10-qt-m { stroke: var(--bg); stroke-width: 14px; }
+#s10 .s10-qt-f { fill: var(--cream); stroke: none; }
 
 #s10 .s10-uz { position: absolute; left: 500px; width: 1032px; top: 392px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transform: translateY(20px); transition: opacity .4s .9s, transform .5s var(--ease-out) .9s; }
 #s10.s10-sc-c .s10-uz { opacity: 1; transform: none; }
@@ -204,7 +216,7 @@
 #s10 .s10-normal-bub { font-family: var(--f-display); font-weight: 800; font-size: 58px; padding: 22px 40px 26px; max-width: none; white-space: nowrap; }
 #s10 .s10-strike { position: absolute; left: 22px; right: 22px; top: 50%; height: 10px; margin-top: -5px; border-radius: 5px; background: var(--red); transform: scaleX(0) rotate(-3deg); transform-origin: 0 50%; transition: transform .3s var(--ease-out); }
 #s10.s10-sc-d .s10-strike, #s10.s10-sc-e .s10-strike { transform: scaleX(1) rotate(-3deg); }
-#s10 .s10-andall { position: absolute; left: 378px; top: 470px; z-index: 4; font-size: 58px; transform: rotate(-8deg) scale(.5); opacity: 0; transition: opacity .3s, transform .4s var(--ease-back); }
+#s10 .s10-andall { position: absolute; left: 362px; top: 556px; z-index: 4; font-size: 58px; transform: rotate(-8deg) scale(.5); opacity: 0; transition: opacity .3s, transform .4s var(--ease-back); }
 #s10.s10-short.s10-sc-c .s10-andall { opacity: 1; transform: rotate(-8deg); transition-delay: 1.1s; }
 
 /* панель ответа */
@@ -220,8 +232,8 @@
 #s10 .s10-rahmat { font-family: var(--f-display); font-weight: 900; font-size: 66px; line-height: 1.05; color: var(--gold); letter-spacing: -.01em; }
 #s10 .s10-rahmat-tr { font-family: var(--f-body); font-weight: 700; font-size: 31px; color: var(--cream-2); margin-top: 6px; }
 #s10 .s10-panel-badge { position: absolute; right: 30px; top: 126px; }
-#s10 .s10-view { position: absolute; left: 0; right: 0; top: 168px; bottom: 0; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 64px, #000 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 64px, #000 100%); }
-#s10 .s10-list { position: absolute; left: 0; right: 0; top: 0; margin: 0; padding: 30px 60px 34px 30px; list-style: none; display: flex; flex-direction: column; gap: 14px; transition: transform .5s var(--ease-out); will-change: transform; }
+#s10 .s10-view { position: absolute; left: 0; right: 0; top: 168px; bottom: 0; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 64px, #000 calc(100% - 60px), transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 64px, #000 calc(100% - 60px), transparent 100%); }
+#s10 .s10-list { position: absolute; left: 0; right: 0; top: 0; margin: 0; padding: 30px 60px 64px 30px; list-style: none; display: flex; flex-direction: column; gap: 14px; transition: transform .5s var(--ease-out); will-change: transform; }
 #s10 .s10-item {
   display: grid; grid-template-columns: 58px 1fr; align-items: start; gap: 14px;
   background: var(--cream); color: var(--ink); border-radius: 18px; padding: 14px 22px 16px 16px;
@@ -232,7 +244,7 @@
 @keyframes s10-item-in { from { opacity: 0; transform: translateY(46px) scale(.9) rotate(var(--r, 0deg)); } to { opacity: 1; transform: rotate(var(--r, 0deg)); } }
 #s10 .s10-item-n { font-family: var(--f-mono); font-weight: 800; font-size: 30px; line-height: 1; color: var(--ink); background: var(--gold); border-radius: 12px; padding: 9px 0 8px; text-align: center; margin-top: 2px; }
 #s10 .s10-item-b { font-family: var(--f-body); font-weight: 700; font-size: 32px; line-height: 1.2; }
-#s10 .s10-tag { display: inline-block; vertical-align: 4px; margin-right: 6px; font-weight: 800; font-size: 18px; letter-spacing: .12em; text-transform: uppercase; padding: 5px 11px 4px; border-radius: 99px; line-height: 1.1; }
+#s10 .s10-tag { display: inline-block; vertical-align: 4px; margin-right: 6px; font-weight: 800; font-size: 20px; letter-spacing: .1em; text-transform: uppercase; padding: 5px 11px 4px; border-radius: 99px; line-height: 1.1; }
 #s10 .s10-tag--fam { background: var(--gold); color: var(--ink); }
 #s10 .s10-tag--kin { background: var(--cobalt); color: var(--cream); }
 #s10 .s10-tag--nbr { background: var(--turq); color: var(--ink); }
@@ -256,7 +268,9 @@
 /* =====================================================================
    СЦЕНА E — финал
    ===================================================================== */
-#s10 .s10-e { z-index: 10; background: radial-gradient(1400px 900px at 50% 45%, color-mix(in srgb, var(--bg) 80%, transparent), color-mix(in srgb, var(--bg) 96%, transparent)); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); }
+#s10 .s10-e { z-index: 10; background: radial-gradient(1400px 900px at 50% 45%, color-mix(in srgb, var(--bg) 88%, transparent), color-mix(in srgb, var(--bg) 97%, transparent)); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+/* актёры сцены D уходят: за финалом остаётся только размытый бесконечный список («ответ продолжается») */
+#s10.s10-sc-e :is(.s10-guest, .s10-res, .s10-q, .s10-count, .s10-go-e-wrap, .s10-spot) { opacity: 0; transition: opacity .35s ease; }
 #s10 .s10-e-cap { position: absolute; left: 90px; right: 90px; top: 84px; text-align: center; }
 #s10 .s10-e-l1 { font-family: var(--f-display); font-weight: 900; font-size: 70px; line-height: 1; letter-spacing: -.015em; color: var(--cream); white-space: nowrap; }
 #s10 .s10-e-l2 { font-family: var(--f-display); font-weight: 800; font-size: 50px; line-height: 1.16; color: var(--cream-2); margin: 22px auto 0; max-width: 1500px; text-wrap: balance; }
@@ -268,6 +282,7 @@
 
 #s10 .s10-e-thanks { position: absolute; left: 470px; right: 470px; top: 452px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 #s10 .s10-e-thanks span { display: block; font-family: var(--f-display); font-weight: 900; font-size: 144px; line-height: 1.04; letter-spacing: -.02em; white-space: nowrap; opacity: 0; }
+#s10 .s10-e-thanks.is-bump { animation: jelly .6s var(--ease-out); }
 #s10 .s10-e-rahmat { color: var(--gold); text-shadow: 0 10px 0 var(--gold-3), 0 26px 40px rgba(0, 0, 0, .5); }
 #s10 .s10-e-spasibo { color: var(--red); text-shadow: 0 10px 0 var(--red-3), 0 26px 40px rgba(0, 0, 0, .5); }
 #s10.s10-sc-e .s10-e-rahmat { animation: s10-boom .8s var(--ease-back) 1.2s both; }
