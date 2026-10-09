@@ -1,0 +1,133 @@
+/* Слайд 4. Можно ли доесть плов: прибор «На тарелке» и кнопки слева, сцена за дастарханом справа,
+   внизу — цепочка честной арифметики 1,00 → 0,30 → 1,30 → …, в конце — панчлайн-стикер */
+#s04 .s04-head { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 4; }
+
+/* ---------- левая колонка ---------- */
+#s04 .s04-left { position: absolute; left: var(--pad-x); top: 262px; width: 560px; z-index: 3; }
+#s04 .s04-meter { padding: 24px 34px 22px; border-radius: 24px; }
+#s04 .s04-meter-head { display: flex; align-items: center; justify-content: space-between; height: 40px; }
+#s04 .s04-meter-head .counter-label { font-size: 21px; color: var(--cream-3); }
+#s04 .s04-delta { font-family: var(--f-serif); font-size: 40px; line-height: 1; opacity: 0; }
+#s04 .s04-delta.is-eat { color: var(--gold); }
+#s04 .s04-delta.is-add { color: var(--red); }
+#s04 .s04-delta.is-on { animation: s04-delta 1.6s var(--ease-out) both; }
+@keyframes s04-delta { 0% { opacity: 0; transform: translateY(14px) scale(.6); } 15% { opacity: 1; transform: none; } 75% { opacity: 1; } 100% { opacity: 0; transform: translateY(-10px); } }
+#s04 .s04-read { display: flex; align-items: baseline; gap: 16px; margin: 4px 0 14px; white-space: nowrap; }
+#s04 .s04-val { font-size: 118px; letter-spacing: -.03em; text-shadow: 0 0 30px rgba(246, 187, 42, .35); }
+#s04 .s04-val small { font-size: .5em; margin-right: .08em; color: var(--cream-3); }
+#s04 .s04-val.is-bump { animation: s04-bump .45s var(--ease-back); }
+@keyframes s04-bump { 0% { transform: scale(1.12); } 100% { transform: none; } }
+#s04 .s04-unit { font-family: var(--f-body); font-weight: 700; font-size: 36px; color: var(--cream-2); }
+#s04 .s04-track { position: relative; height: 26px; border-radius: 99px; background: var(--bg); box-shadow: 0 0 0 2px var(--line) inset; overflow: hidden; }
+#s04 .s04-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 50%; border-radius: 99px; background: linear-gradient(90deg, var(--gold-2), var(--gold)); transition: width .7s var(--ease-back), background .3s; }
+#s04 .s04-track.is-over .s04-fill { background: linear-gradient(90deg, var(--red-2), var(--red)); }
+#s04 .s04-mark { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 4px; margin-left: -2px; background: var(--cream); opacity: .8; }
+#s04 .s04-scale { display: flex; justify-content: space-between; margin-top: 8px; font-family: var(--f-mono); font-weight: 700; font-size: 22px; color: var(--muted); }
+
+#s04 .s04-btns { display: flex; flex-direction: column; align-items: flex-start; gap: 26px; margin-top: 34px; }
+#s04 .s04-btn { font-size: 31px; padding: 22px 36px 20px 24px; }
+#s04 .s04-btn.is-hit { animation: s04-press .3s var(--ease-out); }
+@keyframes s04-press { 0% { transform: translateY(8px) scale(.97); box-shadow: 0 1px 0 var(--c2), 0 6px 14px rgba(0, 0, 0, .4); } 100% { transform: none; } }
+
+/* ---------- сцена (внутри: 0…1090 × 0…744; на сцене это x 720…1810, y 240…984) ---------- */
+#s04 .s04-scene { position: absolute; left: 720px; top: 240px; width: 1090px; height: 744px; z-index: 2; }
+#s04 .s04-scene > * { position: absolute; }
+#s04 .s04-guestwrap { left: 65px; top: 90px; width: 290px; clip-path: inset(-140px -90px 132px -90px); }
+#s04 .s04-guest .art { filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .45)); transform-origin: 50% 60%; }
+#s04 .s04-guest.is-chew .art { animation: s04-chew .7s ease-in-out; }
+@keyframes s04-chew { 0%, 100% { transform: none; } 25% { transform: translateY(6px) scale(1.02, .98); } 50% { transform: translateY(-4px); } 75% { transform: translateY(5px) scale(1.02, .98); } }
+#s04 .s04-guest.is-shake .art { animation: shake .45s linear; }
+
+#s04 .s04-tablewrap { left: 40px; top: 436px; width: 840px; }
+#s04 .s04-table svg { display: block; width: 100%; height: auto; overflow: visible; }
+#s04 .tb-shadow { fill: rgba(0, 0, 0, .4); }
+#s04 .tb-leg { fill: var(--ink-2); stroke: var(--ink); stroke-width: 5; stroke-linejoin: round; }
+#s04 .tb-top { fill: var(--cream); stroke: var(--ink); stroke-width: 5; stroke-linejoin: round; }
+#s04 .tb-line { fill: none; stroke: var(--gold-2); stroke-width: 4; stroke-dasharray: 2 12; stroke-linecap: round; }
+#s04 .tb-skirt { fill: var(--red-2); stroke: var(--ink); stroke-width: 5; stroke-linejoin: round; }
+#s04 .tb-band { fill: var(--gold); stroke: var(--ink); stroke-width: 3; }
+#s04 .tb-dia { fill: var(--red-3); }
+#s04 .tb-tassel { fill: var(--gold); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+
+#s04 .s04-itemswrap { left: 0; top: 0; width: 1090px; height: 744px; pointer-events: none; }
+#s04 .s04-itemswrap > div { position: absolute; }
+#s04 .s04-itemswrap .art { filter: drop-shadow(0 8px 8px rgba(0, 0, 0, .35)); }
+#s04 .s04-piala { left: 196px; top: 470px; width: 84px; }
+#s04 .s04-non { left: 52px; top: 462px; width: 140px; }
+
+#s04 .s04-platewrap { left: 280px; top: 18px; width: 420px; }
+#s04 .s04-plate.is-jelly .art { animation: jelly .6s var(--ease-out); transform-origin: 50% 85%; }
+
+#s04 .s04-pop { left: 330px; top: 250px; width: 320px; text-align: center; z-index: 6; pointer-events: none; }
+#s04 .s04-pop-t { display: inline-block; font-family: var(--f-display); font-weight: 900; font-size: 64px; line-height: 1; opacity: 0; -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill; }
+#s04 .s04-pop.is-eat .s04-pop-t { color: var(--cream); }
+#s04 .s04-pop.is-add .s04-pop-t { color: var(--red); }
+#s04 .s04-pop.is-on .s04-pop-t { animation: s04-float 1.3s var(--ease-out) both; }
+@keyframes s04-float { 0% { opacity: 0; transform: translateY(40px) scale(.5); } 20% { opacity: 1; transform: scale(1.1); } 35% { transform: none; } 75% { opacity: 1; } 100% { opacity: 0; transform: translateY(-70px); } }
+
+#s04 .s04-grandmawrap { left: 745px; top: 230px; width: 330px; }
+#s04 .s04-grandma .art { filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .45)); transform-origin: 50% 100%; }
+#s04 .s04-grandma.is-serve .art { animation: s04-lean .9s var(--ease-out); }
+@keyframes s04-lean { 0%, 100% { transform: none; } 40% { transform: rotate(-5deg) translateX(-14px); } }
+#s04 .s04-grandma.is-jelly .art { animation: jelly .6s var(--ease-out); }
+
+/* капгир в руках бабушки: поворот вокруг рукоятки (её руки) */
+#s04 .s04-kapwrap { left: 865px; top: 193px; width: 90px; z-index: 5; pointer-events: none; }
+#s04 .s04-kap { transform-origin: 45px 352px; transform: translate(0, 0) rotate(28deg); }
+#s04 .s04-kap svg { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 10px 12px rgba(0, 0, 0, .45)); }
+#s04 .s04-kap .kmound { transition: opacity .2s; }
+#s04 .s04-kap.is-serve { animation: s04-serve .95s cubic-bezier(.45, 0, .35, 1) both; }
+#s04 .s04-kap.is-serve .kmound { animation: s04-kmound .95s linear both; }
+@keyframes s04-serve {
+  0% { transform: translate(0, 0) rotate(28deg); }
+  38% { transform: translate(-183px, -78px) rotate(-62deg); }
+  52% { transform: translate(-183px, -64px) rotate(-92deg); }
+  66% { transform: translate(-183px, -64px) rotate(-92deg); }
+  100% { transform: translate(0, 0) rotate(28deg); }
+}
+@keyframes s04-kmound { 0%, 47% { opacity: 1; } 51%, 82% { opacity: 0; } 100% { opacity: 1; } }
+
+#s04 .s04-say { right: 205px; top: 150px; z-index: 6; pointer-events: none; } /* якорь справа: хвостик всегда у бабушки */
+#s04 .s04-say-b { font-size: 32px; padding: 18px 28px; white-space: nowrap; background: var(--gold); transform-origin: 85% 120%; opacity: 0; transform: scale(.4); transition: opacity .25s, transform .45s var(--ease-back); }
+#s04 .s04-say.is-on .s04-say-b { opacity: 1; transform: none; }
+#s04 .s04-say.is-swap .s04-say-b { animation: s04-swap .45s var(--ease-back); }
+@keyframes s04-swap { 0% { transform: scale(.6) rotate(3deg); } 100% { transform: none; } }
+#s04 .s04-say-t { display: block; position: relative; z-index: 1; }
+#s04 .s04-say-b small { display: block; font-size: 24px; font-weight: 700; color: var(--ink-2); margin-top: 2px; }
+
+/* ---------- цепочка значений ---------- */
+#s04 .s04-trailbox { position: absolute; left: var(--pad-x); top: 872px; width: 1390px; height: 96px; display: flex; align-items: center; gap: 20px; z-index: 3; }
+#s04 .s04-trail-badge { flex: none; }
+#s04 .s04-trail { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; overflow: hidden; height: 96px; padding: 4px 6px; }
+#s04 .s04-chip {
+  flex: none; font-family: var(--f-mono); font-weight: 800; font-size: 36px; line-height: 1; font-variant-numeric: tabular-nums;
+  color: var(--ink); background: var(--cream); border-radius: 14px; padding: 12px 14px 10px;
+  box-shadow: 0 6px 0 var(--cream-3), 0 12px 20px rgba(0, 0, 0, .35);
+}
+#s04 .s04-chip.is-last { background: var(--gold); box-shadow: 0 6px 0 var(--gold-2), 0 12px 20px rgba(0, 0, 0, .35); }
+#s04 .s04-chip.is-dots { background: transparent; box-shadow: 0 0 0 3px var(--cream-3) inset; color: var(--cream); }
+#s04 .s04-dots { display: block; width: 50px; height: 36px; fill: currentColor; }
+#s04 .s04-chip.is-end { background: var(--red); color: var(--cream); box-shadow: 0 6px 0 var(--red-3), 0 12px 20px rgba(0, 0, 0, .35); }
+#s04 .s04-chip.is-new { animation: s04-chip .5s var(--ease-back) both; }
+@keyframes s04-chip { 0% { opacity: 0; transform: translateX(-30px) scale(.5); } 100% { opacity: 1; transform: none; } }
+#s04 .s04-arrow { flex: none; position: relative; width: 80px; height: 70px; display: grid; place-items: end center; }
+#s04 .s04-arrow svg { width: 64px; height: 24px; overflow: visible; margin-bottom: 10px; }
+#s04 .s04-arrow path { fill: none; stroke: var(--cream-3); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+#s04 .s04-op { position: absolute; left: 0; right: 0; top: 0; text-align: center; font-family: var(--f-serif); font-size: 27px; line-height: 1; white-space: nowrap; }
+#s04 .s04-arrow.op-eat .s04-op { color: var(--gold); }
+#s04 .s04-arrow.op-add .s04-op { color: var(--red); }
+#s04 .s04-arrow.is-new { animation: in-fade .35s both; }
+
+/* ---------- панчлайн ---------- */
+#s04 .s04-caption { position: absolute; left: 1000px; top: 252px; width: 810px; text-align: right; z-index: 7; pointer-events: none; }
+#s04 .s04-cap {
+  margin: 0; display: inline-block; background: var(--cream); color: var(--ink);
+  font-family: var(--f-display); font-weight: 800; font-size: 50px; line-height: 1.08; letter-spacing: -.01em;
+  padding: 20px 32px 22px; border-radius: 20px;
+  box-shadow: 0 0 0 6px var(--bg), 0 0 0 10px var(--red), 0 26px 44px rgba(0, 0, 0, .5);
+  opacity: 0; transform: rotate(-3deg) scale(.4);
+}
+#s04 .s04-cap { text-align: left; }
+#s04 .s04-cap span { display: block; color: var(--red); white-space: nowrap; }
+#s04 .s04-caption.is-on .s04-cap { animation: s04-cap .6s var(--ease-out) both; }
+@keyframes s04-cap { 0% { opacity: 0; transform: rotate(-12deg) scale(2.2); } 60% { opacity: 1; transform: rotate(-2.5deg) scale(.95); } 100% { opacity: 1; transform: rotate(-2.5deg) scale(1); } }

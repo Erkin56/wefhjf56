@@ -120,6 +120,8 @@ button { font: inherit; color: inherit; }
 }
 .slide.is-leaving { transform: scale(.985); }
 .slide .notes { display: none !important; }
+/* бесконечные анимации скрытых слайдов не тратят ресурсы ноутбука */
+.slide:not(.is-active):not(.is-leaving) * { animation-play-state: paused !important; }
 
 /* появление элементов при входе на слайд: data-in="1..9" задаёт порядок */
 .slide [data-in] { opacity: 0; }

@@ -1,7 +1,7 @@
 <section class="slide" id="s08" data-id="08" data-title="Коэффициент бабушки" data-section="Главное открытие" data-time="3:25–3:55">
-  <!-- фон: дастархан, ляган и гора плова (растёт вместе с k) -->
+  <!-- фон: ляган и гора плова (растёт вместе с k) -->
   <div class="s08-world" data-in="fade" style="--d:200" aria-hidden="true">
-    <svg class="s08-mtn" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"></svg>
+    <div class="s08-quake"><svg class="s08-mtn" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"></svg></div>
   </div>
   <div class="s08-heat" aria-hidden="true"></div>
 
@@ -18,7 +18,6 @@
         <span class="s08-eq">=</span>
         <span class="s08-kval">1,5</span>
       </div>
-      <span class="s08-eqno math">(8.1)</span>
 
       <div class="s08-slider">
         <input class="range s08-range" type="range" min="1" max="2" step="0.05" value="1.5" aria-label="Коэффициент бабушки k, от 1 до 2">
@@ -29,6 +28,7 @@
 
       <div class="card s08-model">
         <span class="badge badge--math s08-badge-m">Математика</span>
+        <span class="s08-eqno math">(2)</span>
         <div class="s08-rec math"><var>P</var><sub>0</sub> = 1,&ensp;<var>P</var><sub><var>n</var>+1</sub> = 0,3&thinsp;·&thinsp;<var>P</var><sub><var>n</var></sub> + <b class="s08-kn"><var>k</var><sup><var>n</var></sup></b></div>
         <div class="s08-adds">
           <span class="s08-adds-l">добавки&nbsp;<span class="math"><var>k</var><sup><var>n</var></sup></span>:</span>
@@ -53,6 +53,9 @@
     </div>
   </div>
 
+  <!-- k = 1: идеальная модель -->
+  <div class="s08-ideal" aria-hidden="true"><span class="sticker sticker--gold" style="--rot:-4deg">В&nbsp;природе не&nbsp;встречается</span></div>
+
   <!-- критический уровень -->
   <div class="s08-alert" role="status">
     <div class="s08-alert-box">
@@ -62,11 +65,11 @@
         <path d="M44,80 Q44,54 58,50" fill="none" stroke="#ffd2c6" stroke-width="6" stroke-linecap="round"/>
         <rect x="22" y="90" width="76" height="16" rx="5" fill="#26292e" stroke="#1b1814" stroke-width="5"/>
       </svg>
-      <span class="s08-alert-t">Критический уровень гостеприимства</span>
+      <span class="s08-alert-t">Критический<br>уровень<br>гостеприимства</span>
     </div>
   </div>
   <div class="s08-sos">
-    <button type="button" class="btn btn--cream btn--pulse s08-reset">Аварийный сброс</button>
+    <button type="button" class="btn btn--red btn--pulse s08-reset">Аварийный сброс</button>
   </div>
 
   <!-- контрольная группа: две бабушки -->
@@ -90,11 +93,10 @@
 
   <aside class="notes">
     <p><span class="cue">3:25</span> <span class="say">Главное открытие исследования — коэффициент бабушки. Он равен полутора.</span></p>
-    <p><span class="cue">НАЖАТЬ</span> → — ползунок едет к 1. <span class="say">Если бы каждая добавка была как первая, ряд бы сходился: на тарелке всегда десять седьмых порции.</span></p>
-    <p><span class="cue">НАЖАТЬ</span> → — обратно к 1,5. <span class="say">Но каждая следующая добавка в полтора раза больше. Ряд расходится.</span></p>
-    <p><span class="cue">НАЖАТЬ</span> → — к 2: сирена. <span class="say">При k, равном двум, — критический уровень гостеприимства. Шестьсот порций.</span></p>
-    <p class="tip">Пауза на смех, пока воет сирена.</p>
-    <p><span class="cue">НАЖАТЬ</span> «Аварийный сброс» (или →). <span class="say">Аварийный сброс возвращает систему к норме. Норма — полтора. Контрольная группа — бабушка из Петербурга с пирожками — дала тот же коэффициент. Это международная научная константа.</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> ползунок едет к 1. <span class="say">Если бы все добавки были одинаковыми, ряд бы сходился к десяти седьмым. Но в природе такое не встречается.</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> обратно к 1,5. <span class="say">На самом деле каждая следующая добавка в полтора раза больше. Ряд расходится.</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> к 2: сирена. <span class="say">При k, равном двум, — критический уровень гостеприимства. Шестьсот порций.</span> <span class="tip">Пауза на смех, пока воет сирена.</span></p>
+    <p><span class="cue">НАЖАТЬ</span> «Аварийный сброс» (или →): k вернётся к 1,5, придут две бабушки. <span class="say">Аварийный сброс возвращает систему к норме. Норма — полтора. Контрольная группа — бабушка из Петербурга с пирожками — дала тот же коэффициент. Это международная научная константа.</span></p>
     <p class="tip">Ползунок можно тянуть мышью: при k = 1 ряд сходится, при любом k &gt; 1 — расходится.</p>
   </aside>
 </section>
