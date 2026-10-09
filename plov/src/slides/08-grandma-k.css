@@ -144,6 +144,8 @@
 }
 #s08 .s08-ideal .sticker { font-size: 32px; }
 #s08.is-conv .s08-ideal { opacity: 1; transform: none; transition: opacity .3s .25s, transform .55s var(--ease-back) .25s; }
+/* после «константы» на месте стикера стоят бабушки с подписями — стикер не показываем */
+#s08.is-const .s08-ideal { display: none; }
 
 /* ---------- критический уровень ---------- */
 #s08 .s08-alert {

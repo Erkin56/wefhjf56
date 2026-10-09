@@ -49,7 +49,7 @@ const Fmt = {
 
 /* ---------------- Звуки (синтез) ---------------- */
 const Sfx = (() => {
-  let ctx = null, master = null, muted = false;
+  let ctx = null, master = null, bus = null, muted = false;
   try { muted = localStorage.getItem('plov-muted') === '1'; } catch (e) { /* нет хранилища */ }
   function ac() {
     if (!ctx) {
@@ -73,7 +73,7 @@ const Sfx = (() => {
     g.gain.setValueAtTime(0.0001, now);
     g.gain.exponentialRampToValueAtTime(vol, now + attack);
     g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-    o.connect(g); g.connect(master);
+    o.connect(g); g.connect(bus || master);
     o.start(now); o.stop(now + dur + .05);
   }
   function noise({ t = 0, dur = .2, vol = .3, freq = 1200, q = .8, type = 'lowpass', f1 = null }) {
@@ -90,7 +90,7 @@ const Sfx = (() => {
     const g = c.createGain();
     g.gain.setValueAtTime(vol, now);
     g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-    src.connect(filt); filt.connect(g); g.connect(master);
+    src.connect(filt); filt.connect(g); g.connect(bus || master);
     src.start(now); src.stop(now + dur + .02);
   }
   const lib = {
@@ -118,6 +118,16 @@ const Sfx = (() => {
   return {
     play(name, ...args) { if (muted || !lib[name]) return; try { lib[name](...args); } catch (e) { /* звук не критичен */ } },
     unlock() { try { ac(); } catch (e) { /* */ } },
+    // новая «шина» для звуков слайда; звуки предыдущего слайда (дробь, тромбон, сирена) быстро затухают
+    newBus() {
+      if (!ctx) return;
+      try {
+        const old = bus;
+        bus = ctx.createGain();
+        bus.connect(master);
+        if (old) { old.gain.setTargetAtTime(0, ctx.currentTime, .03); setTimeout(() => { try { old.disconnect(); } catch (e) { /* */ } }, 400); }
+      } catch (e) { /* звук не критичен */ }
+    },
     toggle() { muted = !muted; try { localStorage.setItem('plov-muted', muted ? '1' : '0'); } catch (e) { /* */ } return !muted; },
     get muted() { return muted; },
     names: Object.keys(lib),
@@ -220,7 +230,8 @@ const Deck = (() => {
       raf(fn) { const t = requestAnimationFrame((ts) => { sc.rafs.delete(t); fn(ts); }); sc.rafs.add(t); return t; },
       wait(ms) { return new Promise((r) => api.timeout(r, ms)); },
       clearTimers() { clearScope(id); },
-      sfx: (n, ...a) => Sfx.play(n, ...a),
+      // отложенный звук ушедшего слайда не должен прозвучать на следующем
+      sfx: (n, ...a) => { if (slides[index] === el) Sfx.play(n, ...a); },
       fx: FX,
       isActive: () => slides[index] === el,
       state: {},
@@ -288,6 +299,7 @@ const Deck = (() => {
       setTimeout(() => prevEl.classList.remove('is-leaving'), 700);
     }
     index = i;
+    if (prevEl && prevEl !== nextEl) { Sfx.newBus(); FX.clear(); }
     nextEl.classList.add('is-active');
     clock.slideStart = performance.now();
     const first = !visited.has(nextEl.dataset.id);
@@ -314,6 +326,7 @@ const Deck = (() => {
     callHook(el, 'leave');
     clearScope(id);
     FX.clear();
+    Sfx.newBus();
     el.innerHTML = initialHtml.get(id);
     el._api = null;
     callHook(el, 'init');

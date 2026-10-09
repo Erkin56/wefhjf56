@@ -1591,6 +1591,8 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
 }
 #s08 .s08-ideal .sticker { font-size: 32px; }
 #s08.is-conv .s08-ideal { opacity: 1; transform: none; transition: opacity .3s .25s, transform .55s var(--ease-back) .25s; }
+/* после «константы» на месте стикера стоят бабушки с подписями — стикер не показываем */
+#s08.is-const .s08-ideal { display: none; }
 
 /* ---------- критический уровень ---------- */
 #s08 .s08-alert {
@@ -2209,6 +2211,12 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
   #s10 .s10-res-in, #s10 .s10-wave, #s10 .s10-star, #s10 .s10-ripple, #s10 .s10-doorglow { animation: none !important; }
 }
 
+/* быстрый кликер после третьего вывода: «Ч. Т. Д.», бабушка и «+1» — сразу, без задержек */
+#s10.s10-c3-now .s10-qed { animation: stamp-slam .35s var(--ease-out) 0s both; }
+#s10.s10-c3-now .s10-a-gma { transition-delay: 0s; transition-duration: .35s; }
+#s10.s10-c3-now .s10-a-gma-in { animation: none; }
+#s10.s10-c3-now .s10-plus1 { transition-delay: 0s; }
+
 </style>
 </head>
 <body>
@@ -2307,7 +2315,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
             <span class="s02-bhead"><span class="s02-bnum">Результат №&nbsp;2</span><span class="s02-bclaim">Тема: родственники</span></span>
             <span class="s02-stampzone"><span class="stamp stamp--green s02-stamp s02-stamp--two" style="--rot:-5deg"><span class="s02-st-big">Подтверждено</span><span class="s02-st-small">в&nbsp;рамках семейного исследования</span></span></span>
             <span class="s02-treebox"><span class="s02-treethumb"></span><span class="s02-n mono">n&nbsp;=&nbsp;<b class="s02-nv">1</b></span></span>
-            <span class="s02-fact s02-fact--tree"><span class="badge badge--joke">Шутка</span> <b>Это уже не&nbsp;семья. Это&nbsp;научная&nbsp;выборка</b></span>
+            <span class="s02-fact s02-fact--tree"><span class="badge badge--joke">Шутка</span> <b>Это уже не&nbsp;семья. Это&nbsp;научная&nbsp;выборка.</b></span>
           </span>
         </span>
       </button>
@@ -2364,7 +2372,7 @@ body.show-ui #navbar, #navbar:hover, #navbar:focus-within { opacity: 1; }
     <div class="s02-treefly-svg"></div>
     <div class="s02-treecount"><span class="s02-tc-top"><span class="badge badge--joke">Шутка</span><span class="counter-label">Размер выборки</span></span><span class="counter s02-treecount-v">n = 1</span></div>
   </div>
-  <div class="s02-quip" aria-hidden="true"><span class="sticker s02-quip-st">Это уже не&nbsp;семья. Это научная выборка</span></div>
+  <div class="s02-quip" aria-hidden="true"><span class="sticker s02-quip-st">Это уже не&nbsp;семья. Это научная выборка.</span></div>
 
   <aside class="notes">
     <p><span class="cue">0:25</span> <span class="say">Начнём с гипотез. Что российские студенты знают об узбеках? Три научные гипотезы. Проверим.</span></p>
@@ -3191,7 +3199,7 @@ const Fmt = {
 
 /* ---------------- Звуки (синтез) ---------------- */
 const Sfx = (() => {
-  let ctx = null, master = null, muted = false;
+  let ctx = null, master = null, bus = null, muted = false;
   try { muted = localStorage.getItem('plov-muted') === '1'; } catch (e) { /* нет хранилища */ }
   function ac() {
     if (!ctx) {
@@ -3215,7 +3223,7 @@ const Sfx = (() => {
     g.gain.setValueAtTime(0.0001, now);
     g.gain.exponentialRampToValueAtTime(vol, now + attack);
     g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-    o.connect(g); g.connect(master);
+    o.connect(g); g.connect(bus || master);
     o.start(now); o.stop(now + dur + .05);
   }
   function noise({ t = 0, dur = .2, vol = .3, freq = 1200, q = .8, type = 'lowpass', f1 = null }) {
@@ -3232,7 +3240,7 @@ const Sfx = (() => {
     const g = c.createGain();
     g.gain.setValueAtTime(vol, now);
     g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-    src.connect(filt); filt.connect(g); g.connect(master);
+    src.connect(filt); filt.connect(g); g.connect(bus || master);
     src.start(now); src.stop(now + dur + .02);
   }
   const lib = {
@@ -3260,6 +3268,16 @@ const Sfx = (() => {
   return {
     play(name, ...args) { if (muted || !lib[name]) return; try { lib[name](...args); } catch (e) { /* звук не критичен */ } },
     unlock() { try { ac(); } catch (e) { /* */ } },
+    // новая «шина» для звуков слайда; звуки предыдущего слайда (дробь, тромбон, сирена) быстро затухают
+    newBus() {
+      if (!ctx) return;
+      try {
+        const old = bus;
+        bus = ctx.createGain();
+        bus.connect(master);
+        if (old) { old.gain.setTargetAtTime(0, ctx.currentTime, .03); setTimeout(() => { try { old.disconnect(); } catch (e) { /* */ } }, 400); }
+      } catch (e) { /* звук не критичен */ }
+    },
     toggle() { muted = !muted; try { localStorage.setItem('plov-muted', muted ? '1' : '0'); } catch (e) { /* */ } return !muted; },
     get muted() { return muted; },
     names: Object.keys(lib),
@@ -3362,7 +3380,8 @@ const Deck = (() => {
       raf(fn) { const t = requestAnimationFrame((ts) => { sc.rafs.delete(t); fn(ts); }); sc.rafs.add(t); return t; },
       wait(ms) { return new Promise((r) => api.timeout(r, ms)); },
       clearTimers() { clearScope(id); },
-      sfx: (n, ...a) => Sfx.play(n, ...a),
+      // отложенный звук ушедшего слайда не должен прозвучать на следующем
+      sfx: (n, ...a) => { if (slides[index] === el) Sfx.play(n, ...a); },
       fx: FX,
       isActive: () => slides[index] === el,
       state: {},
@@ -3430,6 +3449,7 @@ const Deck = (() => {
       setTimeout(() => prevEl.classList.remove('is-leaving'), 700);
     }
     index = i;
+    if (prevEl && prevEl !== nextEl) { Sfx.newBus(); FX.clear(); }
     nextEl.classList.add('is-active');
     clock.slideStart = performance.now();
     const first = !visited.has(nextEl.dataset.id);
@@ -3456,6 +3476,7 @@ const Deck = (() => {
     callHook(el, 'leave');
     clearScope(id);
     FX.clear();
+    Sfx.newBus();
     el.innerHTML = initialHtml.get(id);
     el._api = null;
     callHook(el, 'init');
@@ -6601,7 +6622,7 @@ Deck.register('08', {
         FX.shakeStage();
         api.timeout(() => FX.shakeStage(), 520);
         api.timeout(() => FX.shakeStage(), 1040);
-        FX.plov({ x: S08.RX, y: 560, count: 170, power: 36, spread: 2.2 });
+        FX.plov({ x: S08.RX, y: 900, count: 120, power: 22, spread: 2.4 }); // снизу, чтобы рис не закрывал табло тревоги
         api.$$('.s08-gma-art .art').forEach((g) => Art.mood(g, 'shock'));
       } else if (!silent && !crit && !s.resetting) {
         api.sfx('swoosh');
@@ -6615,8 +6636,9 @@ Deck.register('08', {
     if (!silent && tick !== s.lastTick) {
       api.sfx('tick');
       if (tick > s.lastTick && k > 1.02) {
-        const top = Math.max(150, S08.BASE_Y - s.dim.h * .85);
-        FX.plov({ x: S08.RX + (Math.random() - .5) * 120, y: top, count: 8 + Math.round((k - 1) * 22), power: 11 + (k - 1) * 10, spread: 1.6 });
+        // рис сыплется со склона горы ниже табло тревоги, чтобы не закрывать надпись
+        const top = Math.max(620, S08.BASE_Y - s.dim.h * .85);
+        FX.plov({ x: S08.RX + (Math.random() - .5) * 160, y: top, count: 8 + Math.round((k - 1) * 22), power: 8 + (k - 1) * 6, spread: 1.6 });
       }
     }
     s.lastTick = tick;
@@ -6673,6 +6695,7 @@ Deck.register('08', {
     const s = api.state;
     const first = !s.constShown;
     s.constShown = true;
+    if (first) s.constAt = performance.now();
     s.step = 3;
     api.updateSteps();
     api.sfx('whoosh');
@@ -6711,7 +6734,21 @@ Deck.register('08', {
 
   next(api) {
     const s = api.state;
-    if (s.constShown) return false;
+    if (s.constShown) {
+      // быстрое повторное нажатие: сначала показать итог «константы» (печать, бабушки), а не проскочить его
+      if (!s.constSettled && performance.now() - (s.constAt || 0) < 1600) {
+        s.constSettled = true;
+        api.clearTimers();
+        s.springOn = false;
+        s.resetting = false;
+        if (s.anim) this.finishAnim(api); else this.apply(api, 1.5, { silent: true });
+        this.finishConst(api);
+        api.sfx('stamp');
+        if (s.nodes) S08.kick(api);
+        return true;
+      }
+      return false;
+    }
     // быстрый кликер: предыдущий шаг ещё едет — сначала завершаем его (k = 1 успевает «сойтись», k = 2 — включить сирену)
     const hold = this.finishAnim(api) ? 450 : 0;
     if (s.step < 3) {
@@ -7508,7 +7545,14 @@ Deck.register('10', {
     api.$('.s10-e-gma-in').innerHTML = S10.wavingGrandma();
 
     const on = (sel, fn) => api.$$(sel).forEach((b) => b.addEventListener('click', (e) => { e.currentTarget.blur(); fn(); api.updateSteps(); }));
-    on('.s10-row', () => this.conclude(api));
+    // клик по строке N открывает выводы по порядку до N включительно
+    api.$$('.s10-row').forEach((b, i) => b.addEventListener('click', (e) => {
+      e.currentTarget.blur();
+      const st = api.state, n = i + 1;
+      const step = () => { if (st.c < n && this.conclude(api)) api.timeout(step, 320); };
+      step();
+      api.updateSteps();
+    }));
     on('.s10-go-b', () => this.toCenter(api));
     on('.s10-go-c', () => this.toQuestion(api));
     on('.s10-btn-short', () => this.answerShort(api));
@@ -7557,10 +7601,27 @@ Deck.register('10', {
       Art.mood(res, k === 1 ? 'serious' : 'smug');
     } else {
       const g = api.$('.s10-a-gma-in');
-      api.timeout(inA(() => { api.sfx('boing'); FX.shakeStage(); Art.mood(res, 'shock'); FX.at(num, 'confetti', { count: 40, power: 14, spread: 6.28 }); }), 380);
-      api.timeout(inA(() => { api.sfx('plop'); const c = FX.centerOf(g); FX.plov({ x: c.x, y: c.y - 30, count: 70, power: 17 }); Art.mood(g, 'happy'); }), 1000);
-      api.timeout(inA(() => { api.sfx('stamp'); FX.at(api.$('.s10-qed'), 'rice', { count: 30, power: 12 }); Art.mood(res, 'proud'); Art.mood(g, 'proud'); }), 1520);
+      s.c3At = performance.now();
+      s.c3Timers = [];
+      const keep = (t) => { s.c3Timers.push(t); return t; };
+      keep(api.timeout(inA(() => { api.sfx('boing'); FX.shakeStage(); Art.mood(res, 'shock'); FX.at(num, 'confetti', { count: 40, power: 14, spread: 6.28 }); }), 380));
+      keep(api.timeout(inA(() => { api.sfx('plop'); const c = FX.centerOf(g); FX.plov({ x: c.x, y: c.y - 30, count: 70, power: 17 }); Art.mood(g, 'happy'); }), 1000));
+      keep(api.timeout(inA(() => { api.sfx('stamp'); FX.at(api.$('.s10-qed'), 'rice', { count: 30, power: 12 }); Art.mood(res, 'proud'); Art.mood(g, 'proud'); }), 1520));
     }
+    api.updateSteps();
+    return true;
+  },
+
+  // быстрое нажатие сразу после третьего вывода: показать «Ч. Т. Д.» и бабушку немедленно, а не проскочить
+  settleC3(api) {
+    const s = api.state;
+    (s.c3Timers || []).forEach(clearTimeout);
+    s.c3Timers = [];
+    s.c3Settled = true;
+    api.el.classList.add('s10-c3-now');
+    const res = api.$('.s10-a-res .art'), g = api.$('.s10-a-gma-in');
+    Art.mood(res, 'proud'); Art.mood(g, 'proud');
+    api.sfx('stamp');
     api.updateSteps();
     return true;
   },
@@ -7572,9 +7633,11 @@ Deck.register('10', {
     while (s.c < 3) { s.c += 1; api.el.classList.add('s10-c' + s.c); }
     this.setScene(api, 'b');
     api.sfx('whoosh');
-    api.timeout(() => api.sfx('sparkle'), 700);
-    api.timeout(() => api.sfx('pop'), 1350);
-    api.timeout(() => { api.sfx('ding'); }, 1600);
+    // отложенные звуки звучат, только если мы всё ещё в этой сцене
+    const inB = (fn) => () => { if (s.scene === 'b') fn(); };
+    api.timeout(inB(() => api.sfx('sparkle')), 700);
+    api.timeout(inB(() => api.sfx('pop')), 1350);
+    api.timeout(inB(() => api.sfx('ding')), 1600);
     return true;
   },
 
@@ -7585,8 +7648,9 @@ Deck.register('10', {
     api.sfx('swoosh');
     Art.mood(api.$('.s10-guest-in .art'), 'polite');
     Art.mood(api.$('.s10-res-in .art'), 'serious');
-    api.timeout(() => api.sfx('pop'), 520);
-    api.timeout(() => api.sfx('click'), 1150);
+    const inC = (fn) => () => { if (api.state.scene === 'c') fn(); };
+    api.timeout(inC(() => api.sfx('pop')), 520);
+    api.timeout(inC(() => api.sfx('click')), 1150);
     return true;
   },
 
@@ -7601,7 +7665,7 @@ Deck.register('10', {
     Art.mood(api.$('.s10-res-in .art'), 'serious');
     const g = api.$('.s10-guest-in');
     Art.mood(g, 'neutral');
-    api.timeout(() => { Art.mood(g, 'surprised'); api.sfx('tick'); }, 1150);
+    api.timeout(() => { if (s.scene !== 'c') return; Art.mood(g, 'surprised'); api.sfx('tick'); }, 1150);
     return true;
   },
 
@@ -7696,7 +7760,10 @@ Deck.register('10', {
   next(api) {
     const s = api.state;
     switch (s.scene) {
-      case 'a': return s.c < 3 ? this.conclude(api) : this.toCenter(api);
+      case 'a':
+        if (s.c < 3) return this.conclude(api);
+        if (!s.c3Settled && performance.now() - (s.c3At || 0) < 1600) return this.settleC3(api);
+        return this.toCenter(api);
       case 'b': return this.toQuestion(api);
       case 'c': return this.answerUz(api);
       case 'd': return this.toFinal(api);

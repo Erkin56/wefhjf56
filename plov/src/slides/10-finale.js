@@ -277,7 +277,14 @@ Deck.register('10', {
     api.$('.s10-e-gma-in').innerHTML = S10.wavingGrandma();
 
     const on = (sel, fn) => api.$$(sel).forEach((b) => b.addEventListener('click', (e) => { e.currentTarget.blur(); fn(); api.updateSteps(); }));
-    on('.s10-row', () => this.conclude(api));
+    // клик по строке N открывает выводы по порядку до N включительно
+    api.$$('.s10-row').forEach((b, i) => b.addEventListener('click', (e) => {
+      e.currentTarget.blur();
+      const st = api.state, n = i + 1;
+      const step = () => { if (st.c < n && this.conclude(api)) api.timeout(step, 320); };
+      step();
+      api.updateSteps();
+    }));
     on('.s10-go-b', () => this.toCenter(api));
     on('.s10-go-c', () => this.toQuestion(api));
     on('.s10-btn-short', () => this.answerShort(api));
@@ -326,10 +333,27 @@ Deck.register('10', {
       Art.mood(res, k === 1 ? 'serious' : 'smug');
     } else {
       const g = api.$('.s10-a-gma-in');
-      api.timeout(inA(() => { api.sfx('boing'); FX.shakeStage(); Art.mood(res, 'shock'); FX.at(num, 'confetti', { count: 40, power: 14, spread: 6.28 }); }), 380);
-      api.timeout(inA(() => { api.sfx('plop'); const c = FX.centerOf(g); FX.plov({ x: c.x, y: c.y - 30, count: 70, power: 17 }); Art.mood(g, 'happy'); }), 1000);
-      api.timeout(inA(() => { api.sfx('stamp'); FX.at(api.$('.s10-qed'), 'rice', { count: 30, power: 12 }); Art.mood(res, 'proud'); Art.mood(g, 'proud'); }), 1520);
+      s.c3At = performance.now();
+      s.c3Timers = [];
+      const keep = (t) => { s.c3Timers.push(t); return t; };
+      keep(api.timeout(inA(() => { api.sfx('boing'); FX.shakeStage(); Art.mood(res, 'shock'); FX.at(num, 'confetti', { count: 40, power: 14, spread: 6.28 }); }), 380));
+      keep(api.timeout(inA(() => { api.sfx('plop'); const c = FX.centerOf(g); FX.plov({ x: c.x, y: c.y - 30, count: 70, power: 17 }); Art.mood(g, 'happy'); }), 1000));
+      keep(api.timeout(inA(() => { api.sfx('stamp'); FX.at(api.$('.s10-qed'), 'rice', { count: 30, power: 12 }); Art.mood(res, 'proud'); Art.mood(g, 'proud'); }), 1520));
     }
+    api.updateSteps();
+    return true;
+  },
+
+  // быстрое нажатие сразу после третьего вывода: показать «Ч. Т. Д.» и бабушку немедленно, а не проскочить
+  settleC3(api) {
+    const s = api.state;
+    (s.c3Timers || []).forEach(clearTimeout);
+    s.c3Timers = [];
+    s.c3Settled = true;
+    api.el.classList.add('s10-c3-now');
+    const res = api.$('.s10-a-res .art'), g = api.$('.s10-a-gma-in');
+    Art.mood(res, 'proud'); Art.mood(g, 'proud');
+    api.sfx('stamp');
     api.updateSteps();
     return true;
   },
@@ -341,9 +365,11 @@ Deck.register('10', {
     while (s.c < 3) { s.c += 1; api.el.classList.add('s10-c' + s.c); }
     this.setScene(api, 'b');
     api.sfx('whoosh');
-    api.timeout(() => api.sfx('sparkle'), 700);
-    api.timeout(() => api.sfx('pop'), 1350);
-    api.timeout(() => { api.sfx('ding'); }, 1600);
+    // отложенные звуки звучат, только если мы всё ещё в этой сцене
+    const inB = (fn) => () => { if (s.scene === 'b') fn(); };
+    api.timeout(inB(() => api.sfx('sparkle')), 700);
+    api.timeout(inB(() => api.sfx('pop')), 1350);
+    api.timeout(inB(() => api.sfx('ding')), 1600);
     return true;
   },
 
@@ -354,8 +380,9 @@ Deck.register('10', {
     api.sfx('swoosh');
     Art.mood(api.$('.s10-guest-in .art'), 'polite');
     Art.mood(api.$('.s10-res-in .art'), 'serious');
-    api.timeout(() => api.sfx('pop'), 520);
-    api.timeout(() => api.sfx('click'), 1150);
+    const inC = (fn) => () => { if (api.state.scene === 'c') fn(); };
+    api.timeout(inC(() => api.sfx('pop')), 520);
+    api.timeout(inC(() => api.sfx('click')), 1150);
     return true;
   },
 
@@ -370,7 +397,7 @@ Deck.register('10', {
     Art.mood(api.$('.s10-res-in .art'), 'serious');
     const g = api.$('.s10-guest-in');
     Art.mood(g, 'neutral');
-    api.timeout(() => { Art.mood(g, 'surprised'); api.sfx('tick'); }, 1150);
+    api.timeout(() => { if (s.scene !== 'c') return; Art.mood(g, 'surprised'); api.sfx('tick'); }, 1150);
     return true;
   },
 
@@ -465,7 +492,10 @@ Deck.register('10', {
   next(api) {
     const s = api.state;
     switch (s.scene) {
-      case 'a': return s.c < 3 ? this.conclude(api) : this.toCenter(api);
+      case 'a':
+        if (s.c < 3) return this.conclude(api);
+        if (!s.c3Settled && performance.now() - (s.c3At || 0) < 1600) return this.settleC3(api);
+        return this.toCenter(api);
       case 'b': return this.toQuestion(api);
       case 'c': return this.answerUz(api);
       case 'd': return this.toFinal(api);

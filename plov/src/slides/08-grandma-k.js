@@ -264,7 +264,7 @@ Deck.register('08', {
         FX.shakeStage();
         api.timeout(() => FX.shakeStage(), 520);
         api.timeout(() => FX.shakeStage(), 1040);
-        FX.plov({ x: S08.RX, y: 560, count: 170, power: 36, spread: 2.2 });
+        FX.plov({ x: S08.RX, y: 900, count: 120, power: 22, spread: 2.4 }); // снизу, чтобы рис не закрывал табло тревоги
         api.$$('.s08-gma-art .art').forEach((g) => Art.mood(g, 'shock'));
       } else if (!silent && !crit && !s.resetting) {
         api.sfx('swoosh');
@@ -278,8 +278,9 @@ Deck.register('08', {
     if (!silent && tick !== s.lastTick) {
       api.sfx('tick');
       if (tick > s.lastTick && k > 1.02) {
-        const top = Math.max(150, S08.BASE_Y - s.dim.h * .85);
-        FX.plov({ x: S08.RX + (Math.random() - .5) * 120, y: top, count: 8 + Math.round((k - 1) * 22), power: 11 + (k - 1) * 10, spread: 1.6 });
+        // рис сыплется со склона горы ниже табло тревоги, чтобы не закрывать надпись
+        const top = Math.max(620, S08.BASE_Y - s.dim.h * .85);
+        FX.plov({ x: S08.RX + (Math.random() - .5) * 160, y: top, count: 8 + Math.round((k - 1) * 22), power: 8 + (k - 1) * 6, spread: 1.6 });
       }
     }
     s.lastTick = tick;
@@ -336,6 +337,7 @@ Deck.register('08', {
     const s = api.state;
     const first = !s.constShown;
     s.constShown = true;
+    if (first) s.constAt = performance.now();
     s.step = 3;
     api.updateSteps();
     api.sfx('whoosh');
@@ -374,7 +376,21 @@ Deck.register('08', {
 
   next(api) {
     const s = api.state;
-    if (s.constShown) return false;
+    if (s.constShown) {
+      // быстрое повторное нажатие: сначала показать итог «константы» (печать, бабушки), а не проскочить его
+      if (!s.constSettled && performance.now() - (s.constAt || 0) < 1600) {
+        s.constSettled = true;
+        api.clearTimers();
+        s.springOn = false;
+        s.resetting = false;
+        if (s.anim) this.finishAnim(api); else this.apply(api, 1.5, { silent: true });
+        this.finishConst(api);
+        api.sfx('stamp');
+        if (s.nodes) S08.kick(api);
+        return true;
+      }
+      return false;
+    }
     // быстрый кликер: предыдущий шаг ещё едет — сначала завершаем его (k = 1 успевает «сойтись», k = 2 — включить сирену)
     const hold = this.finishAnim(api) ? 450 : 0;
     if (s.step < 3) {

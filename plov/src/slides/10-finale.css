@@ -309,3 +309,9 @@
 @media (prefers-reduced-motion: reduce) {
   #s10 .s10-res-in, #s10 .s10-wave, #s10 .s10-star, #s10 .s10-ripple, #s10 .s10-doorglow { animation: none !important; }
 }
+
+/* быстрый кликер после третьего вывода: «Ч. Т. Д.», бабушка и «+1» — сразу, без задержек */
+#s10.s10-c3-now .s10-qed { animation: stamp-slam .35s var(--ease-out) 0s both; }
+#s10.s10-c3-now .s10-a-gma { transition-delay: 0s; transition-duration: .35s; }
+#s10.s10-c3-now .s10-a-gma-in { animation: none; }
+#s10.s10-c3-now .s10-plus1 { transition-delay: 0s; }
