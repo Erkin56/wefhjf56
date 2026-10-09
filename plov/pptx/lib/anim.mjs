@@ -66,8 +66,8 @@ function buildFx(e, spid) {
     case 'flyRight': return fly(spid, d, 2, null, `1+${W}/2`);
     case 'riseUp': // всплывает на 6% высоты слайда с проявлением
       return { cls: 'entr', preset: 42, sub: 0, body: setVis(spid, 'visible') + animEffect(spid, d, 'in', 'fade') + animProp(spid, d, 'ppt_y', [[0, `${Y}+.05`], [100000, Y]]) + animProp(spid, d, 'ppt_x', [[0, X], [100000, X]]) };
-    case 'wipeLeft': return { cls: 'entr', preset: 22, sub: 8, body: setVis(spid, 'visible') + animEffect(spid, d, 'in', 'wipe(left)') };
-    case 'wipeRight': return { cls: 'entr', preset: 22, sub: 2, body: setVis(spid, 'visible') + animEffect(spid, d, 'in', 'wipe(right)') };
+    case 'wipeLeft': return { cls: 'entr', preset: 22, sub: 8, body: setVis(spid, 'visible') + animEffect(spid, d, 'in', 'wipe(right)') }; // «Слева»: шторка идёт вправо
+    case 'wipeRight': return { cls: 'entr', preset: 22, sub: 2, body: setVis(spid, 'visible') + animEffect(spid, d, 'in', 'wipe(left)') }; // «Справа»: шторка идёт влево
     case 'wipeUp': return { cls: 'entr', preset: 22, sub: 4, body: setVis(spid, 'visible') + animEffect(spid, d, 'in', 'wipe(up)') };
     case 'wipeDown': return { cls: 'entr', preset: 22, sub: 1, body: setVis(spid, 'visible') + animEffect(spid, d, 'in', 'wipe(down)') };
     case 'expandX': return { cls: 'entr', preset: 17, sub: 10, body: setVis(spid, 'visible') + animProp(spid, d, 'ppt_w', [[0, '0'], [100000, W]]) };

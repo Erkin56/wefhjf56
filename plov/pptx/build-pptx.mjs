@@ -31,7 +31,7 @@ if (!existsSync(DECK) || flag('rebuild-html')) execSync(`node ${join(PLOV, 'tool
 if (!existsSync(join(SFX, 'stamp.wav'))) execSync(`python3 ${join(HERE, 'sfx', 'make_sfx.py')} ${SFX}`, { stdio: 'inherit' });
 mkdirSync(ASSETS, { recursive: true });
 const BG = join(ASSETS, 'bg.jpg');
-if (!existsSync(BG) || flag('capture')) { console.log('[pptx] фон'); await captureBackground(DECK, BG); }
+if (!existsSync(BG) || flag('capture-bg')) { console.log('[pptx] фон'); await captureBackground(DECK, BG); }
 
 // 2. модули слайдов
 const slideFiles = readdirSync(join(HERE, 'slides')).filter((f) => /^\d\d\.mjs$/.test(f)).sort()
@@ -64,6 +64,7 @@ for (const f of slideFiles) {
 }
 
 // 3. запись и постобработка
+mkdirSync(dirname(OUT), { recursive: true });
 const tmp = OUT.replace(/\.pptx$/, '.raw.pptx');
 await pres.writeFile({ fileName: tmp });
 const buf = await postProcess(tmp, specs, { sfxDir: SFX });
@@ -71,4 +72,6 @@ writeFileSync(OUT, buf);
 // карта анимаций для QA (какие фигуры появляются/исчезают)
 writeFileSync(OUT.replace(/\.pptx$/, '.anims.json'), JSON.stringify(specs.map((s) => s.anims), null, 0));
 execSync(`rm -f "${tmp}"`);
-console.log(`[pptx] ${OUT} — ${(buf.length / 1024 / 1024).toFixed(1)} МБ, слайдов ${specs.length}`);
+// сжатие картинок и склейка дублей (pptxgenjs кладёт копию на каждое использование)
+if (!flag('no-optimize')) execSync(`python3 ${join(HERE, 'optimize-media.py')} "${OUT}"`, { stdio: 'inherit' });
+console.log(`[pptx] ${OUT} — слайдов ${specs.length}`);

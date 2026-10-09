@@ -111,7 +111,7 @@ export class SlideBuilder {
   button(name, label, rect, { fill = C.gold, edge = C.gold2, color = C.ink, size = 17, font = 'display', radius = 0.5 } = {}) {
     return this.text(name, label, rect, {
       font, size, color, bold: true, align: 'center', valign: 'middle', fill, radius,
-      shadow: { type: 'outer', color: edge, blur: 0, offset: 4.5, angle: 90, opacity: 1 },
+      shadow: { type: 'outer', color: edge, blur: 0.5, offset: 4.5, angle: 90, opacity: 1 }, // blur 0 pptxgenjs подменяет на 8 pt
     });
   }
   /** бейдж «Факт / Математика / Шутка» */
@@ -169,7 +169,7 @@ export function defineMasters(pres, bgPath) {
       { text: { text: 'ЭРКИНБОЙ', options: { x: 110 * PX, y: 1032 * PX, w: 160 * PX, h: 36 * PX, ...chromeText, color: C.gold } } },
       { placeholder: { options: { name: 'section', type: 'body', x: 260 * PX, y: 1032 * PX, w: 700 * PX, h: 36 * PX, ...chromeText, color: C.cream3 }, text: '' } },
       { placeholder: { options: { name: 'eyebrow', type: 'body', x: 110 * PX, y: 98 * PX, w: 1400 * PX, h: 34 * PX, fontFace: F.body, fontSize: 11, bold: true, color: C.gold, charSpacing: 3.5, margin: 0, valign: 'middle' }, text: '' } },
-      { placeholder: { options: { name: 'title', type: 'title', x: 110 * PX, y: 136 * PX, w: 1700 * PX, h: 150 * PX, fontFace: F.display, fontSize: 32, color: C.cream, margin: 0, valign: 'top', align: 'left' }, text: '' } },
+      { placeholder: { options: { name: 'title', type: 'title', x: 110 * PX, y: 136 * PX, w: 1700 * PX, h: 150 * PX, fontFace: F.display, fontSize: 32, color: C.cream, margin: 0, valign: 'top', align: 'left', lineSpacingMultiple: 0.92 }, text: '' } },
     ],
     slideNumber: { x: 1700 * PX, y: 1032 * PX, w: 110 * PX, h: 36 * PX, fontFace: F.mono, fontSize: 11, color: C.cream, bold: true, align: 'right' },
   });

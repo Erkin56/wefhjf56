@@ -23,6 +23,22 @@ export async function postProcess(file, specs, { sfxDir, log = console.log } = {
     let xml = await zip.file(slidePath).async('string');
     let rels = await zip.file(relsPath).async('string');
 
+    // pptxgenjs 3.12 пишет <a:pPr> перед каждым фрагментом многофрагментного абзаца — по схеме допустим только первый
+    xml = xml.replace(/<a:p>([\s\S]*?)<\/a:p>/g, (m, body) => {
+      let first = true;
+      const fixed = body.replace(/<a:pPr\b[^>]*\/>|<a:pPr\b[^>]*>[\s\S]*?<\/a:pPr>/g, (pp, off) => {
+        if (first && off === 0) { first = false; return pp; }
+        first = false;
+        return '';
+      });
+      return `<a:p>${fixed}</a:p>`;
+    });
+    // поле номера слайда pptxgenjs всегда получает id 25 — даём ему свободный id, чтобы не совпасть с фигурой
+    {
+      const used = [...xml.matchAll(/<p:cNvPr id="(\d+)"/g)].map((m) => +m[1]);
+      const free = Math.max(...used) + 1;
+      xml = xml.replace(/<p:cNvPr id="\d+" name="Slide Number Placeholder 0"/, `<p:cNvPr id="${free}" name="Slide Number Placeholder 0"`);
+    }
     // имена фигур → id и тип
     const ids = {}, kinds = {};
     const scan = (re, kind) => {
