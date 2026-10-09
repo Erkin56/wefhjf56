@@ -1,0 +1,89 @@
+<section class="slide" id="s07" data-id="07" data-title="Куда исчезает плов?" data-section="Теорема 2" data-time="3:00–3:25">
+  <header class="s07-head">
+    <div class="eyebrow" data-in style="--d:0">Теорема 2</div>
+    <h2 class="h1 s07-title" data-in style="--d:80">Куда исчезает плов?</h2>
+  </header>
+
+  <!-- график: синяя — на тарелке, оранжевая — съедено всего -->
+  <div class="s07-chartbox" data-in="fade" style="--d:180">
+    <div class="s07-chart"></div>
+    <div class="s07-legend">
+      <div class="s07-leg s07-leg--plate"><i></i><span class="s07-leg-t">на&nbsp;тарелке</span><span class="math"><var>P</var><sub><var>n</var></sub> <span class="s07-arr">→</span> 1,43</span></div>
+      <div class="s07-leg s07-leg--eaten"><i></i><span class="s07-leg-t">съедено всего</span><span class="math"><var>E</var><sub><var>n</var></sub> <span class="s07-arr">→</span> ∞</span></div>
+      <div class="s07-ctrl">
+        <button type="button" class="btn btn--sm btn--ghost s07-ff"><svg class="s07-ffi" viewBox="0 0 44 26" aria-hidden="true"><path d="M3,3 L20,13 L3,23 Z M22,3 L39,13 L22,23 Z" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>Перемотка: 20&nbsp;циклов</button>
+        <div class="s07-ffsticker sticker sticker--red" style="--rot:-3deg"><svg class="s07-ffi" viewBox="0 0 44 26" aria-hidden="true"><path d="M3,3 L20,13 L3,23 Z M22,3 L39,13 L22,23 Z" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>Перемотка</div>
+        <button type="button" class="btn btn--sm btn--red s07-sum">Подвести итог</button>
+      </div>
+    </div>
+    <div class="s07-slope hand">≈&nbsp;+1&nbsp;порция за&nbsp;цикл</div>
+  </div>
+
+  <div class="s07-formulas" data-in style="--d:380">
+    <div class="s07-f"><span class="badge badge--joke">Шуточная модель</span><span class="math"><var>P</var><sub>0</sub> = 1,&ensp;<var>P</var><sub><var>n</var>+1</sub> = 0,3·<var>P</var><sub><var>n</var></sub> + 1</span></div>
+    <div class="s07-f"><span class="badge badge--math">Математика</span><span class="math"><var>E</var><sub><var>N</var></sub> = <var>N</var> + 1 − <var>P</var><sub><var>N</var></sub> <span class="s07-arr">→</span> ∞</span></div>
+  </div>
+
+  <!-- табло: съедено всего -->
+  <div class="s07-scorewrap" data-in="right" style="--d:240">
+    <div class="card card--dark s07-score">
+      <div class="s07-score-top"><span class="counter-label">Съедено всего</span><span class="s07-n mono">цикл <b class="s07-nv">1</b></span></div>
+      <div class="s07-eaten"><span class="counter s07-eaten-num">0,00</span><span class="s07-eaten-unit">порций</span></div>
+    </div>
+  </div>
+
+  <!-- сцена эксперимента: весы с ляганом, капгир бабушки, гость -->
+  <div class="s07-scene" aria-hidden="true">
+    <div class="s07-benchwrap" data-in="left" style="--d:300">
+      <svg class="s07-bench" viewBox="0 0 330 300">
+        <ellipse cx="165" cy="292" rx="150" ry="10" fill="rgba(0,0,0,.35)"/>
+        <rect x="40" y="186" width="24" height="106" rx="5" fill="#6b4426" stroke="#1b1814" stroke-width="5"/>
+        <rect x="266" y="186" width="24" height="106" rx="5" fill="#6b4426" stroke="#1b1814" stroke-width="5"/>
+        <rect x="24" y="166" width="282" height="26" rx="6" fill="#57351d" stroke="#1b1814" stroke-width="5"/>
+        <rect x="6" y="148" width="318" height="24" rx="9" fill="#8a5a33" stroke="#1b1814" stroke-width="5"/>
+        <path d="M52,150 L278,150 L262,74 Q260,62 248,62 L82,62 Q70,62 68,74 Z" fill="#d9dbe0" stroke="#1b1814" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M78,140 L92,76" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".6"/>
+        <rect x="110" y="84" width="112" height="50" rx="9" fill="#0d1b2a" stroke="#1b1814" stroke-width="4"/>
+        <text class="s07-scale-v" x="166" y="122" text-anchor="middle">1,00</text>
+        <rect x="150" y="50" width="30" height="14" fill="#9a9da6" stroke="#1b1814" stroke-width="4"/>
+        <rect x="66" y="38" width="198" height="16" rx="7" fill="#c3c6ce" stroke="#1b1814" stroke-width="5"/>
+      </svg>
+    </div>
+    <div class="s07-platewrap" data-in="drop" style="--d:420"><div class="s07-plate"></div></div>
+    <div class="s07-kapgir"><div class="s07-kapgir-in"></div></div>
+    <div class="s07-guestwrap" data-in="right" style="--d:360"><div class="s07-guest"></div></div>
+    <div class="s07-chpok sticker sticker--red" style="--rot:10deg">Чпок!</div>
+    <div class="s07-floats"></div>
+  </div>
+
+  <div class="s07-mainwrap" data-in="pop" style="--d:560">
+    <button type="button" class="btn btn--pulse s07-more">ЕЩЁ ОДНУ ПОРЦИЮ!</button>
+  </div>
+
+  <!-- кульминация на весь экран -->
+  <div class="s07-final" aria-live="polite">
+    <div class="s07-final-top"><span class="badge badge--joke">Шуточный вывод</span></div>
+    <div class="s07-final-lines">
+      <div class="s07-l1">ТАРЕЛКА СХОДИТСЯ.</div>
+      <div class="s07-l2">ГОСТЬ РАСХОДИТСЯ.</div>
+    </div>
+    <p class="s07-final-sub">Плов не&nbsp;исчез. <b>Он&nbsp;в&nbsp;вас.</b></p>
+    <div class="s07-bigarrow" aria-hidden="true">
+      <svg viewBox="0 0 320 380">
+        <path class="s07-ba-sh" d="M110,10 L210,10 L210,190 L300,190 L160,366 L20,190 L110,190 Z" transform="translate(10,12)"/>
+        <path class="s07-ba-body" d="M110,10 L210,10 L210,190 L300,190 L160,366 L20,190 L110,190 Z"/>
+        <path class="s07-ba-hi" d="M128,30 L128,196" />
+      </svg>
+    </div>
+  </div>
+
+  <aside class="notes">
+    <p><span class="cue">3:00</span> <span class="say">Теорема два: куда исчезает плов? Синяя линия — тарелка, она застревает на 1,43. Оранжевая — сколько съедено.</span></p>
+    <p><span class="cue">НАЖАТЬ</span> «ЕЩЁ ОДНУ ПОРЦИЮ!» (или →) три раза, в ритм: <span class="say">Ещё одну… И ещё… Бабушка не дремлет.</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> перемотка до 20 циклов. <span class="say">Двадцать циклов спустя…</span> <span class="tip">На 12-м цикле у гостя отлетает пуговица — «Чпок!».</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> барабанная дробь. <span class="say">Тарелка сходится. Гость — расходится.</span></p>
+    <p class="tip">Пауза на смех.</p>
+    <p><span class="cue">НАЖАТЬ →</span> стрелка в зал. <span class="say">Плов не исчез. Он в вас.</span> <span class="tip">Показать рукой на зал, затем → к слайду 8.</span></p>
+    <p class="tip">Мышью: «Перемотка: 20 циклов» → «Подвести итог» → клик по экрану.</p>
+  </aside>
+</section>
