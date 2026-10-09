@@ -1,0 +1,100 @@
+/* Слайд 5. Формула в «академической» рамке, три карточки-пояснения с проводками, мораль внизу */
+#s05 .s05-head { display: flex; flex-direction: column; gap: 14px; }
+#s05 .s05-head .h1 { font-size: 64px; }
+
+#s05 .s05-stage { position: absolute; left: 0; right: 0; top: 268px; display: flex; justify-content: center; }
+#s05 .s05-frame {
+  position: relative;
+  padding: 34px 120px 40px 90px;
+  border: 2px solid rgba(246, 187, 42, .55);
+  border-radius: 6px;
+  box-shadow: 0 0 0 10px rgba(246, 187, 42, .05), 0 0 0 11px rgba(246, 187, 42, .25), 0 40px 90px rgba(0, 0, 0, .5);
+  background: radial-gradient(120% 140% at 50% 0%, rgba(246, 187, 42, .10), transparent 60%), rgba(23, 24, 27, .7);
+}
+#s05 .s05-corner { position: absolute; width: 34px; height: 34px; border: 5px solid var(--gold); }
+#s05 .c1 { left: -8px; top: -8px; border-right: 0; border-bottom: 0; }
+#s05 .c2 { right: -8px; top: -8px; border-left: 0; border-bottom: 0; }
+#s05 .c3 { left: -8px; bottom: -8px; border-right: 0; border-top: 0; }
+#s05 .c4 { right: -8px; bottom: -8px; border-left: 0; border-top: 0; }
+#s05 .s05-eqno { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); font-size: 46px; color: var(--muted); }
+
+#s05 .s05-formula { display: flex; align-items: baseline; gap: 0; font-size: 176px; line-height: 1.12; color: var(--cream); }
+#s05 .s05-t {
+  display: inline-block; padding: 0 .1em; border-radius: 18px;
+  background: transparent; border: 0; font: inherit; color: inherit; line-height: inherit;
+  transition: color .35s, text-shadow .35s, background-color .35s, scale .45s var(--ease-back);
+}
+#s05 .s05-t.t-eq, #s05 .s05-t.t-plus, #s05 .s05-t.t-dot { color: var(--cream-3); padding: 0 .16em; }
+#s05 .s05-hot { cursor: pointer; }
+#s05 .s05-hot:hover { background: rgba(245, 235, 213, .07); }
+#s05 .s05-hot:focus-visible { outline: 4px solid var(--cream); outline-offset: 4px; }
+#s05 .s05-t.is-hl { scale: 1.08; }
+#s05 .t-pn.is-hl { color: #fff; text-shadow: 0 0 34px rgba(255, 255, 255, .55); background: rgba(245, 235, 213, .08); }
+#s05 .t-coef.is-hl { color: var(--gold); text-shadow: 0 0 34px rgba(246, 187, 42, .7); background: rgba(246, 187, 42, .1); }
+#s05 .t-one.is-hl { color: var(--red); text-shadow: 0 0 34px rgba(232, 67, 45, .7); background: rgba(232, 67, 45, .1); }
+
+/* сборка формулы при входе */
+#s05.is-active .s05-t { animation: s05-term .7s var(--ease-back) both; }
+#s05.is-active .s05-t:nth-child(1) { animation-delay: .35s; }
+#s05.is-active .s05-t:nth-child(2) { animation-delay: .6s; }
+#s05.is-active .s05-t:nth-child(3) { animation-delay: .85s; }
+#s05.is-active .s05-t:nth-child(4) { animation-delay: 1.05s; }
+#s05.is-active .s05-t:nth-child(5) { animation-delay: 1.25s; }
+#s05.is-active .s05-t:nth-child(6) { animation-delay: 1.45s; }
+#s05.is-active .s05-t:nth-child(7) { animation-delay: 1.65s; }
+@keyframes s05-term { from { opacity: 0; transform: translateY(-60px) rotate(-6deg); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+#s05 .s05-frame::after {
+  content: ''; position: absolute; inset: 0; border-radius: 6px; pointer-events: none;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 236, 170, .22) 50%, transparent 70%) -200% 0 / 200% 100% no-repeat;
+}
+#s05.is-built .s05-frame::after { animation: s05-sheen 1.3s ease-out 1; }
+@keyframes s05-sheen { to { background-position: 200% 0; } }
+#s05 .s05-eureka { position: absolute; right: -40px; top: -38px; font-size: 30px; opacity: 0; transform: scale(.3) rotate(20deg); transition: opacity .3s, transform .5s var(--ease-back); }
+#s05.is-built .s05-eureka { opacity: 1; transform: rotate(var(--rot)); }
+
+/* проводки от членов формулы к карточкам */
+#s05 .s05-wires { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; overflow: visible; }
+#s05 .s05-wires .w { fill: none; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 2 13; opacity: 0; transition: opacity .3s; }
+#s05 .s05-wires .w.is-on { opacity: 1; animation: s05-flow 1s linear infinite; }
+#s05 .w-pn { stroke: var(--cream); }
+#s05 .w-coef { stroke: var(--gold); }
+#s05 .w-one { stroke: var(--red); }
+@keyframes s05-flow { to { stroke-dashoffset: -30; } }
+
+/* карточки */
+#s05 .s05-cards { position: absolute; left: var(--pad-x); right: var(--pad-x); top: 640px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px; }
+#s05 .s05-card {
+  --c: var(--cream-3);
+  display: flex; align-items: center; gap: 22px;
+  background: var(--cream); color: var(--ink);
+  border-radius: 24px; padding: 18px 26px 18px 18px; min-height: 196px;
+  box-shadow: 0 0 0 4px var(--c), 0 26px 50px rgba(0, 0, 0, .45);
+  opacity: 0; transform: translateY(30px) scale(.94);
+  transition: opacity .45s var(--ease-out), transform .6s var(--ease-back);
+  cursor: default;
+}
+#s05 .s05-card.is-on { opacity: 1; transform: none; }
+#s05 .s05-card.is-pulse { animation: jelly .6s var(--ease-out); }
+#s05 .k-coef { --c: var(--gold); }
+#s05 .k-pn { --c: var(--cream-3); }
+#s05 .k-one { --c: var(--red); }
+#s05 .s05-ico { flex: 0 0 168px; height: 160px; display: grid; place-items: center; overflow: hidden; }
+#s05 .s05-ico .art { width: 168px; }
+#s05 .s05-ico-one { align-items: start; }
+#s05 .s05-ico-one .art { width: 150px; margin-top: 4px; }
+#s05 .s05-txt { min-width: 0; }
+#s05 .s05-sym { font-size: 64px; line-height: 1; margin-bottom: 8px; }
+#s05 .k-coef .s05-sym { color: var(--gold-2); }
+#s05 .k-one .s05-sym { color: var(--red); }
+#s05 .s05-txt p { margin: 0; font-family: var(--f-body); font-weight: 700; font-size: 31px; line-height: 1.18; text-wrap: balance; }
+
+/* мораль */
+#s05 .s05-foot {
+  position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 112px;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
+  opacity: 0; transform: translateY(24px); transition: opacity .5s, transform .6s var(--ease-back);
+}
+#s05 .s05-foot.is-on { opacity: 1; transform: none; }
+#s05 .s05-moral { margin: 0; font-family: var(--f-serif); font-style: italic; font-size: 40px; line-height: 1.2; color: var(--cream-2); }
+#s05 .s05-moral span { color: var(--red); font-family: var(--f-display); font-style: normal; font-weight: 800; font-size: 44px; text-transform: uppercase; letter-spacing: -.01em; }
+#s05 .s05-badges { display: flex; flex-direction: column; gap: 12px; align-items: flex-end; flex: none; }

@@ -20,9 +20,10 @@ const read = (p) => readFileSync(p, 'utf8');
 const FONTS = [
   ['Unbounded', 'Unbounded.woff2', '300 900', 'normal'],
   ['Manrope', 'Manrope.woff2', '200 800', 'normal'],
-  ['PT Serif', 'PTSerif-Regular.woff2', '400', 'normal'],
-  ['PT Serif', 'PTSerif-Italic.woff2', '400', 'italic'],
-  ['PT Serif', 'PTSerif-Bold.woff2', '700', 'normal'],
+  // подмножество PT Serif переименовано в Plov Serif: в лицензии OFL у PT Serif есть Reserved Font Name
+  ['Plov Serif', 'PlovSerif-Regular.woff2', '400', 'normal'],
+  ['Plov Serif', 'PlovSerif-Italic.woff2', '400', 'italic'],
+  ['Plov Serif', 'PlovSerif-Bold.woff2', '700', 'normal'],
   ['Caveat', 'Caveat.woff2', '400 700', 'normal'],
   ['JetBrains Mono', 'JetBrainsMono.woff2', '100 800', 'normal'],
 ];

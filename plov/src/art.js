@@ -145,7 +145,8 @@ Art.plovMound = function ({ w = 300, h = 140, seed = 3, garlic = true, meat = tr
 };
 
 // ляган (риштанская керамика) с пловом. amount — сколько порций (1 = обычная горка)
-Art.plate = function ({ w = 520, amount = 1, seed = 3, garlic = true, empty = false } = {}) {
+// headroom — запас сверху под растущую горку (в долях ширины); для иконок можно 0.3
+Art.plate = function ({ w = 520, amount = 1, seed = 3, garlic = true, empty = false, headroom = .9 } = {}) {
   const ry = w * .17, cx = w / 2 + 20, cy = w * .62;
   const r = rng(seed + 11);
   let rim = '';
@@ -157,7 +158,7 @@ Art.plate = function ({ w = 520, amount = 1, seed = 3, garlic = true, empty = fa
   }
   const mw = w * .66, mh = w * .3;
   const s = Art.amountScale(amount);
-  return `<svg class="art art-plate" viewBox="0 ${-w * .9} ${w + 40} ${w * .9 + cy + ry + 30}" data-amount="${amount}">
+  return `<svg class="art art-plate" viewBox="0 ${-w * headroom} ${w + 40} ${w * headroom + cy + ry + 30}" data-amount="${amount}">
     <ellipse cx="${cx}" cy="${cy + ry * .35}" rx="${w / 2 + 6}" ry="${ry + 6}" fill="rgba(0,0,0,.35)" filter="url(#f-soft)"/>
     <ellipse cx="${cx}" cy="${cy + 10}" rx="${w / 2}" ry="${ry}" fill="#173a86" stroke="${INK}" stroke-width="5"/>
     <ellipse cx="${cx}" cy="${cy}" rx="${w / 2}" ry="${ry}" fill="#2453b0" stroke="${INK}" stroke-width="5"/>

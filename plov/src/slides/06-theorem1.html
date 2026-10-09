@@ -1,0 +1,45 @@
+<section class="slide" id="s06" data-id="06" data-title="Первая теорема" data-section="Теорема 1" data-time="2:40–3:00">
+  <header class="s06-head">
+    <div class="eyebrow" data-in style="--d:0">Теорема 1</div>
+    <h2 class="h1" data-in style="--d:100">Математика спасает тарелку!</h2>
+  </header>
+
+  <div class="s06-chart" data-in="fade" style="--d:200"></div>
+
+  <aside class="s06-side">
+    <div class="card s06-thm" data-in="right" style="--d:300">
+      <span class="badge badge--math s06-badge">Математика</span>
+      <p class="s06-thm-t"><b>Теорема 1.</b> Пусть <span class="math"><var>P</var><sub>0</sub> = 1</span> и <span class="math"><var>P</var><sub><var>n</var>+1</sub> = 0,3·<var>P</var><sub><var>n</var></sub> + 1</span>. Тогда</p>
+      <p class="s06-lim"><span class="math"><span class="s06-limop">lim<span class="s06-limsub"><var>n</var><span class="s06-arr">→</span>∞</span></span> <var>P</var><sub><var>n</var></sub> =</span> <span class="math s06-frac"><span>10</span><span>7</span></span> <span class="math">≈ 1,43</span></p>
+      <p class="s06-proof"><i>Доказательство:</i> <span class="math"><var>P</var><sub><var>n</var></sub> = <span class="s06-frac s06-frac--sm"><span>10</span><span>7</span></span> − <span class="s06-frac s06-frac--sm"><span>3</span><span>7</span></span>·0,3<sup><var>n</var></sup></span>, а&nbsp;<span class="math">0,3<sup><var>n</var></sup> <span class="s06-arr">→</span> 0</span>. ∎</p>
+    </div>
+
+    <div class="s06-readout" data-in="right" style="--d:420">
+      <div class="s06-plate"></div>
+      <div class="s06-vals">
+        <div class="counter-label">После цикла</div>
+        <div class="s06-n mono">n = <b class="s06-nv">0</b></div>
+        <div class="s06-p"><span class="math"><var>P</var><sub class="s06-psub">0</sub> =</span> <b class="mono s06-pv">1,000</b> <span class="s06-unit">порции</span></div>
+      </div>
+    </div>
+
+    <label class="s06-ctl" data-in="right" style="--d:540" for="s06-range">
+      <span class="s06-ctl-l">Количество циклов</span>
+      <input type="range" class="range" id="s06-range" min="0" max="20" step="1" value="0">
+      <span class="s06-ticks mono" aria-hidden="true"><span>0</span><span>5</span><span>10</span><span>15</span><span>20</span></span>
+    </label>
+  </aside>
+
+  <div class="s06-verdict" aria-live="polite">
+    <span class="stamp stamp--gold stamp--double s06-st1" style="--rot:-6deg">Тарелка сходится</span>
+    <span class="stamp s06-st2" style="--rot:5deg">Но гостя это не спасает</span>
+  </div>
+  <div class="s06-guest" aria-hidden="true"></div>
+
+  <aside class="notes">
+    <p><span class="cue">2:40</span> <span class="say">Хорошая новость: математика спасает тарелку.</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> ползунок сам проедет 20 циклов. <span class="say">Смотрите: сколько бы циклов ни было, на тарелке не больше десяти седьмых порции.</span></p>
+    <p><span class="cue">НАЖАТЬ →</span> <span class="say">Тарелка сходится!</span> <span class="tip">Через секунду появится вторая печать.</span> <span class="say">Но гостя это не спасает.</span></p>
+    <p class="tip">Ползунок можно двигать мышью или стрелками ← → (сначала кликните по нему). При ≥ 12 циклах печати появятся сами.</p>
+  </aside>
+</section>

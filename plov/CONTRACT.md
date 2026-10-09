@@ -30,8 +30,8 @@
 ### CSS
 - Все селекторы начинаются с `#sNN` (изоляция). Ключевые кадры называйте `sNN-…`.
 - Цвета только через токены: `--bg --bg-2 --panel --line --cream --cream-2 --cream-3 --ink --ink-2 --muted --gold --gold-2 --red --red-2 --red-3 --blue --orange --rice --carrot --cobalt --turq`.
-- Шрифты: `--f-display` (Unbounded — крупные заголовки, кнопки), `--f-body` (Manrope — текст), `--f-serif` (PT Serif — формулы, «академичное»), `--f-hand` (Caveat — рукописные пометки), `--f-mono` (JetBrains Mono — счётчики).
-  В Caveat и PT Serif нет стрелок (→ ↓) — рисуйте стрелки SVG. В Unbounded нет ∞ ∑ √ — для математики берите `.math` (PT Serif).
+- Шрифты: `--f-display` (Unbounded — крупные заголовки, кнопки), `--f-body` (Manrope — текст), `--f-serif` (Plov Serif — подмножество PT Serif; формулы, «академичное»; в CSS/SVG пишите только `var(--f-serif)`, не имя шрифта), `--f-hand` (Caveat — рукописные пометки), `--f-mono` (JetBrains Mono — счётчики).
+  В Caveat и Plov Serif нет стрелок (→ ↓) — рисуйте стрелки SVG. В Unbounded нет ∞ ∑ √ — для математики берите `.math` (Plov Serif).
 - Минимум текста. Кегли: заголовок слайда `.h1` (76px), подзаголовки `.h2` (46px), основной текст ≥ 30px, сноски ≥ 20px. Проектор не прощает мелочь.
 
 ### JS
