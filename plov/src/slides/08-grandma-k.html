@@ -1,0 +1,100 @@
+<section class="slide" id="s08" data-id="08" data-title="Коэффициент бабушки" data-section="Главное открытие" data-time="3:25–3:55">
+  <!-- фон: дастархан, ляган и гора плова (растёт вместе с k) -->
+  <div class="s08-world" data-in="fade" style="--d:200" aria-hidden="true">
+    <svg class="s08-mtn" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"></svg>
+  </div>
+  <div class="s08-heat" aria-hidden="true"></div>
+
+  <header class="s08-head" data-in style="--d:0">
+    <h1 class="h1 s08-title">Главное открытие исследования</h1>
+  </header>
+
+  <!-- левая панель: формула, ползунок, модель, показания -->
+  <div class="s08-panelwrap" data-in="left" style="--d:120">
+    <div class="s08-panel">
+      <span class="badge badge--joke s08-badge-k">Шуточная константа</span>
+      <div class="s08-formula math" aria-label="Коэффициент бабушки">
+        <span class="s08-kbox"><var class="s08-k">k</var><sub class="s08-ksub">бабушки</sub></span>
+        <span class="s08-eq">=</span>
+        <span class="s08-kval">1,5</span>
+      </div>
+      <span class="s08-eqno math">(8.1)</span>
+
+      <div class="s08-slider">
+        <input class="range s08-range" type="range" min="1" max="2" step="0.05" value="1.5" aria-label="Коэффициент бабушки k, от 1 до 2">
+        <div class="s08-ticks" aria-hidden="true">
+          <span style="--p:0">1</span><span style="--p:.5">1,5</span><span style="--p:1">2</span>
+        </div>
+      </div>
+
+      <div class="card s08-model">
+        <span class="badge badge--math s08-badge-m">Математика</span>
+        <div class="s08-rec math"><var>P</var><sub>0</sub> = 1,&ensp;<var>P</var><sub><var>n</var>+1</sub> = 0,3&thinsp;·&thinsp;<var>P</var><sub><var>n</var></sub> + <b class="s08-kn"><var>k</var><sup><var>n</var></sup></b></div>
+        <div class="s08-adds">
+          <span class="s08-adds-l">добавки&nbsp;<span class="math"><var>k</var><sup><var>n</var></sup></span>:</span>
+          <span class="s08-chips"><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip"></i><i class="s08-chip s08-chip--more">…</i></span>
+        </div>
+        <div class="s08-verdict">
+          <span class="s08-vchip"><b class="s08-vchip-t">расходится</b></span>
+          <span class="s08-vmath math"></span>
+        </div>
+      </div>
+
+      <div class="s08-readout">
+        <div class="s08-ro-text">
+          <div class="s08-ro-label">Через 10 циклов на тарелке:</div>
+          <div class="s08-ro-val"><span class="s08-ro-num">48,1</span><span class="s08-ro-unit">порции</span></div>
+        </div>
+        <div class="s08-spark" aria-hidden="true">
+          <div class="s08-bars"></div>
+          <div class="s08-spark-cap"><span class="math"><var>P</var><sub><var>n</var></sub></span>, <span class="math"><var>n</var> = 0…10</span> · лог. шкала</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- критический уровень -->
+  <div class="s08-alert" role="status">
+    <div class="s08-alert-box">
+      <svg class="s08-siren" viewBox="0 0 120 120" aria-hidden="true">
+        <g class="s08-siren-rays"><path d="M60,58 L6,22 L6,94 Z M60,58 L114,22 L114,94 Z" fill="#f6bb2a" opacity=".55"/></g>
+        <path d="M30,92 Q30,40 60,38 Q90,40 90,92 Z" fill="#e8432d" stroke="#1b1814" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M44,80 Q44,54 58,50" fill="none" stroke="#ffd2c6" stroke-width="6" stroke-linecap="round"/>
+        <rect x="22" y="90" width="76" height="16" rx="5" fill="#26292e" stroke="#1b1814" stroke-width="5"/>
+      </svg>
+      <span class="s08-alert-t">Критический уровень гостеприимства</span>
+    </div>
+  </div>
+  <div class="s08-sos">
+    <button type="button" class="btn btn--cream btn--pulse s08-reset">Аварийный сброс</button>
+  </div>
+
+  <!-- контрольная группа: две бабушки -->
+  <div class="s08-gma s08-gma--uz" aria-hidden="true">
+    <div class="s08-gma-art"></div>
+    <span class="s08-tag">Ташкент: <span class="math"><var>k</var> = 1,5</span></span>
+  </div>
+  <div class="s08-gma s08-gma--ru" aria-hidden="true">
+    <div class="s08-gma-art"></div>
+    <span class="s08-tag">Петербург: <span class="math"><var>k</var> = 1,5</span></span>
+  </div>
+  <div class="s08-const">
+    <div class="stamp stamp--gold s08-stamp" style="--rot:-5deg">Международная<br>научная константа</div>
+    <span class="badge badge--joke s08-badge-c">Шутка</span>
+  </div>
+
+  <div class="s08-peak">
+    <span class="hand">вершина — где-то там</span>
+    <svg viewBox="0 0 60 90" aria-hidden="true"><path d="M30,84 C26,60 34,40 30,10" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><path d="M12,28 L30,8 L48,28" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+  <aside class="notes">
+    <p><span class="cue">3:25</span> <span class="say">Главное открытие исследования — коэффициент бабушки. Он равен полутора.</span></p>
+    <p><span class="cue">НАЖАТЬ</span> → — ползунок едет к 1. <span class="say">Если бы каждая добавка была как первая, ряд бы сходился: на тарелке всегда десять седьмых порции.</span></p>
+    <p><span class="cue">НАЖАТЬ</span> → — обратно к 1,5. <span class="say">Но каждая следующая добавка в полтора раза больше. Ряд расходится.</span></p>
+    <p><span class="cue">НАЖАТЬ</span> → — к 2: сирена. <span class="say">При k, равном двум, — критический уровень гостеприимства. Шестьсот порций.</span></p>
+    <p class="tip">Пауза на смех, пока воет сирена.</p>
+    <p><span class="cue">НАЖАТЬ</span> «Аварийный сброс» (или →). <span class="say">Аварийный сброс возвращает систему к норме. Норма — полтора. Контрольная группа — бабушка из Петербурга с пирожками — дала тот же коэффициент. Это международная научная константа.</span></p>
+    <p class="tip">Ползунок можно тянуть мышью: при k = 1 ряд сходится, при любом k &gt; 1 — расходится.</p>
+  </aside>
+</section>
