@@ -1,0 +1,1279 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>我在这儿买光盘</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600&family=Noto+Serif+SC:wght@500;700&family=Unbounded:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap&text=我在这儿买光盘第十课">
+<style>
+/* Layout: a market street. Sticky wallet bar, a red shop sign as the hero, three rows of price-tag stalls; every game opens as one counter, max 760px wide. */
+:root{
+  --bg:#EEF2EC; --surface:#FFFFFF; --surface-2:#F5F8F3; --ink:#17201A; --muted:#56635A; --line:#D2DBD1;
+  --accent:#5B39A8; --accent-ink:#FFFFFF; --accent-soft:#ECE6F7;
+  --banana:#F7C84A; --banana-ink:#2B2206; --banana-soft:#F9E3A0;
+  --apple:#C92A3E; --apple-ink:#FFFFFF;
+  --sign:#A51D30; --sign-ink:#FFD45E; --sign-sub:#F8D3D8;
+  --ok:#1E7D48; --ok-soft:#DCF1E3; --bad:#B8283A; --bad-soft:#F8DFE2;
+  --cd-1:#CDD6E4; --cd-2:#F1D5E6; --cd-3:#D5EFE2; --cd-4:#F5EAC6; --cd-5:#D8DBF4;
+  --shadow:0 1px 0 rgb(23 32 26 / .05), 0 12px 24px -18px rgb(23 32 26 / .45);
+  --f-display:"Unbounded","Golos Text",system-ui,sans-serif;
+  --f-body:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-han:"Noto Serif SC","Songti SC","STSong","SimSun","Noto Serif CJK SC",serif;
+  --f-pin:"Noto Sans","Golos Text",system-ui,sans-serif;
+  --f-brush:"Ma Shan Zheng","KaiTi","STKaiti","Noto Serif SC",serif;
+  --r-s:8px; --r-m:14px; --r-l:20px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111613; --surface:#1A201C; --surface-2:#212823; --ink:#E9EEE9; --muted:#9DAAA1; --line:#2E3832;
+    --accent:#B39BF0; --accent-ink:#17102B; --accent-soft:#2C2445;
+    --banana:#F2C341; --banana-ink:#241C05; --banana-soft:#54461A;
+    --apple:#EC5F72; --apple-ink:#1C0A0E;
+    --sign:#86172A; --sign-ink:#FFD45E; --sign-sub:#F3C2C9;
+    --ok:#5BD08F; --ok-soft:#17392A; --bad:#FF7F8C; --bad-soft:#3F1C23;
+    --shadow:0 1px 0 rgb(0 0 0 / .3), 0 14px 28px -18px rgb(0 0 0 / .8);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111613; --surface:#1A201C; --surface-2:#212823; --ink:#E9EEE9; --muted:#9DAAA1; --line:#2E3832;
+  --accent:#B39BF0; --accent-ink:#17102B; --accent-soft:#2C2445;
+  --banana:#F2C341; --banana-ink:#241C05; --banana-soft:#54461A;
+  --apple:#EC5F72; --apple-ink:#1C0A0E;
+  --sign:#86172A; --sign-ink:#FFD45E; --sign-sub:#F3C2C9;
+  --ok:#5BD08F; --ok-soft:#17392A; --bad:#FF7F8C; --bad-soft:#3F1C23;
+  --shadow:0 1px 0 rgb(0 0 0 / .3), 0 14px 28px -18px rgb(0 0 0 / .8);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+.han{font-family:var(--f-han);font-weight:500}
+.pin{font-family:var(--f-pin)}
+.muted{color:var(--muted)}
+.center{text-align:center;justify-content:center}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.topin{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px}
+.brand{display:flex;align-items:baseline;gap:10px;background:none;border:0;padding:6px 0;cursor:pointer}
+.brand .brush{font-family:var(--f-brush);font-size:1.7rem;line-height:1;color:var(--apple)}
+.brand span:last-child{font-family:var(--f-display);font-size:.8rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+
+.tag{position:relative;display:inline-flex;align-items:center;gap:.5em;background:var(--banana);color:var(--banana-ink);border-radius:6px 14px 14px 6px;padding:.3rem .85rem .3rem 1.45rem;border:0;line-height:1.2}
+.tag::before{content:"";position:absolute;left:.55rem;top:50%;width:.42rem;height:.42rem;margin-top:-.21rem;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 1.5px rgb(0 0 0 / .28)}
+.wallet{cursor:pointer;flex-direction:column;align-items:flex-start;gap:0;padding-block:.35rem;min-width:7.5rem}
+.wallet .wy{font-family:var(--f-display);font-weight:700;font-size:.95rem;font-variant-numeric:tabular-nums}
+.wallet .wz{font-family:var(--f-han);font-size:.78rem;opacity:.85;max-width:11rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wallet.bump{animation:bump .5s ease}
+@keyframes bump{0%{transform:none}35%{transform:scale(1.08) rotate(-2deg)}100%{transform:none}}
+.pop{position:absolute;right:6px;top:100%;margin-top:6px;font:600 .85rem var(--f-body);background:var(--ok);color:var(--surface);padding:.15rem .5rem;border-radius:999px;white-space:nowrap;animation:rise 1s ease forwards;pointer-events:none}
+@keyframes rise{0%{opacity:0;transform:translateY(-6px)}20%{opacity:1}100%{opacity:0;transform:translateY(12px)}}
+
+/* hero */
+main{padding-block:24px 64px}
+.hero{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;margin-bottom:32px}
+.sign{position:relative;background:var(--sign);color:var(--sign-ink);border-radius:var(--r-m);padding:28px 28px 24px;box-shadow:var(--shadow);outline:2px solid var(--sign-ink);outline-offset:-10px;overflow:hidden;display:flex;flex-direction:column}
+.sign .eyebrow{margin:0 0 6px;font:500 .78rem var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--sign-sub)}
+.sign h1{margin:0;font-family:var(--f-brush);font-weight:400;font-size:clamp(2.6rem,9.5vw,4.6rem);line-height:1.1;letter-spacing:.04em;text-wrap:balance}
+.sign .spy{margin:4px 0 0;font-family:var(--f-pin);font-size:1.15rem;color:var(--sign-sub)}
+.sign .sru{margin:auto 0 0;padding-top:14px;max-width:46ch;color:var(--sign-sub);font-size:.98rem}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.fact b{font-family:var(--f-han);font-size:1.35rem;font-weight:700}
+.fact span{color:var(--muted);font-size:.9rem}
+.fact.wide{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.fact.wide .num{font-family:var(--f-display);font-weight:700;font-size:1.05rem;color:var(--ink)}
+.start-hint{grid-column:1/-1;margin:0;color:var(--muted);font-size:.95rem}
+
+.sec{margin-top:36px}
+.sec-h{display:flex;align-items:baseline;gap:12px;margin:0 0 14px;flex-wrap:wrap}
+.sec-h .han{font-size:1.9rem;font-weight:700;line-height:1}
+.sec-h h2{margin:0;font:700 1.05rem var(--f-display);letter-spacing:.02em}
+.sec-h p{margin:0;color:var(--muted);font-size:.92rem;flex-basis:100%}
+.stalls{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.stall{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:16px;cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;min-width:0}
+.stall:hover{transform:translateY(-2px);border-color:var(--ink);box-shadow:var(--shadow)}
+.stall .stag{font-family:var(--f-han);font-size:1.15rem;font-weight:700}
+.stall .sname{font-weight:700;font-size:1.08rem;line-height:1.25}
+.stall .sd{color:var(--muted);font-size:.92rem;line-height:1.4}
+.stall .stars{margin-top:auto;font-size:1.05rem;letter-spacing:.12em}
+.star-on{color:var(--banana)}
+.star-off{color:var(--line)}
+.t-w{background:var(--banana);color:var(--banana-ink)}
+.t-t{background:var(--accent);color:var(--accent-ink)}
+.t-p{background:var(--apple);color:var(--apple-ink)}
+
+.shopband{margin-top:36px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--surface);border:1px dashed var(--muted);border-radius:var(--r-m);padding:16px 18px}
+.shopband p{margin:0;max-width:60ch}
+.shopband .shelf-mini{font-size:1.5rem;letter-spacing:.1em}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:.6rem 1.15rem;font-weight:600;cursor:pointer;min-height:44px;transition:border-color .15s ease,background .15s ease}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:transparent;padding-inline:.4rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* game shell */
+.game{max-width:760px;margin:0 auto}
+.ghead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.gmeta{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 220px}
+.gmeta h2{margin:0;font:700 1.15rem var(--f-display);letter-spacing:.01em}
+.gmeta .tag{font-family:var(--f-han);font-weight:700;flex:none;white-space:nowrap}
+.gstat{display:flex;gap:10px;align-items:center;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600}
+.streak{background:var(--banana);color:var(--banana-ink);border-radius:999px;padding:.1rem .6rem;font-size:.85rem}
+.bar{height:6px;background:var(--line);border-radius:999px;margin:12px 0 20px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:inherit;transition:width .35s ease}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:22px;text-align:center;margin-bottom:14px;min-width:0}
+.ask{margin:0 0 6px;color:var(--muted);font-size:.85rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.han-xl{font-family:var(--f-han);font-weight:700;font-size:clamp(3rem,13vw,5.2rem);line-height:1.15}
+.pin-xl{font-family:var(--f-pin);font-size:clamp(1.8rem,7vw,2.6rem);font-weight:500}
+.ru-xl{font-size:clamp(1.3rem,5vw,1.8rem);font-weight:600;line-height:1.3}
+.sub{margin:6px 0 0;color:var(--muted)}
+.zhq{font-family:var(--f-han);font-size:clamp(1.3rem,4.8vw,1.75rem);line-height:1.6;margin:4px 0 0;font-weight:500}
+.zhq u,.blank{display:inline-block;min-width:2.4em;border-bottom:3px solid var(--accent);text-decoration:none;margin:0 .15em;line-height:1.1}
+.ctx{margin:0 0 8px;color:var(--muted);font-family:var(--f-han);font-size:1.05rem}
+.tr{margin-top:10px;font-size:.95rem;color:var(--muted)}
+.tr summary{cursor:pointer;display:inline-block;font-weight:600;color:var(--accent)}
+.tr p{margin:6px 0 0}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts.one{grid-template-columns:1fr}
+.opt{position:relative;display:flex;align-items:center;gap:12px;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-m);padding:14px 16px;min-height:60px;cursor:pointer;transition:border-color .12s ease,background .12s ease,transform .12s ease;min-width:0}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:active:not(:disabled){transform:scale(.985)}
+.opt:disabled{cursor:default}
+.opt .kbd{flex:none;width:1.6rem;height:1.6rem;border-radius:6px;display:grid;place-items:center;font-size:.8rem;font-weight:700;color:var(--muted);background:var(--surface-2);border:1px solid var(--line)}
+.opt .otx{min-width:0;overflow-wrap:anywhere;font-size:1.05rem;display:flex;flex-direction:column;gap:2px}
+.opt .otx .han{font-size:1.4rem;line-height:1.35}
+.opt .otx .ru{font-size:.88rem;color:var(--muted)}
+.opt.ok{background:var(--ok-soft);border-color:var(--ok)}
+.opt.ok .kbd{background:var(--ok);color:var(--surface);border-color:var(--ok)}
+.opt.bad{background:var(--bad-soft);border-color:var(--bad);animation:shake .35s}
+.opt.bad .kbd{background:var(--bad);color:var(--surface);border-color:var(--bad)}
+.pin-opt{font-family:var(--f-pin);font-size:1.3rem}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fb{margin-top:14px;border-radius:var(--r-m);padding:14px 16px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;border:1px solid var(--line);background:var(--surface)}
+.fb.good{border-color:var(--ok)}
+.fb.nope{border-color:var(--bad)}
+.fb .verdict{margin:0;font-weight:700}
+.fb.good .verdict{color:var(--ok)}
+.fb.nope .verdict{color:var(--bad)}
+.fb p{margin:0}
+.wl{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.wl .han{font-size:1.4rem}
+.wl .pin{color:var(--accent);font-weight:500}
+.syl{display:inline-flex;flex-direction:column;align-items:center;padding:4px 10px;background:var(--surface-2);border-radius:var(--r-s);border:1px solid var(--line)}
+.syl .tn{font-size:.75rem;color:var(--muted)}
+.quote{font-size:.95rem}
+.quote .han{font-size:1.1rem}
+mark{background:var(--banana-soft);color:inherit;border-radius:4px;padding:0 .15em}
+
+/* result */
+.result{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.rstars{font-size:2.6rem;letter-spacing:.15em;line-height:1}
+.result h3{margin:0;font:700 1.4rem var(--f-display)}
+.result h3 .han{font-family:var(--f-han)}
+.result p{margin:0}
+.rscore{font-family:var(--f-display);font-size:1.1rem;font-variant-numeric:tabular-nums}
+
+/* segmented control */
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.seg button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:.35rem .85rem;font-size:.9rem;font-weight:600;cursor:pointer;min-height:36px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* flashcards */
+.flash{display:block;width:100%;min-height:290px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-l);padding:24px;cursor:pointer;text-align:center;box-shadow:var(--shadow);margin-bottom:14px;position:relative}
+.flash .ff{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:240px}
+.flash .back{display:none}
+.flash.flipped .front{display:none}
+.flash.flipped .back{display:flex;animation:flip .35s ease}
+@keyframes flip{from{transform:rotateY(70deg);opacity:.2}to{transform:none;opacity:1}}
+.flash .hint{color:var(--muted);font-size:.85rem}
+.flash .han-l{font-family:var(--f-han);font-size:2.6rem;font-weight:700;line-height:1.2}
+.flash .pin-l{font-family:var(--f-pin);font-size:1.4rem;color:var(--accent)}
+.flash .pos{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.flash .ru-l{font-size:1.3rem;font-weight:600;max-width:30ch}
+.flash .ex{font-family:var(--f-han);font-size:1.1rem;color:var(--muted)}
+.flash .badge{position:absolute;top:12px;right:12px;font-size:.75rem;font-weight:700;border-radius:999px;padding:.1rem .55rem;background:var(--ok-soft);color:var(--ok)}
+
+/* memory */
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mcard{position:relative;aspect-ratio:4/5;max-width:100%;border-radius:var(--r-m);border:1.5px solid var(--line);background:var(--surface-2);cursor:pointer;padding:8px;overflow:hidden;display:grid;place-items:center}
+.mcard .disc{position:absolute;inset:0;margin:auto;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,var(--surface-2) 0 13%,var(--line) 13% 17%,transparent 17%),conic-gradient(from 30deg,var(--cd-1),var(--cd-2),var(--cd-3),var(--cd-4),var(--cd-5),var(--cd-1));box-shadow:inset 0 0 0 1px rgb(0 0 0 / .08);transition:transform .3s ease}
+.mcard:hover .disc{transform:rotate(40deg)}
+.mface{display:none;flex-direction:column;align-items:center;gap:4px;text-align:center;font-size:.9rem;line-height:1.25;overflow-wrap:anywhere;position:relative}
+.mface .han{font-size:clamp(1.3rem,5.4vw,1.9rem);line-height:1.2}
+.mface .pin{font-size:.8rem;color:var(--accent);visibility:hidden}
+.mcard.open{background:var(--surface);border-color:var(--accent)}
+.mcard.open .disc{display:none}
+.mcard.open .mface{display:flex;animation:flip .3s ease}
+.mcard.done{background:var(--ok-soft);border-color:var(--ok);cursor:default}
+.mcard.done .pin{visibility:visible}
+.mcard.miss{border-color:var(--bad);animation:shake .35s}
+
+/* reading */
+.rtools{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-bottom:12px}
+.switch{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:.92rem;cursor:pointer;min-height:36px}
+.switch input{width:1.1rem;height:1.1rem;accent-color:var(--accent)}
+.dialog{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:8px 18px}
+.line{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.line:last-child{border-bottom:0}
+.spk{display:flex;flex-direction:column;padding-top:.7rem}
+.spk .han{font-size:1.05rem;font-weight:700}
+.spk span:last-child{font-size:.78rem;color:var(--muted)}
+.tx{margin:0;font-family:var(--f-han);font-size:1.5rem;line-height:2.5;overflow-wrap:anywhere}
+.nopy .tx{line-height:1.8}
+ruby{ruby-position:over}
+rt{font-family:var(--f-pin);font-size:.5em;color:var(--muted);font-weight:400;letter-spacing:0}
+.nopy rt{display:none}
+.tok{cursor:pointer;border-radius:5px;padding:0 1px;transition:background .12s ease}
+.tok:hover{background:var(--accent-soft)}
+.tok.nw{background-image:linear-gradient(var(--banana),var(--banana));background-size:100% 3px;background-repeat:no-repeat;background-position:0 100%}
+.tok.sel{background-color:var(--accent-soft);outline:2px solid var(--accent)}
+.lru{margin:2px 0 0;color:var(--muted);font-size:.98rem}
+.nori .lru{display:none}
+.line.masked .lc{filter:blur(7px);cursor:pointer;user-select:none}
+.line.masked .lc *{pointer-events:none}
+.line.masked .spk::after{content:"нажми, чтобы проверить";font-size:.72rem;color:var(--accent);margin-top:4px}
+.gloss{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:5;margin-top:12px;background:var(--surface);color:var(--ink);border:2px solid var(--accent);border-radius:var(--r-m);padding:12px 16px;display:flex;gap:6px 14px;flex-wrap:wrap;align-items:baseline;box-shadow:var(--shadow);min-height:52px}
+.gloss .han{font-size:1.5rem}
+.gloss .pin{color:var(--accent);font-weight:500}
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:10px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px}
+.note h4{margin:0 0 6px;font-family:var(--f-han);font-size:1.15rem;font-weight:700}
+.note p{margin:0;font-size:.94rem}
+.subh{font:700 1rem var(--f-display);margin:28px 0 4px}
+
+/* sentence builder */
+.answer{min-height:70px;border:2px dashed var(--line);border-radius:var(--r-m);padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;background:var(--surface)}
+.answer:empty::before{content:"Нажимай на слова ниже по порядку";color:var(--muted);font-size:.92rem;padding-left:4px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;min-height:56px}
+.tile{font-family:var(--f-han);font-size:1.35rem;font-weight:500;background:var(--surface);border:1.5px solid var(--line);border-bottom-width:4px;border-radius:10px;padding:.35rem .8rem;cursor:pointer;min-height:48px}
+.tile:hover{border-color:var(--accent)}
+.tile.used{visibility:hidden}
+.answer .tile{background:var(--accent-soft);border-color:var(--accent)}
+.answer.ok{border-color:var(--ok);border-style:solid;background:var(--ok-soft)}
+.answer.bad{border-color:var(--bad);border-style:solid;background:var(--bad-soft)}
+.ru-q{margin:0;font-size:1.25rem;font-weight:600}
+
+/* market */
+.stall-scene{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;text-align:left}
+.crate{position:relative;width:132px;padding:14px 10px 12px;border-radius:var(--r-m);background:var(--surface-2);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:2px}
+.crate .fruit{font-size:3.2rem;line-height:1.1}
+.crate .fname{font-size:1.05rem}
+.ptag{margin-top:6px;transform:rotate(-4deg)}
+.ptag b{font-family:var(--f-display);font-size:1rem}
+.ptag small{font-family:var(--f-han);font-size:.8rem}
+.bubbles{display:flex;flex-direction:column;gap:8px;min-width:0}
+.bub{margin:0;background:var(--surface-2);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:1.15rem;display:flex;flex-direction:column;align-self:flex-start;max-width:100%}
+.bub b{font-size:.78rem;color:var(--muted);font-family:var(--f-han)}
+.bub.me{align-self:flex-end;border-radius:14px 4px 14px 14px;background:var(--accent-soft);border-color:transparent}
+.mq{margin:14px 0 0;font-weight:600}
+
+/* talk */
+.chat{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:16px;min-height:200px;margin-bottom:14px}
+.scene{margin:6px 0;text-align:center;font-size:.85rem;color:var(--muted);font-weight:600}
+.msg{max-width:min(85%,520px);padding:10px 14px;border-radius:4px 16px 16px 16px;background:var(--surface-2);border:1px solid var(--line);align-self:flex-start;animation:msgin .3s ease}
+.msg.me{align-self:flex-end;border-radius:16px 4px 16px 16px;background:var(--accent-soft);border-color:transparent}
+.msg .who{display:block;font-size:.78rem;color:var(--muted)}
+.msg p{margin:0}
+.msg p.han{font-size:1.25rem;line-height:1.5}
+.msg .ru,.replies .ru{color:var(--muted);font-size:.9rem}
+.nru .ru{display:none!important}
+@keyframes msgin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.replies{display:grid;gap:10px}
+
+/* shop */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-top:12px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:16px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.item .e{font-size:2.6rem;line-height:1.1}
+.item .zh{font-family:var(--f-han);font-size:1.2rem;font-weight:700}
+.item .ru{color:var(--muted);font-size:.9rem}
+.item .tag{margin:4px 0 8px}
+.item .tag b{font-family:var(--f-display);font-size:.9rem}
+.item .tag small{font-family:var(--f-han)}
+.shelf{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:12px}
+.shelf span{font-size:1.8rem}
+.shelf small{font-size:.85rem;color:var(--muted);margin-right:6px}
+.blitz-start{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:32px 20px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.blitz-start .big{font:700 2rem var(--f-display);margin:0}
+.blitz-start p{margin:0;max-width:44ch}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:40;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:.92rem;max-width:calc(100% - 32px);text-align:center;box-shadow:var(--shadow)}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+
+@media (max-width:720px){
+  .hero{grid-template-columns:1fr}
+  .line{grid-template-columns:1fr;gap:2px}
+  .spk{flex-direction:row;gap:8px;align-items:baseline;padding-top:0}
+  .line.masked .spk::after{margin-top:0}
+}
+@media (max-width:520px){
+  .opts{grid-template-columns:1fr}
+  .opts.hanopts{grid-template-columns:1fr 1fr}
+  .mgrid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .mcard{aspect-ratio:1}
+  .mface{font-size:.82rem}
+  .sign{padding:24px 20px 20px}
+  .stall-scene{grid-template-columns:1fr;justify-items:center}
+  .crate{width:100%;flex-direction:row;justify-content:center;gap:12px}
+  .ptag{margin-top:0}
+  .tx{font-size:1.35rem}
+  .qcard{padding:18px 14px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap topin">
+    <button class="brand" data-go="home" aria-label="На главную"><span class="brush">第十课</span><span>Урок 10</span></button>
+    <button class="tag wallet" id="wallet" data-go="shop" aria-label="Кошелёк: открыть лавку наград"><span class="wy" id="wy">¥0.00</span><span class="wz" id="wz">零</span></button>
+  </div>
+</header>
+<main id="app" class="wrap"></main>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- storage (per-viewer, optional) ---------- */
+const S = {
+  get(k, d){ try{ const v = localStorage.getItem('l10:' + k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('l10:' + k, JSON.stringify(v)); }catch(e){} }
+};
+const state = {
+  wallet: S.get('wallet', 0),   // in 分 (fen)
+  best: S.get('best', {}),      // game id -> stars 0..3
+  known: S.get('known', {}),    // hanzi -> true
+  shelf: S.get('shelf', {}),    // shop item id -> count
+  done: S.get('done', {})       // one-off rewards
+};
+function save(){ for(const k of Object.keys(state)) S.set(k, state[k]); }
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle = a => { a = [...a]; for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const sample = (a, n) => shuffle(a).slice(0, n);
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const timers = new Set();
+function later(fn, ms){ const t = setTimeout(() => { timers.delete(t); fn(); }, ms); timers.add(t); return t; }
+function clearTimers(){ timers.forEach(clearTimeout); timers.clear(); }
+
+/* ---------- pinyin: numbered syllables -> tone marks ---------- */
+const TONES = {a:'āáǎà', e:'ēéěè', i:'īíǐì', o:'ōóǒò', u:'ūúǔù', 'ü':'ǖǘǚǜ'};
+function syl(s){
+  const m = /^([a-zü]+?)(r?)([1-5])$/.exec(s.replace('v', 'ü'));
+  if(!m) return s;
+  const b = m[1], r = m[2], t = +m[3];
+  if(t === 5) return b + r;
+  let i = b.indexOf('a');
+  if(i < 0) i = b.indexOf('e');
+  if(i < 0 && b.includes('ou')) i = b.indexOf('o');
+  if(i < 0){ for(let k = b.length - 1; k >= 0; k--){ if('iouü'.includes(b[k])){ i = k; break; } } }
+  if(i < 0) return b + r;
+  return b.slice(0, i) + TONES[b[i]][t - 1] + b.slice(i + 1) + r;
+}
+const py = p => p.split(' ').map(syl).join('');
+const tonesOf = p => p.split(' ').map(s => +s.slice(-1));
+const withTones = (p, ts) => p.split(' ').map((s, i) => syl(s.slice(0, -1) + ts[i])).join('');
+
+/* ---------- money: 块 / 毛 / 分 ---------- */
+const D = '零一二三四五六七八九';
+function numZh(n){
+  if(n < 10) return D[n];
+  if(n < 20) return '十' + (n % 10 ? D[n % 10] : '');
+  if(n < 100) return D[Math.floor(n / 10)] + '十' + (n % 10 ? D[n % 10] : '');
+  const b = Math.floor(n / 100), r = n % 100, head = (b === 2 ? '两' : D[b]) + '百';
+  if(!r) return head;
+  if(r < 10) return head + '零' + D[r];
+  return head + (r < 20 ? '一' + numZh(r) : numZh(r));
+}
+const countZh = n => n === 2 ? '两' : numZh(n);
+function priceZh(fen){
+  const k = Math.floor(fen / 100), m = Math.floor(fen % 100 / 10), f = fen % 10;
+  if(k > 999) return String(k) + '块';
+  let s = '';
+  if(k) s += countZh(k) + '块';
+  if(m) s += (k ? D[m] : countZh(m)) + '毛';
+  if(k && !m && f) s += '零';
+  if(f) s += ((k || m) ? D[f] : countZh(f)) + '分';
+  return s || '零';
+}
+const yuan = fen => '¥' + (fen / 100).toFixed(2);
+
+/* ---------- lesson data ---------- */
+// g: new = 生词 урока, t1 = слова из текста (一), ext = 补充生词
+const W = [
+  {h:'先生', p:'xian1 sheng5', pos:'сущ.', ru:'господин', ex:'张先生，王先生', g:'new'},
+  {h:'要', p:'yao4', pos:'гл.', ru:'хотеть; нужно', ex:'要什么，要音乐光盘', g:'new'},
+  {h:'师傅', p:'shi1 fu5', pos:'сущ.', ru:'мастер (вежливое обращение)', ex:'张师傅，王师傅', g:'new'},
+  {h:'香蕉苹果', p:'xiang1 jiao1 ping2 guo3', pos:'сущ.', ru:'яблоко с банановым вкусом', ex:'一个香蕉苹果', g:'new'},
+  {h:'香蕉', p:'xiang1 jiao1', pos:'сущ.', ru:'банан', ex:'买香蕉', g:'new'},
+  {h:'苹果', p:'ping2 guo3', pos:'сущ.', ru:'яблоко', ex:'一个苹果', g:'new'},
+  {h:'对不起', p:'dui4 bu5 qi3', pos:'идиом.', ru:'извините; прошу прощения', ex:'', g:'new'},
+  {h:'怎么', p:'zen3 me5', pos:'вопр. мест.', ru:'как', ex:'怎么说，怎么做，怎么去，怎么介绍', g:'new'},
+  {h:'容易', p:'rong2 yi4', pos:'прил.', ru:'лёгкий', ex:'很容易，不容易，真容易，不太容易', g:'new'},
+  {h:'葡萄', p:'pu2 tao5', pos:'сущ.', ru:'виноград', ex:'两斤葡萄', g:'new'},
+  {h:'钱', p:'qian2', pos:'сущ.', ru:'деньги', ex:'多少钱', g:'new'},
+  {h:'斤', p:'jin1', pos:'сч. сл.', ru:'цзинь (500 граммов)', ex:'一斤苹果，两斤葡萄', g:'new'},
+  {h:'块', p:'kuai4', pos:'сч. сл.', ru:'юань (в устной речи)', ex:'两块钱，十二块钱，二十块钱', g:'new', clash:'yuan'},
+  {h:'毛', p:'mao2', pos:'сч. сл.', ru:'10 фэней (0,1 юаня)', ex:'两毛钱，六毛钱', g:'new'},
+  {h:'贵', p:'gui4', pos:'прил.', ru:'дорогой', ex:'很贵，真贵，不太贵，不贵', g:'new'},
+  {h:'做', p:'zuo4', pos:'гл.', ru:'делать', ex:'做个朋友，做好朋友', g:'new'},
+  {h:'分', p:'fen1', pos:'сч. сл.', ru:'фэнь (0,01 юаня)', ex:'一分钱，八分钱', g:'new'},
+  {h:'送', p:'song4', pos:'гл.', ru:'дарить', ex:'送蛋糕，送葡萄酒', g:'new'},
+  {h:'给', p:'gei3', pos:'гл.', ru:'дать', ex:'给他，给师傅，给我，给香蕉', g:'new'},
+  {h:'找钱', p:'zhao3 qian2', pos:'гл.', ru:'дать сдачу', ex:'找钱', g:'new'},
+  {h:'这儿', p:'zher4', pos:'мест.', ru:'здесь, тут', ex:'你常常来这儿吗？', g:'t1'},
+  {h:'买', p:'mai3', pos:'гл.', ru:'покупать', ex:'买光盘，买香蕉', g:'t1'},
+  {h:'光盘', p:'guang1 pan2', pos:'сущ.', ru:'компакт-диск', ex:'音乐光盘', g:'t1'},
+  {h:'音乐', p:'yin1 yue4', pos:'сущ.', ru:'музыка', ex:'中国音乐', g:'t1'},
+  {h:'常常', p:'chang2 chang2', pos:'нареч.', ru:'часто', ex:'常常来这儿', g:'t1'},
+  {h:'星期天', p:'xing1 qi1 tian1', pos:'сущ.', ru:'воскресенье', ex:'星期天我常常去小商场', g:'t1'},
+  {h:'跟', p:'gen1', pos:'предл.', ru:'с, вместе с', ex:'跟林娜去', g:'t1'},
+  {h:'去', p:'qu4', pos:'гл.', ru:'идти, ехать', ex:'去商场', g:'t1'},
+  {h:'商场', p:'shang1 chang3', pos:'сущ.', ru:'торговый центр', ex:'小商场', g:'t1'},
+  {h:'喜欢', p:'xi3 huan5', pos:'гл.', ru:'нравиться, любить', ex:'喜欢中国音乐', g:'t1'},
+  {h:'张', p:'zhang1', pos:'сч. сл.', ru:'счётное слово для плоских предметов', ex:'这张光盘', g:'t1'},
+  {h:'怎么样', p:'zen3 me5 yang4', pos:'вопр. мест.', ru:'как? каков? (просьба оценить)', ex:'这张光盘怎么样？', g:'t1'},
+  {h:'大', p:'da4', pos:'прил.', ru:'большой', ex:'这个商场很大', g:'t1'},
+  {h:'小', p:'xiao3', pos:'прил.', ru:'маленький', ex:'小商场', g:'t1'},
+  {h:'元', p:'yuan2', pos:'сч. сл.', ru:'юань (на письме и на ценниках)', ex:'', g:'ext', clash:'yuan'},
+  {h:'笔', p:'bi3', pos:'сущ.', ru:'ручка', ex:'一支笔', g:'ext'},
+  {h:'支', p:'zhi1', pos:'сч. сл.', ru:'счётное слово для длинных предметов', ex:'一支笔', g:'ext'},
+  {h:'份', p:'fen4', pos:'сч. сл.', ru:'экземпляр; счётное слово для газет и журналов', ex:'一份报纸', g:'ext'}
+].map(w => ({...w, pin: py(w.p)}));
+const WBY = Object.fromEntries(W.map(w => [w.h, w]));
+const GROUPS = [['all','Все'], ['new','Новые слова'], ['t1','Из текста (一)'], ['ext','Дополнительные']];
+
+// glossary for words in the dialogs that are not on the cards
+const GL = {
+  '大为':'Давэй (имя)', '你':'ты', '在':'в, на; находиться', '什么':'что? какой?', '我':'я', '吗':'вопросительная частица',
+  '不':'не', '常':'часто', '来':'приходить', '林娜':'Линь На (имя)', '这':'этот, это', '个':'общее счётное слово', '很':'очень',
+  '中国':'Китай; китайский', '您':'Вы (вежливо)', '你好':'здравствуйте', '请问':'скажите, пожалуйста', '是':'быть, являться',
+  '认识':'знать, быть знакомым', '问':'спрашивать', '汉语':'китайский язык', '说':'говорить', '啊':'а! (междометие)',
+  '外国人':'иностранец', '哪儿':'где? куда?', '工作':'работать', '语言学院':'Институт языка', '学习':'учиться, изучать',
+  '是不是':'не так ли? да?', '学':'учиться', '叫':'называться', '也':'тоже', '那':'тот, то', '一':'один', '多少':'сколько',
+  '三':'три', '二':'два', '的':'частица принадлежности', '真':'действительно, по-настоящему', '看':'смотреть',
+  '好':'хорошо; ладно', '朋友':'друг'
+};
+const SPK = {'王小云':'Ван Сяоюнь', '马大为':'Ма Давэй', '师傅':'мастер', '丁力波':'Дин Либо'};
+
+// dialog lines: tokens "汉字/pinyin" separated by spaces, "_" = space inside pinyin
+const TEXTS = [
+  {id:1, title:'(一)', lines:[
+    {s:'王小云', t:'大为/Dàwéi ， 你/nǐ 在/zài 这儿/zhèr 买/mǎi 什么/shénme ？', ru:'Давэй, что ты здесь покупаешь?'},
+    {s:'马大为', t:'我/Wǒ 买/mǎi 音乐/yīnyuè 光盘/guāngpán 。', ru:'Я покупаю музыкальные диски.'},
+    {s:'王小云', t:'你/Nǐ 常常/chángcháng 来/lái 这儿/zhèr 吗/ma ？', ru:'Ты часто сюда приходишь?'},
+    {s:'马大为', t:'我/Wǒ 不/bù 常/cháng 来/lái 这儿/zhèr 。 星期天/Xīngqītiān 我/wǒ 常常/chángcháng 跟/gēn 林娜/Lín_Nà 去/qù 小/xiǎo 商场/shāngchǎng 。 这/Zhè 个/ge 商场/shāngchǎng 很/hěn 大/dà 。', ru:'Я нечасто сюда прихожу. По воскресеньям я обычно хожу с Линь На в маленький торговый центр. А этот торговый центр очень большой.'},
+    {s:'王小云', t:'你/Nǐ 喜欢/xǐhuan 什么/shénme 音乐/yīnyuè ？', ru:'Какая музыка тебе нравится?'},
+    {s:'马大为', t:'我/Wǒ 喜欢/xǐhuan 中国/Zhōngguó 音乐/yīnyuè 。 这/Zhè 张/zhāng 光盘/guāngpán 怎么样/zěnmeyàng ？', ru:'Мне нравится китайская музыка. Как тебе этот диск?'}
+  ]},
+  {id:2, title:'(二)', lines:[
+    {s:'师傅', t:'先生/Xiānsheng ， 您/nín 要/yào 什么/shénme ？', ru:'Господин, что желаете?'},
+    {s:'丁力波', t:'你好/Nǐ_hǎo ， 师傅/shīfu 。 请问/Qǐngwèn ， 这/zhè 是/shì 什么/shénme ？', ru:'Здравствуйте, мастер. Скажите, пожалуйста, что это?'},
+    {s:'师傅', t:'您/Nín 不/bú 认识/rènshi 吗/ma ？ 这/Zhè 是/shì 香蕉苹果/xiāngjiāopíngguǒ 。', ru:'Вы не знаете? Это «банановые яблоки».'},
+    {s:'丁力波', t:'对不起/Duìbuqǐ ， 我/wǒ 是/shì 问/wèn ： 这/Zhè 个/ge 汉语/Hànyǔ 怎么/zěnme 说/shuō ？', ru:'Извините, я имею в виду: как это сказать по-китайски?'},
+    {s:'师傅', t:'啊/À ， 您/nín 是/shì 外国人/wàiguó_rén 。 您/Nín 在/zài 哪儿/nǎr 工作/gōngzuò ？', ru:'А, вы иностранец. Где вы работаете?'},
+    {s:'丁力波', t:'我/Wǒ 在/zài 语言学院/Yǔyán_Xuéyuàn 学习/xuéxí 。', ru:'Я учусь в Институте языка.'},
+    {s:'师傅', t:'您/Nín 学习/xuéxí 汉语/Hànyǔ ， 是不是/shì_bu_shì ？ 您/Nín 跟/gēn 我/wǒ 学/xué ， 很/hěn 容易/róngyì ： 这/zhè 叫/jiào 香蕉/xiāngjiāo ， 这/zhè 叫/jiào 香蕉苹果/xiāngjiāopíngguǒ ， 这/zhè 也/yě 是/shì 苹果/píngguǒ ， 那/nà 是/shì 葡萄/pútao ……', ru:'Вы изучаете китайский, да? Учитесь у меня, это очень легко: это называется «банан», это «банановое яблоко», это тоже яблоко, а вон то виноград…'},
+    {s:'丁力波', t:'香蕉/Xiāngjiāo 、 苹果/píngguǒ 、 香蕉苹果/xiāngjiāopíngguǒ …… 一/Yì 斤/jīn 苹果/píngguǒ 多少/duōshao 钱/qián ？', ru:'Банан, яблоко, банановое яблоко… Сколько стоит цзинь яблок?'},
+    {s:'师傅', t:'一/Yì 斤/jīn 三/sān 块/kuài 二/èr 毛/máo 钱/qián 。', ru:'Три юаня двадцать фэней за цзинь.'},
+    {s:'丁力波', t:'您/Nín 的/de 苹果/píngguǒ 真/zhēn 贵/guì 。', ru:'Какие у вас дорогие яблоки!'},
+    {s:'师傅', t:'一/Yì 斤/jīn 三/sān 块/kuài 二/èr 不/bú 贵/guì 。 您/Nín 看/kàn ， 我/wǒ 的/de 苹果/píngguǒ 大/dà 。 好/Hǎo ， 做/zuò 个/ge 朋友/péngyou ， 三/sān 块/kuài 钱/qián 一/yì 斤/jīn 。', ru:'Три двадцать за цзинь не дорого. Посмотрите, яблоки у меня крупные. Ладно, давайте дружить: три юаня за цзинь.'}
+  ]}
+];
+
+const NOTES = [
+  {n:'①', zh:'这个商场很大。', ru:'Когда 这 или 那 стоят перед существительным как определение, между ними обязательно счётное слово: 这张光盘, 那个朋友, 那瓶酒.'},
+  {n:'②', zh:'先生，您要什么？', ru:'先生: общее вежливое обращение к взрослым мужчинам, а также уважительное обращение к учёным и специалистам в годах (в том числе к женщинам). Иногда женщины называют своего мужа 我先生. Фразы «您要什么？» и «您还要什么？» говорят продавцы и служащие, когда спрашивают, что нужно посетителю.'},
+  {n:'③', zh:'你好，师傅。', ru:'师傅: вежливое обращение к рабочим и людям сферы обслуживания: водителям, кондукторам, поварам, официантам. Сейчас это обращение становится всё более распространённым.'},
+  {n:'④', zh:'我是问：这个汉语怎么说？', ru:'«Я имею в виду: как сказать это по-китайски?» 怎么 + глагол спрашивает, как совершить действие: 怎么说？怎么做？怎么去？怎么介绍？'},
+  {n:'⑤', zh:'您学习汉语，是不是？', ru:'«……，是不是？» или «……，是吗？» задаёт вопрос на основании предположения. Утвердительный ответ: 是啊！ Отрицательный: 不(是)。'},
+  {n:'⑥', zh:'一斤苹果多少钱？', ru:'Сколько стоит один цзинь яблок?'},
+  {n:'¥', zh:'块 · 毛 · 分', ru:'1 块 = 10 毛 = 100 分. На ценниках и на письме пишут 元. Цену читают от крупной единицы к мелкой: ¥3.20 → 三块二毛(钱). В разговоре последнюю единицу часто опускают: 三块二.'}
+];
+
+const QA = [
+  {t:1, q:'马大为在这儿买什么？', ru:'Что Ма Давэй здесь покупает?', a:'音乐光盘', o:['苹果','葡萄','香蕉'], why:'马大为：我买音乐光盘。'},
+  {t:1, q:'星期天马大为常常跟谁去小商场？', ru:'С кем Ма Давэй по воскресеньям ходит в маленький торговый центр?', a:'林娜', o:['王小云','丁力波','师傅'], why:'马大为：星期天我常常跟林娜去小商场。'},
+  {t:1, q:'星期天马大为常常去哪儿？', ru:'Куда Ма Давэй часто ходит по воскресеньям?', a:'小商场', o:['语言学院','中国','这儿'], why:'马大为：我不常来这儿。星期天我常常跟林娜去小商场。'},
+  {t:1, q:'这个商场大不大？', ru:'Этот торговый центр большой?', a:'很大', o:['很小','不大','不太大'], why:'马大为：这个商场很大。'},
+  {t:1, q:'马大为喜欢什么音乐？', ru:'Какая музыка нравится Ма Давэю?', a:'中国音乐', o:['外国音乐','他不喜欢音乐'], why:'马大为：我喜欢中国音乐。'},
+  {t:1, tf:true, q:'马大为常常来这儿。', ru:'Ма Давэй часто приходит сюда.', a:false, why:'马大为：我不常来这儿。'},
+  {t:1, tf:true, q:'马大为买音乐光盘。', ru:'Ма Давэй покупает музыкальные диски.', a:true, why:'马大为：我买音乐光盘。'},
+  {t:1, tf:true, q:'星期天马大为常常跟王小云去小商场。', ru:'По воскресеньям Ма Давэй ходит в маленький торговый центр с Ван Сяоюнь.', a:false, why:'马大为：星期天我常常跟林娜去小商场。'},
+  {t:1, tf:true, q:'马大为喜欢中国音乐。', ru:'Ма Давэю нравится китайская музыка.', a:true, why:'马大为：我喜欢中国音乐。'},
+  {t:2, q:'丁力波在哪儿学习？', ru:'Где учится Дин Либо?', a:'语言学院', o:['小商场','中国','这儿'], why:'丁力波：我在语言学院学习。'},
+  {t:2, q:'丁力波学习什么？', ru:'Что изучает Дин Либо?', a:'汉语', o:['音乐','葡萄','工作'], why:'师傅：您学习汉语，是不是？'},
+  {t:2, q:'师傅说，跟他学汉语怎么样？', ru:'Каково, по словам мастера, учить китайский у него?', a:'很容易', o:['很贵','不容易','很大'], why:'师傅：您跟我学，很容易。'},
+  {t:2, q:'师傅说，一斤苹果多少钱？', ru:'Какую цену за цзинь яблок мастер называет сначала?', a:'三块二毛钱', o:['三块钱','两块二毛钱','三毛二分钱'], why:'师傅：一斤三块二毛钱。'},
+  {t:2, q:'丁力波说师傅的苹果怎么样？', ru:'Что Дин Либо говорит о яблоках мастера?', a:'真贵', o:['不贵','很小','很容易'], why:'丁力波：您的苹果真贵。'},
+  {t:2, q:'做个朋友，一斤苹果多少钱？', ru:'«Давайте дружить»: почём теперь цзинь яблок?', a:'三块钱', o:['三块二毛钱','两块钱','三毛钱'], why:'师傅：好，做个朋友，三块钱一斤。'},
+  {t:2, tf:true, q:'丁力波是外国人。', ru:'Дин Либо иностранец.', a:true, why:'师傅：啊，您是外国人。'},
+  {t:2, tf:true, q:'丁力波在语言学院工作。', ru:'Дин Либо работает в Институте языка.', a:false, why:'丁力波：我在语言学院学习。'},
+  {t:2, tf:true, q:'丁力波说师傅的苹果不贵。', ru:'Дин Либо говорит, что яблоки мастера недорогие.', a:false, why:'丁力波：您的苹果真贵。'},
+  {t:2, tf:true, q:'师傅说他的苹果很小。', ru:'Мастер говорит, что его яблоки маленькие.', a:false, why:'师傅：您看，我的苹果大。'},
+  {t:2, tf:true, q:'师傅说一斤三块二不贵。', ru:'Мастер говорит, что три двадцать за цзинь недорого.', a:true, why:'师傅：一斤三块二不贵。'}
+];
+
+const CL = [
+  {s:'王小云', zh:'大为，你在这儿买＿？', a:'什么', o:['怎么','多少','哪儿'], ru:'Давэй, что ты здесь покупаешь?'},
+  {s:'马大为', ctx:['王小云','大为，你在这儿买什么？'], zh:'我买音乐＿。', a:'光盘', o:['商场','朋友','汉语'], ru:'Я покупаю музыкальные диски.'},
+  {s:'王小云', zh:'你＿来这儿吗？', a:'常常', o:['很','的','个'], ru:'Ты часто сюда приходишь?'},
+  {s:'马大为', zh:'星期天我常常＿林娜去小商场。', a:'跟', o:['在','是','给'], ru:'По воскресеньям я обычно хожу с Линь На в маленький торговый центр.'},
+  {s:'马大为', zh:'这＿商场很大。', a:'个', o:['张','斤','支'], ru:'Этот торговый центр очень большой.'},
+  {s:'马大为', ctx:['王小云','你喜欢什么音乐？'], zh:'我＿中国音乐。', a:'喜欢', o:['认识','工作','送'], ru:'Мне нравится китайская музыка.'},
+  {s:'马大为', zh:'这＿光盘怎么样？', a:'张', o:['斤','份','块'], ru:'Как тебе этот диск?'},
+  {s:'师傅', zh:'先生，您＿什么？', a:'要', o:['是','跟','很'], ru:'Господин, что желаете?'},
+  {s:'师傅', ctx:['丁力波','请问，这是什么？'], zh:'您不＿吗？这是香蕉苹果。', a:'认识', o:['给','跟','做'], ru:'Вы не знаете? Это «банановые яблоки».'},
+  {s:'丁力波', zh:'对不起，我是问：这个汉语＿说？', a:'怎么', o:['什么','多少','哪儿'], ru:'Извините, я имею в виду: как это сказать по-китайски?'},
+  {s:'师傅', zh:'啊，您是外国人。您在＿工作？', a:'哪儿', o:['什么','怎么','多少'], ru:'А, вы иностранец. Где вы работаете?'},
+  {s:'丁力波', ctx:['师傅','您在哪儿工作？'], zh:'我在语言学院＿。', a:'学习', o:['认识','喜欢','找'], ru:'Я учусь в Институте языка.'},
+  {s:'师傅', zh:'您跟我学，很＿。', a:'容易', o:['多少','怎么','常常'], ru:'Учитесь у меня, это очень легко.'},
+  {s:'师傅', zh:'这＿香蕉，这叫香蕉苹果。', a:'叫', o:['要','做','给'], ru:'Это называется «банан», это «банановое яблоко».'},
+  {s:'丁力波', zh:'一斤苹果多少＿？', a:'钱', o:['张','份','支'], ru:'Сколько стоит цзинь яблок?'},
+  {s:'师傅', zh:'一＿三块二毛钱。', a:'斤', o:['张','支','份'], ru:'Три двадцать за цзинь.'},
+  {s:'丁力波', zh:'您的苹果真＿。', a:'贵', o:['怎么','跟','吗'], ru:'Какие у вас дорогие яблоки!'},
+  {s:'师傅', zh:'好，＿个朋友，三块钱一斤。', a:'做', o:['叫','给','跟'], ru:'Ладно, давайте дружить: три юаня за цзинь.'},
+  {s:'师傅', zh:'您学习汉语，是＿是？', a:'不', o:['吗','也','很'], ru:'Вы изучаете китайский, да?'},
+  {s:'师傅', ctx:['丁力波','您的苹果真贵。'], zh:'一斤三块二不贵。您看，我的苹果＿。', a:'大', o:['小','怎么','跟'], ru:'Три двадцать не дорого. Посмотрите, яблоки у меня крупные.'}
+];
+
+const BUILD = [
+  {w:['你','在','这儿','买','什么'], end:'？', ru:'Что ты здесь покупаешь?'},
+  {w:['我','买','音乐','光盘'], end:'。', ru:'Я покупаю музыкальные диски.'},
+  {w:['你','常常','来','这儿','吗'], end:'？', ru:'Ты часто сюда приходишь?'},
+  {w:['星期天','我','常常','跟','林娜','去','小商场'], end:'。', ru:'По воскресеньям я обычно хожу с Линь На в маленький торговый центр.', alt:[['我','星期天','常常','跟','林娜','去','小商场']]},
+  {w:['这个','商场','很','大'], end:'。', ru:'Этот торговый центр очень большой.'},
+  {w:['你','喜欢','什么','音乐'], end:'？', ru:'Какая музыка тебе нравится?'},
+  {w:['这','张','光盘','怎么样'], end:'？', ru:'Как тебе этот диск?'},
+  {w:['这个','汉语','怎么','说'], end:'？', ru:'Как это сказать по-китайски?'},
+  {w:['您','在','哪儿','工作'], end:'？', ru:'Где вы работаете?'},
+  {w:['我','在','语言学院','学习'], end:'。', ru:'Я учусь в Институте языка.'},
+  {w:['一斤','苹果','多少','钱'], end:'？', ru:'Сколько стоит цзинь яблок?', alt:[['苹果','一斤','多少','钱']]},
+  {w:['您的','苹果','真','贵'], end:'。', ru:'Какие у вас дорогие яблоки!'},
+  {w:['您','跟','我','学','很','容易'], end:'。', zh:'您跟我学，很容易。', ru:'Учитесь у меня, это очень легко.'}
+];
+
+const GR = [
+  {q:'这<u>　</u>光盘怎么样？', ru:'Как тебе этот диск?', a:'张', o:['斤','支','份'], n:'① После 这/那 перед существительным нужно счётное слово. Для плоских предметов (диск, лист) это 张: 这张光盘.'},
+  {q:'那<u>　</u>朋友', ru:'тот друг', a:'个', o:['张','斤','支'], n:'① 个: самое употребительное счётное слово, в том числе для людей: 那个朋友, 这个商场.'},
+  {q:'一<u>　</u>笔', ru:'одна ручка', a:'支', o:['张','斤','份'], n:'支: счётное слово для длинных предметов: 一支笔.'},
+  {q:'一<u>　</u>报纸', ru:'один экземпляр газеты (报纸 bàozhǐ)', a:'份', o:['支','斤','块'], n:'份: экземпляр; счётное слово для газет и журналов: 一份报纸.'},
+  {q:'两<u>　</u>葡萄', ru:'два цзиня (1 кг) винограда', a:'斤', o:['张','支','份'], n:'斤 = 500 г. Перед счётным словом «два» звучит как 两: 两斤葡萄, 两块钱.'},
+  {q:'这个汉语<u>　</u>说？', ru:'Как это сказать по-китайски?', a:'怎么', o:['什么','哪儿','多少'], n:'④ 怎么 + глагол: вопрос о способе действия. 怎么说？怎么做？怎么去？怎么介绍？'},
+  {q:'Как спросить «Как туда добраться?»', a:'怎么去？', o:['什么去？','去怎么？','多少去？'], n:'④ 怎么 стоит перед глаголом: 怎么去？'},
+  {q:'您学习汉语，<u>　</u>？', ru:'Вы изучаете китайский, не так ли?', a:'是不是', o:['是什么','怎么样','多少'], n:'⑤ «……，是不是？» или «……，是吗？» задаёт вопрос-предположение.'},
+  {q:'A：你喜欢中国音乐，是吗？<br>B：<u>　</u>（Да!）', a:'是啊！', o:['不是。','是不是？','对不起。'], n:'⑤ Утвердительный ответ: 是啊！ Отрицательный: 不(是)。'},
+  {q:'Продавец обращается к мужчине-покупателю: «<u>　</u>，您要什么？»', a:'先生', o:['师傅','朋友','林娜'], n:'② 先生: вежливое обращение к взрослому мужчине.'},
+  {q:'Как вежливо обратиться к водителю или повару?', a:'师傅', o:['先生','朋友','我先生'], n:'③ 师傅: вежливое обращение к рабочим и людям сферы обслуживания.'},
+  {q:'Что говорит продавец, когда спрашивает, что нужно покупателю?', a:'您要什么？', o:['您是什么？','您怎么样？','您多少？'], n:'② «您要什么？» и «您还要什么？» говорят продавцы и официанты.'},
+  {q:'Как сказать «Сколько стоит цзинь яблок?»', a:'一斤苹果多少钱？', o:['一斤苹果什么钱？','一斤苹果怎么钱？','一斤多少苹果钱？'], n:'⑥ 多少钱？ буквально «сколько денег?», то есть «сколько стоит?»'},
+  {q:'Сколько 毛 в одном 块?', a:'十毛', o:['五毛','两毛','一百毛'], n:'1 块 = 10 毛 = 100 分.'},
+  {q:'Сколько граммов в одном 斤?', a:'500 г', o:['100 г','250 г','1000 г'], n:'1 斤 = 500 г, то есть полкило.'},
+  {q:'Как прочитать цену ¥3.20?', a:'三块二毛钱', o:['三毛二块钱','二块三毛钱','三十二块钱'], n:'Сначала крупная единица, потом мелкая: 块, 毛, 分. В разговоре последнюю единицу часто опускают: 三块二.'}
+];
+
+const TALK = [
+  {title:'В магазине дисков', you:'马大为', them:'王小云', steps:[
+    {say:'大为，你在这儿买什么？', ru:'Давэй, что ты здесь покупаешь?', opts:[['我买音乐光盘。','Я покупаю музыкальные диски.'], ['一斤苹果多少钱？','Сколько стоит цзинь яблок?'], ['我在语言学院学习。','Я учусь в Институте языка.']]},
+    {say:'你常常来这儿吗？', ru:'Ты часто сюда приходишь?', opts:[['我不常来这儿。星期天我常常跟林娜去小商场。','Я нечасто сюда прихожу. По воскресеньям я обычно хожу с Линь На в маленький торговый центр.'], ['这个汉语怎么说？','Как это сказать по-китайски?'], ['您的苹果真贵。','Какие у вас дорогие яблоки!']]},
+    {say:'你喜欢什么音乐？', ru:'Какая музыка тебе нравится?', opts:[['我喜欢中国音乐。这张光盘怎么样？','Мне нравится китайская музыка. Как тебе этот диск?'], ['我喜欢香蕉苹果。','Мне нравятся банановые яблоки.'], ['对不起，我不认识。','Извините, я не знаю.']]}
+  ]},
+  {title:'У фруктового прилавка', you:'丁力波', them:'师傅', steps:[
+    {say:'先生，您要什么？', ru:'Господин, что желаете?', opts:[['你好，师傅。请问，这是什么？','Здравствуйте, мастер. Скажите, что это?'], ['我买音乐光盘。','Я покупаю музыкальные диски.'], ['我不常来这儿。','Я нечасто сюда прихожу.']]},
+    {say:'您不认识吗？这是香蕉苹果。', ru:'Вы не знаете? Это «банановые яблоки».', opts:[['对不起，我是问：这个汉语怎么说？','Извините, я имею в виду: как это по-китайски?'], ['我喜欢中国音乐。','Мне нравится китайская музыка.'], ['一斤三块二不贵。','Три двадцать за цзинь не дорого.']]},
+    {say:'啊，您是外国人。您在哪儿工作？', ru:'А, вы иностранец. Где вы работаете?', opts:[['我在语言学院学习。','Я учусь в Институте языка.'], ['我买音乐光盘。','Я покупаю музыкальные диски.'], ['这叫香蕉。','Это называется «банан».']]},
+    {say:'您学习汉语，是不是？您跟我学，很容易：这叫香蕉，这叫香蕉苹果……', ru:'Вы изучаете китайский, да? Учитесь у меня, это легко: это банан, это банановое яблоко…', opts:[['香蕉、苹果、香蕉苹果……一斤苹果多少钱？','Банан, яблоко, банановое яблоко… Сколько стоит цзинь яблок?'], ['先生，您要什么？','Господин, что желаете?'], ['我不常来这儿。','Я нечасто сюда прихожу.']]},
+    {say:'一斤三块二毛钱。', ru:'Три юаня двадцать фэней за цзинь.', opts:[['您的苹果真贵。','Какие у вас дорогие яблоки!'], ['您学习汉语，是不是？','Вы изучаете китайский, да?'], ['这张光盘怎么样？','Как тебе этот диск?']]},
+    {say:'一斤三块二不贵。您看，我的苹果大。好，做个朋友，三块钱一斤。', ru:'Три двадцать не дорого. Посмотрите, яблоки крупные. Ладно, давайте дружить: три юаня за цзинь.', final:true}
+  ]}
+];
+
+const FR = [{zh:'苹果', e:'🍎'}, {zh:'香蕉', e:'🍌'}, {zh:'葡萄', e:'🍇'}, {zh:'香蕉苹果', e:'🍏'}];
+const SHOP = [
+  {id:'pen', e:'🖊️', zh:'一支笔', ru:'ручка', fen:100},
+  {id:'banana', e:'🍌', zh:'一斤香蕉', ru:'цзинь бананов', fen:250},
+  {id:'apple', e:'🍎', zh:'一斤苹果', ru:'цзинь яблок (как у мастера!)', fen:320},
+  {id:'xj', e:'🍏', zh:'一斤香蕉苹果', ru:'цзинь банановых яблок', fen:450},
+  {id:'grape', e:'🍇', zh:'两斤葡萄', ru:'два цзиня винограда', fen:800},
+  {id:'cake', e:'🎂', zh:'一个蛋糕', ru:'торт, чтобы 送 другу', fen:1200},
+  {id:'cd', e:'💿', zh:'一张音乐光盘', ru:'музыкальный диск, как у Ма Давэя', fen:2000}
+];
+
+const SECS = [
+  {id:'w', zh:'生词', ru:'Слова', d:'Запоминаем слова урока: иероглиф, пиньинь, тоны и перевод.'},
+  {id:'t', zh:'课文', ru:'Текст', d:'Читаем оба диалога и проверяем, как ты их понял(а).'},
+  {id:'p', zh:'练习', ru:'Практика', d:'Цены и деньги, живой диалог с продавцом и грамматика из комментариев.'}
+];
+const GAMES = [
+  {id:'cards', sec:'w', zh:'卡片', ru:'Карточки', d:'Переворачивай карточки и отмечай слова, которые уже знаешь.'},
+  {id:'quiz', sec:'w', zh:'选一选', ru:'Викторина', d:'10 вопросов: иероглиф, пиньинь и перевод вперемешку.'},
+  {id:'pairs', sec:'w', zh:'找朋友', ru:'Найди пару', d:'Под дисками спрятаны слова. Соедини иероглиф с переводом.'},
+  {id:'tones', sec:'w', zh:'声调', ru:'Тоны', d:'Выбери пиньинь с правильными тонами.'},
+  {id:'blitz', sec:'w', zh:'快！', ru:'Молния', d:'60 секунд: сколько слов успеешь узнать?'},
+  {id:'read', sec:'t', zh:'读一读', ru:'Читаем текст', d:'Диалоги с пиньинем и переводом, словарик по нажатию, чтение по ролям.'},
+  {id:'qa', sec:'t', zh:'问答', ru:'Вопросы по тексту', d:'Отвечай на вопросы и решай: 对 или 错?'},
+  {id:'cloze', sec:'t', zh:'填空', ru:'Пропущенное слово', d:'Вставь слово в реплику из диалога.'},
+  {id:'build', sec:'t', zh:'排一排', ru:'Собери фразу', d:'Расставь слова в правильном порядке.'},
+  {id:'market', sec:'p', zh:'水果摊', ru:'Фруктовый прилавок', d:'Читай ценники, считай покупку по 斤 и сдачу.'},
+  {id:'talk', sec:'p', zh:'对话', ru:'Разговор', d:'Сыграй за Ма Давэя и Дин Либо: выбирай нужную реплику.'},
+  {id:'grammar', sec:'p', zh:'语法', ru:'Грамматика', d:'Счётные слова, 怎么 + глагол, 是不是, 先生 и 师傅.'}
+];
+const gameById = id => GAMES.find(g => g.id === id);
+
+/* ---------- wallet & feedback ---------- */
+const walletEl = $('#wallet');
+function updateWallet(bump){
+  $('#wy').textContent = yuan(state.wallet);
+  $('#wz').textContent = state.wallet ? priceZh(state.wallet) : '零';
+  if(bump){ walletEl.classList.remove('bump'); void walletEl.offsetWidth; walletEl.classList.add('bump'); }
+}
+function earn(fen){
+  if(!fen) return;
+  state.wallet += fen; save(); updateWallet(true);
+  const p = document.createElement('span'); p.className = 'pop'; p.textContent = '+' + priceZh(fen);
+  walletEl.appendChild(p); setTimeout(() => p.remove(), 1000);
+}
+let toastT = null;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2200); }
+const PRAISE = ['对！ Верно!', '很好！ Отлично!', '太好了！ Здорово!', '没错！ Точно!'];
+const starStr = n => [0,1,2].map(i => `<span class="${i < n ? 'star-on' : 'star-off'}">★</span>`).join('');
+const starsFor = (s, t) => { const r = t ? s / t : 0; return r >= 1 ? 3 : r >= .75 ? 2 : r >= .5 ? 1 : 0; };
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const c = document.createElement('canvas'); c.className = 'confetti'; document.body.appendChild(c);
+  const ctx = c.getContext('2d'), Wd = c.width = innerWidth, Ht = c.height = innerHeight;
+  const cs = getComputedStyle(document.documentElement);
+  const cols = ['--banana','--apple','--accent','--ok','--cd-1'].map(v => cs.getPropertyValue(v).trim() || '#F7C84A');
+  const ps = Array.from({length:140}, () => ({x:Wd / 2 + (Math.random() - .5) * Wd * .4, y:Ht * .4, vx:(Math.random() - .5) * 10, vy:-Math.random() * 11 - 4, r:Math.random() * 7 + 5, c:pick(cols), a:Math.random() * 6, va:(Math.random() - .5) * .3}));
+  let f = 0;
+  (function tick(){
+    f++; ctx.clearRect(0, 0, Wd, Ht);
+    for(const p of ps){ p.vy += .32; p.x += p.vx; p.y += p.vy; p.a += p.va; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; ctx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); ctx.restore(); }
+    if(f < 120) requestAnimationFrame(tick); else c.remove();
+  })();
+}
+
+/* ---------- navigation ---------- */
+const app = $('#app');
+let current = 'home', cleanup = null;
+function go(view){
+  if(cleanup){ try{ cleanup(); }catch(e){} cleanup = null; }
+  clearTimers();
+  current = VIEWS[view] ? view : 'home';
+  app.innerHTML = '';
+  VIEWS[current]();
+  window.scrollTo(0, 0);
+  try{ history.replaceState(null, '', current === 'home' ? location.pathname + location.search : '#' + current); }catch(e){}
+}
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]');
+  if(g){ e.preventDefault(); go(g.dataset.go); }
+});
+
+function shell(g){
+  app.innerHTML = `<div class="game">
+    <div class="ghead">
+      <button class="btn ghost" data-go="home">← Все игры</button>
+      <div class="gmeta"><span class="tag t-${g.sec}">${g.zh}</span><h2>${g.ru}</h2></div>
+      <div class="gstat"><span class="streak" id="gstreak" hidden></span><span id="gcount"></span></div>
+    </div>
+    <div class="bar" aria-hidden="true"><i id="gbar"></i></div>
+    <div class="gbody" id="gbody"></div>
+  </div>`;
+  return {
+    body: $('#gbody'),
+    prog(i, n){ $('#gbar').style.width = (n ? Math.min(1, i / n) * 100 : 0) + '%'; $('#gcount').textContent = n ? `${Math.min(i + 1, n)} / ${n}` : ''; },
+    count(t){ $('#gcount').textContent = t; },
+    bar(r){ $('#gbar').style.width = Math.max(0, Math.min(1, r)) * 100 + '%'; },
+    streak(n){ const s = $('#gstreak'); s.hidden = n < 3; s.textContent = 'серия ×' + n; }
+  };
+}
+
+function result(g, ui, {score, total, stars, earned, line}){
+  if(stars > (state.best[g.id] || 0)) state.best[g.id] = stars;
+  const bonus = stars === 3 ? 100 : 0;
+  save();
+  if(bonus) earn(bonus);
+  if(stars === 3) confetti();
+  const head = [['加油！','Попробуй ещё раз, получится!'], ['不错！','Неплохо!'], ['很好！','Хорошо!'], ['太好了！','Отлично!']][stars];
+  const sum = earned + bonus;
+  ui.bar(1);
+  ui.body.innerHTML = `<div class="result">
+    <div class="rstars" aria-label="Звёзд: ${stars} из 3">${starStr(stars)}</div>
+    <h3><span class="han">${head[0]}</span> ${head[1]}</h3>
+    <p class="rscore">${line || `${score} из ${total}`}</p>
+    <p>В кошелёк: <b class="han">${sum ? priceZh(sum) : '0'}</b> <span class="muted">(${yuan(sum)})${bonus ? ', включая бонус 一块 за три звезды' : ''}</span></p>
+    <div class="row center" style="margin-top:8px"><button class="btn primary" id="again">Ещё раз</button><button class="btn" data-go="home">Все игры</button></div>
+  </div>`;
+  $('#again').onclick = () => go(g.id);
+  $('#again').focus({preventScroll:true});
+}
+
+/* generic multiple-choice runner: items = [{prompt, options:[{html, ok}], info, hold, cls, keep}] */
+function runner(g, items){
+  const ui = shell(g);
+  let i = 0, score = 0, streak = 0, earned = 0, locked = false, auto = null;
+  function show(){
+    if(i >= items.length) return result(g, ui, {score, total: items.length, stars: starsFor(score, items.length), earned});
+    locked = false;
+    const it = items[i];
+    ui.prog(i, items.length);
+    const order = it.keep ? it.options.map((_, k) => k) : shuffle(it.options.map((_, k) => k));
+    ui.body.innerHTML = `<div class="qcard">${it.prompt}</div>
+      <div class="opts ${it.cls || ''}" role="group" aria-label="Варианты ответа">${order.map((k, n) => `<button class="opt" data-k="${k}"><span class="kbd">${n + 1}</span><span class="otx">${it.options[k].html}</span></button>`).join('')}</div>
+      <div class="fb" id="fb" hidden></div>`;
+  }
+  function choose(btn){
+    if(locked) return; locked = true;
+    const it = items[i], ok = !!it.options[+btn.dataset.k].ok;
+    $$('.opt', ui.body).forEach(b => { b.disabled = true; if(it.options[+b.dataset.k].ok) b.classList.add('ok'); });
+    if(ok){ score++; streak++; earned += 10; earn(10); } else { streak = 0; btn.classList.add('bad'); }
+    ui.streak(streak);
+    const fb = $('#fb', ui.body);
+    fb.hidden = false; fb.className = 'fb ' + (ok ? 'good' : 'nope');
+    fb.innerHTML = `<p class="verdict">${ok ? pick(PRAISE) : 'Не совсем. Правильный ответ отмечен зелёным.'}</p>${it.info || ''}<button class="btn primary" id="next">${i + 1 < items.length ? 'Дальше →' : 'Итоги'}</button>`;
+    $('#next', fb).focus({preventScroll:true});
+    if(ok && !it.hold) auto = later(next, it.info ? 1500 : 800);
+  }
+  function next(){ clearTimeout(auto); timers.delete(auto); i++; show(); }
+  ui.body.addEventListener('click', e => {
+    const b = e.target.closest('.opt'); if(b && !b.disabled) return choose(b);
+    if(e.target.closest('#next')) next();
+  });
+  const onKey = e => {
+    if(e.ctrlKey || e.metaKey || e.altKey) return;
+    const n = +e.key; if(n >= 1 && n <= 9){ const b = $$('.opt', ui.body)[n - 1]; if(b && !b.disabled) choose(b); }
+  };
+  document.addEventListener('keydown', onKey);
+  cleanup = () => document.removeEventListener('keydown', onKey);
+  show();
+}
+
+/* ---------- item builders ---------- */
+const wordLine = w => `<div class="wl"><span class="han">${w.h}</span><span class="pin">${w.pin}</span><span>${esc(w.ru)}</span></div>`;
+function others(w, key, n){
+  const pool = W.filter(x => x !== w && x[key] !== w[key] && !(w.clash && x.clash === w.clash));
+  return sample(pool, n);
+}
+function vocabItem(w, type){
+  const ds = others(w, type === 'h2p' ? 'pin' : 'ru', 3);
+  const all = [w, ...ds];
+  if(type === 'h2ru') return {prompt:`<p class="ask">Что значит это слово?</p><div class="han-xl">${w.h}</div>`, options: all.map(x => ({html: esc(x.ru), ok: x === w})), info: wordLine(w)};
+  if(type === 'ru2h') return {prompt:`<p class="ask">Найди иероглиф</p><div class="ru-xl">${esc(w.ru)}</div>`, cls:'hanopts', options: all.map(x => ({html:`<span class="han">${x.h}</span>`, ok: x === w})), info: wordLine(w)};
+  if(type === 'p2h') return {prompt:`<p class="ask">Какое слово так читается?</p><div class="pin-xl">${w.pin}</div>`, cls:'hanopts', options: all.map(x => ({html:`<span class="han">${x.h}</span>`, ok: x === w})), info: wordLine(w)};
+  return {prompt:`<p class="ask">Как читается это слово?</p><div class="han-xl">${w.h}</div>`, cls:'hanopts', options: all.map(x => ({html:`<span class="pin-opt">${x.pin}</span>`, ok: x === w})), info: wordLine(w)};
+}
+function toneVariants(w){
+  const ts = tonesOf(w.p), idx = ts.map((t, i) => t < 5 ? i : -1).filter(i => i >= 0);
+  const out = new Set([w.pin]); let guard = 0;
+  while(out.size < 4 && guard++ < 300){
+    const t2 = [...ts], n = idx.length > 1 && Math.random() < .5 ? 2 : 1;
+    for(let c = 0; c < n; c++){ const j = pick(idx); t2[j] = pick([1,2,3,4].filter(x => x !== ts[j])); }
+    out.add(withTones(w.p, t2));
+  }
+  return [...out];
+}
+function toneBreak(w){
+  const chars = [...w.h], ss = w.p.split(' ');
+  const lab = s => s.slice(-1) === '5' ? 'лёгкий тон' : s.slice(-1) + '-й тон';
+  if(chars.length !== ss.length) return `<div class="wl"><span class="syl"><span class="han">${w.h}</span><span class="pin">${w.pin}</span><span class="tn">${lab(ss[0])}</span></span></div>`;
+  return `<div class="wl">${ss.map((s, k) => `<span class="syl"><span class="han">${chars[k]}</span><span class="pin">${syl(s)}</span><span class="tn">${lab(s)}</span></span>`).join('')}<span>${esc(w.ru)}</span></div>`;
+}
+
+/* ---------- market generators ---------- */
+function stallHtml(f, tag, lines){
+  return `<div class="stall-scene">
+    <div class="crate"><span class="fruit" aria-hidden="true">${f.e}</span><span class="fname han">${f.zh}</span><span class="tag ptag"><b>${tag}</b><small>/斤</small></span></div>
+    <div class="bubbles">${lines.map(([who, zh, me]) => `<p class="bub ${me ? 'me' : ''}"><b>${who}</b><span class="han">${zh}</span></p>`).join('')}</div>
+  </div>`;
+}
+function fill(right, cands, n = 3){
+  const out = [right];
+  for(const c of cands){ if(out.length > n) break; if(c && !out.includes(c)) out.push(c); }
+  return out;
+}
+const MK = {
+  read(){
+    const f = pick(FR), k = rnd(1, 15), m = Math.random() < .2 ? 0 : rnd(1, 9), fen = k * 100 + m * 10;
+    const right = priceZh(fen) + '钱';
+    const opts = fill(right, shuffle([
+      (m && k < 10 && k !== m) ? priceZh(m * 100 + k * 10) + '钱' : null,
+      priceZh((k + 1) * 100 + m * 10) + '钱',
+      priceZh(k * 100 + ((m + 3) % 10) * 10) + '钱',
+      (k < 10 && m) ? numZh(k * 10 + m) + '块钱' : null,
+      priceZh(Math.max(1, k - 1) * 100 + m * 10) + '钱',
+      priceZh((k + 2) * 100 + m * 10) + '钱'
+    ]));
+    const short = (m && k) ? `<p>В разговоре короче: <span class="han">${countZh(k)}块${D[m]}</span></p>` : '';
+    return {prompt: `<p class="ask">Ценник</p>${stallHtml(f, yuan(fen), [['你', '师傅，一斤' + f.zh + '多少钱？', true]])}<p class="mq">Как мастер назовёт эту цену?</p>`,
+      options: opts.map(o => ({html:`<span class="han">${o}</span>`, ok: o === right})), info: `<p><b>${yuan(fen)}</b> → <span class="han">${right}</span></p>${short}`};
+  },
+  rev(){
+    const f = pick(FR), k = rnd(1, 12), m = rnd(1, 9), fen = k * 100 + m * 10, right = yuan(fen);
+    const opts = fill(right, shuffle([
+      (k < 10 && k !== m) ? yuan(m * 100 + k * 10) : null, yuan(fen + 100), yuan(k * 100 + ((m + 5) % 10) * 10), yuan(k * 1000 + m * 100), yuan(Math.max(1, k - 1) * 100 + m * 10)
+    ]));
+    return {prompt: `<p class="ask">Мастер называет цену</p>${stallHtml(f, '¥ ?', [['你', '一斤' + f.zh + '多少钱？', true], ['师傅', '一斤' + priceZh(fen) + '钱。']])}<p class="mq">Что написать на ценнике?</p>`,
+      options: opts.map(o => ({html:`<b>${o}</b>`, ok: o === right})), info: `<p><span class="han">${priceZh(fen)}</span> = <b>${right}</b></p>`};
+  },
+  total(){
+    const f = pick(FR), p = rnd(2, 9), n = rnd(2, 5), tot = p * n, right = priceZh(tot * 100) + '钱';
+    const opts = fill(right, shuffle([p * (n + 1), p * (n - 1), p + n, (p + 1) * n, tot + 1, tot - 1].filter(x => x > 0 && x !== tot).map(x => priceZh(x * 100) + '钱')));
+    return {prompt: `<p class="ask">Покупаем по весу</p>${stallHtml(f, yuan(p * 100), [['师傅', f.zh + countZh(p) + '块钱一斤。'], ['你', '我要' + countZh(n) + '斤。', true]])}<p class="mq">Сколько нужно заплатить?</p>`,
+      options: opts.map(o => ({html:`<span class="han">${o}</span>`, ok: o === right})), info: `<p>${p} 块 × ${n} 斤 = ${tot} 块 → <span class="han">${right}</span></p>`};
+  },
+  change(){
+    const f = pick(FR), cost = rnd(1, 8) * 100 + (Math.random() < .5 ? rnd(1, 9) * 10 : 0), ch = 1000 - cost, right = priceZh(ch) + '钱';
+    const opts = fill(right, shuffle([ch + 100, ch - 100, ch + 10, cost, ch - 10].filter(x => x > 0 && x !== ch && x < 1000).map(x => priceZh(x) + '钱')));
+    return {prompt: `<p class="ask">Сдача: 找钱</p>${stallHtml(f, yuan(cost), [['你', '我要一斤' + f.zh + '。给您十块钱。', true], ['师傅', priceZh(cost) + '钱。我找您……']])}<p class="mq">Сколько сдачи даст мастер?</p>`,
+      options: opts.map(o => ({html:`<span class="han">${o}</span>`, ok: o === right})), info: `<p>${yuan(1000)} - ${yuan(cost)} = <b>${yuan(ch)}</b> → <span class="han">${right}</span></p>`};
+  }
+};
+
+/* ---------- views ---------- */
+const VIEWS = {};
+
+VIEWS.home = () => {
+  const knownN = W.filter(w => state.known[w.h]).length;
+  const starsN = GAMES.reduce((a, g) => a + (state.best[g.id] || 0), 0);
+  const shelfStr = SHOP.filter(s => state.shelf[s.id]).map(s => s.e).join(' ');
+  app.innerHTML = `
+  <section class="hero">
+    <div class="sign">
+      <p class="eyebrow">第十课 · Урок 10</p>
+      <h1>我在这儿买光盘</h1>
+      <p class="spy">Wǒ zài zhèr mǎi guāngpán</p>
+      <p class="sru">«Я покупаю здесь диски». Игры по словам и текстам урока: без звука, только чтение, выбор и счёт. За верные ответы в кошелёк капают 毛, их можно потратить в лавке.</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>1 斤</b><span>= 500 граммов</span></div>
+      <div class="fact"><b>1 块</b><span>= 10 毛 = 100 分</span></div>
+      <div class="fact"><b>¥3.20</b><span>三块二毛钱</span></div>
+      <div class="fact"><b>块 / 元</b><span>юань устно / на письме</span></div>
+      <div class="fact wide"><span>Слов знаю</span><span class="num">${knownN} / ${W.length}</span></div>
+      <div class="fact wide"><span>Звёзд собрано</span><span class="num">${starsN} / ${GAMES.length * 3}</span></div>
+      <p class="start-hint">С чего начать: прочитай текст в «Читаем текст», потом разомнись на карточках.</p>
+    </div>
+  </section>
+  ${SECS.map(s => `<section class="sec" aria-labelledby="h-${s.id}">
+    <div class="sec-h"><span class="han">${s.zh}</span><h2 id="h-${s.id}">${s.ru}</h2><p>${s.d}</p></div>
+    <div class="stalls">${GAMES.filter(g => g.sec === s.id).map(g => `<button class="stall" data-go="${g.id}">
+      <span class="tag stag t-${g.sec}">${g.zh}</span>
+      <span class="sname">${g.ru}</span>
+      <span class="sd">${g.d}</span>
+      <span class="stars" aria-label="Лучший результат: ${state.best[g.id] || 0} из 3 звёзд">${starStr(state.best[g.id] || 0)}</span>
+    </button>`).join('')}</div>
+  </section>`).join('')}
+  <section class="shopband">
+    <p><b class="han">您要什么？</b> В лавке наград можно купить фрукты, торт и диск на заработанные 块 и 毛. ${shelfStr ? `<br><span class="shelf-mini">${shelfStr}</span>` : ''}</p>
+    <button class="btn primary" data-go="shop">В лавку</button>
+  </section>`;
+};
+
+VIEWS.cards = () => {
+  const g = gameById('cards'), ui = shell(g);
+  let filter = 'all', mode = 'h', deck = [], idx = 0, flipped = false, again = [];
+  function build(list){ deck = list || shuffle(W.filter(w => filter === 'all' || w.g === filter)); idx = 0; flipped = false; again = []; draw(); }
+  function controls(){
+    return `<div class="seg" aria-label="Набор слов">${GROUPS.map(([k, l]) => `<button data-f="${k}" aria-pressed="${filter === k}">${l}</button>`).join('')}</div>
+      <div class="seg" aria-label="Сторона карточки"><button data-m="h" aria-pressed="${mode === 'h'}">Иероглиф → перевод</button><button data-m="r" aria-pressed="${mode === 'r'}">Перевод → иероглиф</button></div>`;
+  }
+  function draw(){
+    const knownN = W.filter(w => state.known[w.h]).length;
+    if(idx >= deck.length){
+      ui.bar(1); ui.count('');
+      ui.body.innerHTML = controls() + `<div class="result">
+        <div class="rstars">${starStr(Math.min(3, Math.round(knownN / W.length * 3)))}</div>
+        <h3><span class="han">好！</span> Колода пройдена</h3>
+        <p>Знаю ${knownN} из ${W.length} слов. ${again.length ? `Ещё учу: <span class="han">${again.map(w => w.h).join('、')}</span>` : 'Все слова в этой колоде отмечены.'}</p>
+        <div class="row center">${again.length ? '<button class="btn primary" id="rep">Повторить «ещё учу»</button>' : ''}<button class="btn" id="restart">Начать заново</button></div>
+      </div>`;
+      const rep = $('#rep'); if(rep) rep.onclick = () => build(shuffle(again));
+      $('#restart').onclick = () => build();
+      return;
+    }
+    const w = deck[idx];
+    ui.prog(idx, deck.length);
+    ui.body.innerHTML = controls() + `
+      <button class="flash ${flipped ? 'flipped' : ''}" id="flash" aria-label="Перевернуть карточку">
+        ${state.known[w.h] ? '<span class="badge">знаю</span>' : ''}
+        <span class="ff front">${mode === 'h' ? `<span class="han-xl">${w.h}</span>` : `<span class="ru-xl">${esc(w.ru)}</span>`}<span class="hint">Нажми, чтобы перевернуть</span></span>
+        <span class="ff back"><span class="han-l">${w.h}</span><span class="pin-l">${w.pin}</span><span class="pos">${w.pos}</span><span class="ru-l">${esc(w.ru)}</span>${w.ex ? `<span class="ex">${w.ex}</span>` : ''}</span>
+      </button>
+      <div class="row center"><button class="btn" id="again">Ещё учу</button><button class="btn primary" id="know">Знаю ✓</button></div>
+      <p class="muted center" style="margin-top:12px">Знаю ${knownN} из ${W.length}. Клавиши: пробел переворачивает, ← ещё учу, → знаю.</p>`;
+  }
+  function know(){ const w = deck[idx]; if(!w) return; if(!state.known[w.h]){ state.known[w.h] = true; save(); earn(10); } idx++; flipped = false; draw(); }
+  function still(){ const w = deck[idx]; if(!w) return; if(!again.includes(w)) again.push(w); idx++; flipped = false; draw(); }
+  ui.body.addEventListener('click', e => {
+    const f = e.target.closest('[data-f]'); if(f){ filter = f.dataset.f; return build(); }
+    const m = e.target.closest('[data-m]'); if(m){ mode = m.dataset.m; flipped = false; return draw(); }
+    if(e.target.closest('#flash')){ flipped = !flipped; $('#flash').classList.toggle('flipped', flipped); return; }
+    if(e.target.closest('#know')) return know();
+    if(e.target.closest('#again')) return still();
+  });
+  const onKey = e => {
+    if(!$('#flash')) return;
+    if(e.key === 'ArrowRight') know();
+    else if(e.key === 'ArrowLeft') still();
+    else if(e.key === ' ' && !(document.activeElement && document.activeElement.closest('button,input,a,summary'))){ e.preventDefault(); flipped = !flipped; $('#flash').classList.toggle('flipped', flipped); }
+  };
+  document.addEventListener('keydown', onKey);
+  cleanup = () => document.removeEventListener('keydown', onKey);
+  build();
+};
+
+VIEWS.quiz = () => {
+  const types = ['h2ru','ru2h','p2h','h2p'];
+  const words = sample(W, 10);
+  runner(gameById('quiz'), shuffle(words.map((w, i) => vocabItem(w, types[i % 4]))));
+};
+
+VIEWS.tones = () => {
+  const words = sample(W, 10);
+  runner(gameById('tones'), words.map(w => ({
+    prompt:`<p class="ask">Выбери правильные тоны</p><div class="han-xl">${w.h}</div><p class="sub">${esc(w.ru)}</p>`,
+    cls:'hanopts', options: shuffle(toneVariants(w)).map(v => ({html:`<span class="pin-opt">${v}</span>`, ok: v === w.pin})), info: toneBreak(w)
+  })));
+};
+
+VIEWS.pairs = () => {
+  const g = gameById('pairs'), ui = shell(g), N = 6;
+  const words = sample(W.filter(w => w.g !== 'ext' && w.ru.length <= 30), N);
+  const cards = shuffle(words.flatMap((w, i) => [{i, side:'h', w}, {i, side:'r', w}]));
+  let open = [], matched = 0, moves = 0, lock = false;
+  ui.body.innerHTML = `<p class="muted" style="margin-top:0">Под каждым диском спрятано слово. Открывай по два и находи пары «иероглиф + перевод». Ходов: <b id="moves">0</b></p>
+    <div class="mgrid">${cards.map((c, k) => `<button class="mcard" data-k="${k}" aria-label="Карточка ${k + 1}"><span class="disc" aria-hidden="true"></span><span class="mface">${c.side === 'h' ? `<span class="han">${c.w.h}</span><span class="pin">${c.w.pin}</span>` : esc(c.w.ru)}</span></button>`).join('')}</div>`;
+  ui.count(`0 / ${N} пар`);
+  ui.body.addEventListener('click', e => {
+    const b = e.target.closest('.mcard');
+    if(!b || lock || b.classList.contains('open')) return;
+    b.classList.add('open'); open.push(b);
+    if(open.length < 2) return;
+    moves++; $('#moves').textContent = moves;
+    const [a, c] = open.map(x => cards[+x.dataset.k]);
+    if(a.i === c.i){
+      open.forEach(x => { x.classList.add('done'); x.disabled = true; x.setAttribute('aria-label', a.w.h + ': ' + a.w.ru); });
+      open = []; matched++; earn(10); ui.count(`${matched} / ${N} пар`); ui.bar(matched / N);
+      if(matched === N) later(() => {
+        const stars = moves <= 9 ? 3 : moves <= 12 ? 2 : moves <= 16 ? 1 : 0;
+        result(g, ui, {stars, earned: N * 10, line: `${N} пар за ${moves} ходов`});
+      }, 700);
+    } else {
+      lock = true; open.forEach(x => x.classList.add('miss'));
+      later(() => { open.forEach(x => x.classList.remove('open', 'miss')); open = []; lock = false; }, 1000);
+    }
+  });
+};
+
+VIEWS.blitz = () => {
+  const g = gameById('blitz'), ui = shell(g);
+  ui.count('');
+  ui.body.innerHTML = `<div class="blitz-start">
+    <p class="big">60 секунд</p>
+    <p>Появляется иероглиф, выбери перевод как можно быстрее. Каждый верный ответ: +1毛. Цифры 1-4 на клавиатуре тоже работают.</p>
+    <p class="muted">Три звезды: 20 верных ответов.</p>
+    <button class="btn primary" id="go">开始！ Старт</button>
+  </div>`;
+  $('#go').onclick = start;
+  $('#go').focus({preventScroll:true});
+  function start(){
+    let score = 0, wrong = 0, prev = null, busy = false, cur = null;
+    const t0 = Date.now(), LEN = 60;
+    const iv = setInterval(() => {
+      const left = LEN - (Date.now() - t0) / 1000;
+      if(left <= 0){ clearInterval(iv); end(); return; }
+      ui.bar(left / LEN); ui.count(`0:${String(Math.ceil(left)).padStart(2, '0')} · ${score} ✓`);
+    }, 200);
+    const onKey = e => { const n = +e.key; if(n >= 1 && n <= 4){ const b = $$('.opt', ui.body)[n - 1]; if(b && !b.disabled) answer(b); } };
+    document.addEventListener('keydown', onKey);
+    cleanup = () => { clearInterval(iv); document.removeEventListener('keydown', onKey); };
+    function q(){
+      let w; do { w = pick(W); } while(w === prev); prev = w;
+      cur = vocabItem(w, 'h2ru'); busy = false;
+      const order = shuffle([0,1,2,3]);
+      ui.body.innerHTML = `<div class="qcard">${cur.prompt}</div><div class="opts" role="group" aria-label="Варианты ответа">${order.map((k, n) => `<button class="opt" data-k="${k}"><span class="kbd">${n + 1}</span><span class="otx">${cur.options[k].html}</span></button>`).join('')}</div>`;
+    }
+    function answer(b){
+      if(busy) return; busy = true;
+      const ok = cur.options[+b.dataset.k].ok;
+      $$('.opt', ui.body).forEach(x => { x.disabled = true; if(cur.options[+x.dataset.k].ok) x.classList.add('ok'); });
+      if(ok){ score++; earn(10); later(q, 250); } else { wrong++; b.classList.add('bad'); later(q, 900); }
+    }
+    ui.body.onclick = e => { const b = e.target.closest('.opt'); if(b && !b.disabled) answer(b); };
+    function end(){
+      document.removeEventListener('keydown', onKey); clearTimers(); ui.body.onclick = null;
+      const stars = score >= 20 ? 3 : score >= 14 ? 2 : score >= 8 ? 1 : 0;
+      result(g, ui, {stars, earned: score * 10, line: `Верно: ${score} · ошибок: ${wrong}`});
+    }
+    q();
+  }
+};
+
+function parseLine(t){
+  return t.split(' ').filter(Boolean).map(tok => { const k = tok.indexOf('/'); return k < 0 ? {h: tok, pu: true} : {h: tok.slice(0, k), p: tok.slice(k + 1).replace(/_/g, ' ')}; });
+}
+VIEWS.read = () => {
+  const g = gameById('read'), ui = shell(g);
+  let tab = 0, pyOn = true, ruOn = false, role = '';
+  ui.count('');
+  function draw(){
+    const T = TEXTS[tab], speakers = [...new Set(T.lines.map(l => l.s))];
+    ui.bar((tab + 1) / TEXTS.length);
+    ui.body.innerHTML = `
+      <div class="seg" aria-label="Текст">${TEXTS.map((x, k) => `<button data-tab="${k}" aria-pressed="${k === tab}">Текст ${x.title}</button>`).join('')}</div>
+      <div class="rtools">
+        <label class="switch"><input type="checkbox" id="opy" ${pyOn ? 'checked' : ''}> Пиньинь</label>
+        <label class="switch"><input type="checkbox" id="oru" ${ruOn ? 'checked' : ''}> Перевод</label>
+      </div>
+      <div class="seg" aria-label="Чтение по ролям"><button data-role="" aria-pressed="${role === ''}">Без ролей</button>${speakers.map(s => `<button data-role="${s}" aria-pressed="${role === s}">Я читаю за <span class="han">${s}</span></button>`).join('')}</div>
+      ${role ? `<p class="muted" style="margin:0 0 10px">Реплики <span class="han">${role}</span> скрыты. Вспомни реплику, потом нажми на неё, чтобы проверить себя.</p>` : ''}
+      <div class="dialog ${pyOn ? '' : 'nopy'} ${ruOn ? '' : 'nori'}">${T.lines.map((l, li) => {
+        const toks = parseLine(l.t);
+        return `<div class="line ${role === l.s ? 'masked' : ''}" data-li="${li}">
+          <div class="spk"><span class="han">${l.s}</span><span>${SPK[l.s]}</span></div>
+          <div class="lc"><p class="tx">${toks.map((t, ti) => t.pu ? `<span>${t.h}</span>` : `<ruby class="tok ${WBY[t.h] && WBY[t.h].g !== 'ext' ? 'nw' : ''}" tabindex="0" role="button" data-ti="${ti}">${t.h}<rt>${t.p}</rt></ruby>`).join('')}</p><p class="lru">${l.ru}</p></div>
+        </div>`; }).join('')}</div>
+      <div class="gloss" id="gloss"><span>Нажми на слово, чтобы увидеть перевод. Жёлтым подчёркнуты слова урока.</span></div>
+      <div class="row" style="margin-top:14px"><button class="btn primary" id="readdone">${state.done['read' + tab] ? 'Прочитано ✓' : 'Я прочитал(а) этот текст (+5毛)'}</button>${tab === 0 ? '<button class="btn" data-tab="1">Текст (二) →</button>' : '<button class="btn" data-go="qa">К вопросам по тексту →</button>'}</div>
+      <h3 class="subh">注释 Комментарии</h3>
+      <div class="notes">${NOTES.map(n => `<div class="note"><h4>${n.n} ${n.zh}</h4><p>${n.ru}</p></div>`).join('')}</div>`;
+  }
+  function gloss(el){
+    const line = TEXTS[tab].lines[+el.closest('.line').dataset.li], t = parseLine(line.t)[+el.dataset.ti];
+    const w = WBY[t.h];
+    $$('.tok.sel', ui.body).forEach(x => x.classList.remove('sel')); el.classList.add('sel');
+    $('#gloss').innerHTML = `<span class="han">${t.h}</span><span class="pin">${t.p}</span><span>${esc(w ? w.ru : (GL[t.h] || ''))}</span>${w ? `<span class="muted" style="opacity:.8">${w.pos}</span>` : ''}`;
+  }
+  ui.body.addEventListener('click', e => {
+    const tb = e.target.closest('[data-tab]'); if(tb){ tab = +tb.dataset.tab; role = ''; draw(); return; }
+    const r = e.target.closest('[data-role]'); if(r){ role = r.dataset.role; draw(); return; }
+    const m = e.target.closest('.line.masked'); if(m){ m.classList.remove('masked'); return; }
+    const t = e.target.closest('.tok'); if(t) return gloss(t);
+    if(e.target.closest('#readdone')){
+      if(!state.done['read' + tab]){ state.done['read' + tab] = true; save(); earn(50); toast('好！ +5毛 в кошелёк'); draw(); }
+    }
+  });
+  ui.body.addEventListener('keydown', e => { const t = e.target.closest('.tok'); if(t && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); gloss(t); } });
+  ui.body.addEventListener('change', e => {
+    if(e.target.id === 'opy'){ pyOn = e.target.checked; $('.dialog', ui.body).classList.toggle('nopy', !pyOn); }
+    if(e.target.id === 'oru'){ ruOn = e.target.checked; $('.dialog', ui.body).classList.toggle('nori', !ruOn); }
+  });
+  draw();
+};
+
+function chooser(g, onPick){
+  const ui = shell(g); ui.count('');
+  ui.body.innerHTML = `<div class="blitz-start"><p class="big" style="font-size:1.4rem">С каким текстом играем?</p>
+    <div class="row center"><button class="btn" data-t="1">Текст (一): диски</button><button class="btn" data-t="2">Текст (二): фрукты</button><button class="btn primary" data-t="0">Оба текста</button></div></div>`;
+  ui.body.addEventListener('click', e => { const b = e.target.closest('[data-t]'); if(b) onPick(+b.dataset.t); }, {once:false});
+}
+
+VIEWS.qa = () => {
+  const g = gameById('qa');
+  chooser(g, t => {
+    const pool = QA.filter(x => !t || x.t === t);
+    const items = sample(pool, Math.min(10, pool.length)).map(x => {
+      const head = `<p class="ask">${x.tf ? '对 или 错?' : 'Ответь на вопрос'} · текст ${x.t === 1 ? '(一)' : '(二)'}</p><p class="zhq">${x.q}</p><details class="tr"><summary>Перевод</summary><p>${x.ru}</p></details>`;
+      const info = `<p class="quote">В тексте: <span class="han">${x.why}</span></p>`;
+      if(x.tf) return {prompt: head, keep: true, options: [{html:'<span class="han">对</span><span class="ru">верно</span>', ok: x.a === true}, {html:'<span class="han">错</span><span class="ru">неверно</span>', ok: x.a === false}], info};
+      return {prompt: head, cls:'hanopts', options: [x.a, ...x.o].map(o => ({html:`<span class="han">${o}</span>`, ok: o === x.a})), info};
+    });
+    runner(g, items);
+  });
+};
+
+VIEWS.cloze = () => {
+  const items = sample(CL, 10).map(x => ({
+    prompt: `<p class="ask">Вставь пропущенное слово</p>${x.ctx ? `<p class="ctx">${x.ctx[0]}：${x.ctx[1]}</p>` : ''}<p class="zhq">${x.s}：${x.zh.replace('＿', '<span class="blank">　</span>')}</p><details class="tr"><summary>Перевод</summary><p>${x.ru}</p></details>`,
+    cls:'hanopts', options: [x.a, ...x.o].map(o => ({html:`<span class="han">${o}</span>`, ok: o === x.a})),
+    info: `<p class="han" style="font-size:1.2rem">${x.zh.replace('＿', `<mark>${x.a}</mark>`)}</p><p class="muted">${x.ru}</p>`
+  }));
+  runner(gameById('cloze'), items);
+};
+
+VIEWS.build = () => {
+  const g = gameById('build'), ui = shell(g), items = sample(BUILD, 8);
+  let i = 0, score = 0, picked = [], tiles = [], checked = false;
+  function show(){
+    if(i >= items.length) return result(g, ui, {score, total: items.length, stars: starsFor(score, items.length), earned: score * 20});
+    const it = items[i]; picked = []; checked = false;
+    do { tiles = shuffle(it.w); } while(tiles.join('') === it.w.join(''));
+    ui.prog(i, items.length);
+    ui.body.innerHTML = `<div class="qcard"><p class="ask">Собери фразу по-китайски</p><p class="ru-q">${it.ru}</p></div>
+      <div class="answer" id="ans" aria-label="Твоя фраза"></div>
+      <div class="pool" id="pool">${tiles.map((t, k) => `<button class="tile" data-k="${k}">${t}</button>`).join('')}</div>
+      <div class="row"><button class="btn" id="clr">Очистить</button><button class="btn primary" id="chk" disabled>Проверить</button></div>
+      <div class="fb" id="fb" hidden></div>`;
+  }
+  function sync(){
+    $('#ans').innerHTML = picked.map(k => `<button class="tile" data-a="${k}">${tiles[k]}</button>`).join('');
+    $$('#pool .tile').forEach(b => b.classList.toggle('used', picked.includes(+b.dataset.k)));
+    $('#chk').disabled = picked.length !== tiles.length;
+  }
+  function check(){
+    checked = true;
+    const it = items[i], ans = picked.map(k => tiles[k]).join('');
+    const goods = [it.w, ...(it.alt || [])].map(a => a.join(''));
+    const ok = goods.includes(ans), full = it.zh || it.w.join('') + it.end;
+    if(ok){ score++; earn(20); }
+    $('#ans').classList.add(ok ? 'ok' : 'bad');
+    $$('.tile', ui.body).forEach(b => b.disabled = true);
+    $('#chk').disabled = true; $('#clr').disabled = true;
+    const fb = $('#fb'); fb.hidden = false; fb.className = 'fb ' + (ok ? 'good' : 'nope');
+    fb.innerHTML = `<p class="verdict">${ok ? pick(PRAISE) + ' +2毛' : 'Порядок другой.'}</p><p>${ok ? 'Фраза из текста:' : 'Правильно:'} <span class="han" style="font-size:1.3rem">${full}</span></p><button class="btn primary" id="nx">${i + 1 < items.length ? 'Дальше →' : 'Итоги'}</button>`;
+    $('#nx').focus({preventScroll:true});
+  }
+  ui.body.addEventListener('click', e => {
+    if(checked){ if(e.target.closest('#nx')){ i++; show(); } return; }
+    const p = e.target.closest('#pool .tile'); if(p && !p.classList.contains('used')){ picked.push(+p.dataset.k); return sync(); }
+    const a = e.target.closest('#ans .tile'); if(a){ picked.splice(picked.indexOf(+a.dataset.a), 1); return sync(); }
+    if(e.target.closest('#clr')){ picked = []; return sync(); }
+    if(e.target.closest('#chk')) return check();
+  });
+  show();
+};
+
+VIEWS.market = () => {
+  const types = shuffle(['read','read','read','rev','rev','total','total','total','change','change']);
+  runner(gameById('market'), types.map(t => MK[t]()));
+};
+
+VIEWS.grammar = () => {
+  const items = sample(GR, 10).map(x => ({
+    prompt: `<p class="ask">Грамматика</p><p class="zhq">${x.q}</p>${x.ru ? `<p class="sub">${x.ru}</p>` : ''}`,
+    cls: x.a.length <= 4 ? 'hanopts' : '', hold: true,
+    options: [x.a, ...x.o].map(o => ({html:`<span class="han">${o}</span>`, ok: o === x.a})),
+    info: `<p>${x.n}</p>`
+  }));
+  runner(gameById('grammar'), items);
+};
+
+VIEWS.talk = () => {
+  const g = gameById('talk'), ui = shell(g);
+  const total = TALK.reduce((a, s) => a + s.steps.filter(x => !x.final).length, 0) + 1;
+  let sc = 0, st = 0, tries = 0, first = 0, answered = 0, showRu = false;
+  ui.count(`0 / ${total}`);
+  ui.body.innerHTML = `<div class="rtools"><label class="switch"><input type="checkbox" id="tru"> Показывать перевод реплик</label></div>
+    <div class="nru" id="talkbox"><div class="chat" id="chat" aria-live="polite"></div><div class="replies" id="rep"></div></div>`;
+  const chat = $('#chat'), rep = $('#rep'), box = $('#talkbox');
+  $('#tru').onchange = e => { showRu = e.target.checked; box.classList.toggle('nru', !showRu); };
+  function bubble(who, zh, ru, me){
+    chat.insertAdjacentHTML('beforeend', `<div class="msg ${me ? 'me' : ''}"><span class="who han">${who}</span><p class="han">${zh}</p><p class="ru">${ru}</p></div>`);
+    chat.lastElementChild.scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+  function scene(){
+    const S = TALK[sc];
+    chat.insertAdjacentHTML('beforeend', `<p class="scene">Сцена ${sc + 1}: ${S.title}. Ты играешь за <span class="han">${S.you}</span> (${SPK[S.you]})</p>`);
+    step();
+  }
+  function step(){
+    const S = TALK[sc];
+    if(st >= S.steps.length){ sc++; st = 0; return sc < TALK.length ? later(scene, 400) : finish(); }
+    const X = S.steps[st];
+    bubble(S.them, X.say, X.ru, false);
+    if(X.final) return bonus();
+    tries = 0;
+    rep.innerHTML = `<p class="muted" style="margin:0">Что ответит <span class="han">${S.you}</span>?</p>` + shuffle([0, 1, 2]).map((k, n) => `<button class="opt" data-k="${k}"><span class="kbd">${n + 1}</span><span class="otx"><span class="han">${X.opts[k][0]}</span><span class="ru">${X.opts[k][1]}</span></span></button>`).join('');
+  }
+  function bonus(){
+    rep.innerHTML = `<p style="margin:0"><b>Последний вопрос.</b> Дин Либо просит <span class="han">两斤</span> по новой цене. Сколько он заплатит?</p>` +
+      shuffle([['六块钱', 1], ['六块四毛钱', 0], ['三块钱', 0], ['五块钱', 0]]).map(([t, ok], n) => `<button class="opt" data-b="${ok}"><span class="kbd">${n + 1}</span><span class="otx"><span class="han">${t}</span></span></button>`).join('');
+  }
+  rep.addEventListener('click', e => {
+    const b = e.target.closest('.opt'); if(!b || b.disabled) return;
+    if(b.dataset.b !== undefined){
+      if(b.dataset.b === '1'){ if(!tries){ first++; earn(10); } answered++; ui.count(`${answered} / ${total}`); ui.bar(answered / total); bubble('丁力波', '好，我要两斤。给您六块钱。', 'Хорошо, мне два цзиня. Вот вам шесть юаней.', true); rep.innerHTML = ''; later(finish, 900); }
+      else { tries++; b.classList.add('bad'); b.disabled = true; toast('Посчитай: 3 块 × 2 斤'); }
+      return;
+    }
+    const S = TALK[sc], X = S.steps[st];
+    if(+b.dataset.k === 0){
+      if(!tries){ first++; earn(10); }
+      answered++; ui.count(`${answered} / ${total}`); ui.bar(answered / total);
+      bubble(S.you, X.opts[0][0], X.opts[0][1], true); rep.innerHTML = ''; st++; tries = 0; later(step, 700);
+    } else { tries++; b.classList.add('bad'); b.disabled = true; toast('Не подходит по смыслу. Попробуй другую реплику.'); }
+  });
+  const onKey = e => { const n = +e.key; if(n >= 1 && n <= 4){ const b = $$('.opt', rep)[n - 1]; if(b && !b.disabled) b.click(); } };
+  document.addEventListener('keydown', onKey);
+  cleanup = () => document.removeEventListener('keydown', onKey);
+  function finish(){ result(g, ui, {score: first, total, stars: starsFor(first, total), earned: first * 10, line: `С первой попытки: ${first} из ${total}`}); }
+  tries = 0; scene();
+};
+
+VIEWS.shop = () => {
+  app.innerHTML = `<div class="game">
+    <div class="ghead"><button class="btn ghost" data-go="home">← Все игры</button><div class="gmeta"><span class="tag t-p">小卖部</span><h2>Лавка наград</h2></div></div>
+    <div class="chat" style="min-height:0;margin-top:16px"><div class="msg"><span class="who han">师傅</span><p class="han" id="say">先生，您要什么？</p><p class="ru" id="sayru">Что желаете? У вас в кошельке ${yuan(state.wallet)}.</p></div></div>
+    <div class="shop-grid">${SHOP.map(s => `<div class="item">
+      <span class="e" aria-hidden="true">${s.e}</span><span class="zh">${s.zh}</span><span class="ru">${s.ru}</span>
+      <span class="tag"><b>${yuan(s.fen)}</b><small>${priceZh(s.fen)}</small></span>
+      <button class="btn ${state.wallet >= s.fen ? 'primary' : ''}" data-buy="${s.id}" ${state.wallet >= s.fen ? '' : 'disabled'}>${state.wallet >= s.fen ? 'Купить' : 'Не хватает ' + yuan(s.fen - state.wallet)}</button>
+    </div>`).join('')}</div>
+    <h3 class="subh">Мои покупки</h3>
+    <div class="shelf" id="shelf"></div>
+    <div class="row" style="margin-top:28px"><button class="btn" id="reset">Сбросить прогресс</button><span class="muted" id="resetq"></span></div>
+  </div>`;
+  const drawShelf = () => {
+    const own = SHOP.filter(s => state.shelf[s.id]);
+    $('#shelf').innerHTML = own.length ? own.map(s => `<span title="${s.zh}">${s.e}</span><small>×${state.shelf[s.id]}</small>`).join('') : '<small>Пока пусто. Заработай 毛 в играх и возвращайся.</small>';
+  };
+  drawShelf();
+  app.onclick = e => {
+    const b = e.target.closest('[data-buy]');
+    if(b){
+      const s = SHOP.find(x => x.id === b.dataset.buy);
+      if(state.wallet < s.fen) return;
+      state.wallet -= s.fen; state.shelf[s.id] = (state.shelf[s.id] || 0) + 1; save(); updateWallet(true);
+      VIEWS.shop();
+      $('#say').textContent = `好！${s.zh}，${priceZh(s.fen)}钱。给您！您还要什么？`;
+      $('#sayru').textContent = `Хорошо! ${s.ru}, ${yuan(s.fen)}. Пожалуйста! Что-нибудь ещё?`;
+      return;
+    }
+    if(e.target.closest('#reset')){
+      $('#resetq').innerHTML = 'Удалить кошелёк, звёзды и выученные слова? <button class="btn" id="resetyes">Да, сбросить</button>';
+      return;
+    }
+    if(e.target.closest('#resetyes')){
+      state.wallet = 0; state.best = {}; state.known = {}; state.shelf = {}; state.done = {}; save(); updateWallet(); toast('Прогресс сброшен'); go('home');
+    }
+  };
+  cleanup = () => { app.onclick = null; };
+};
+
+/* ---------- boot ---------- */
+function boot(d){
+  updateWallet();
+  const h = (location.hash || '').slice(1);
+  go((d && d.view && VIEWS[d.view]) ? d.view : (VIEWS[h] ? h : 'home'));
+}
+try{ window.claude?.hot?.snapshot?.(() => ({view: current})); }catch(e){}
+try{
+  if(window.claude?.hot?.ready) window.claude.hot.ready(boot);
+  else boot(window.claude?.hot?.data ?? {});
+}catch(e){ boot({}); }
+})();
+</script>
+</body>
+</html>
