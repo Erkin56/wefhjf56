@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+
+# Render output and build output
+out
+build
+dist
+.remotion
+*.tsbuildinfo
+
+# Local files
+.env
+.env.*
+.DS_Store
+npm-debug.log*
+
+# Debug output of the asset scripts and the downloaded super-resolution model
+source-assets/chk
+source-assets/*_debug.jpg
+source-assets/models_edsr
+
+# Python cache
+__pycache__
